@@ -10,7 +10,13 @@ window.NIHIL_CONFIG = {
     kick: "https://kick.com/nihilguh",
     trovo: "https://trovo.live/s/nihilguh",
     discord: "https://discord.gg/7F9YbfvUXD",
-    coret: "",
+    coret: "https://coret.cloud",
     livepix: "https://livepix.gg/justguh"
+  },
+  status: {
+    twitch: {
+      enabled: true,
+      channel: "nihilguh"
+    }
   }
 };
