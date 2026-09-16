@@ -4,30 +4,41 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#0b0712" />
-  <meta name="description" content="Todos os canais de live do NihilGuh em um só lugar." />
-  <title>NihilGuh — Lives</title>
+  <meta name="description" content="Lives do NihilGuh, comunidade e apoio via LivePix." />
+  <title>NihilGuh — Wonderland Broadcast</title>
+
   <link rel="icon" type="image/webp" href="assets/emote-ramen.webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+
+<body class="intro-running">
+
+  <div class="intro-gate" id="intro-gate" aria-hidden="true">
+    <div class="intro-void"></div>
+    <div class="intro-face">
+      <span class="intro-eye intro-eye-left"><i></i></span>
+      <span class="intro-eye intro-eye-right"><i></i></span>
+      <div class="intro-grin">
+        <span class="intro-grin-line"></span>
+        <span class="intro-teeth"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      </div>
+    </div>
+    <div class="intro-smoke smoke-1"></div>
+    <div class="intro-smoke smoke-2"></div>
+    <div class="intro-smoke smoke-3"></div>
+    <div class="intro-flash"></div>
+  </div>
+
   <div class="noise" aria-hidden="true"></div>
   <div class="orb orb-a" aria-hidden="true"></div>
   <div class="orb orb-b" aria-hidden="true"></div>
 
   <div class="wonderland-fx" aria-hidden="true">
-    <span class="suit suit-1">♠</span>
-    <span class="suit suit-2">♥</span>
-    <span class="suit suit-3">♦</span>
-    <span class="suit suit-4">♣</span>
-    <span class="suit suit-5">?</span>
-    <div class="cheshire-ghost">
-      <i class="ghost-eye ghost-eye-left"></i>
-      <i class="ghost-eye ghost-eye-right"></i>
-      <b class="ghost-grin"></b>
-    </div>
+    <span class="suit suit-1">♠</span><span class="suit suit-2">♥</span><span class="suit suit-3">♦</span><span class="suit suit-4">♣</span><span class="suit suit-5">?</span>
+    <div class="cheshire-ghost"><i class="ghost-eye ghost-eye-left"></i><i class="ghost-eye ghost-eye-right"></i><b class="ghost-grin"></b></div>
   </div>
 
   <main class="shell">
@@ -36,105 +47,93 @@
         <div class="eyebrow"><span class="live-dot"></span> NIHILGUH // MULTIPLATAFORMA</div>
         <h1 id="page-title">NihilGuh</h1>
         <p id="subtitle">Lives, caos e Wonderland em vários cantos da internet.</p>
-        <a class="jump-pix" href="#apoiar"><span>✦</span> Apoiar a toca</a>
+        <div class="hero-actions">
+          <a class="jump-pix primary" href="#apoiar"><span>✦</span> Apoiar a toca</a>
+          <a class="jump-pix secondary" href="#canais">Ver canais</a>
+        </div>
       </div>
 
       <div class="hero-art" aria-hidden="true">
-        <div class="hero-ring"></div>
-        <div class="hero-ring hero-ring-inner"></div>
-        <img class="hero-character" src="assets/emote-ramen.webp" alt="" width="440" height="440" fetchpriority="high" />
+        <div class="hero-ring"></div><div class="hero-ring hero-ring-inner"></div><div class="hero-glitch-line gl-1"></div><div class="hero-glitch-line gl-2"></div>
+        <div class="hero-cheshire">
+          <span class="hero-cat-eye hero-cat-left"><i></i></span><span class="hero-cat-eye hero-cat-right"><i></i></span>
+          <div class="hero-cat-grin"><span class="hero-cat-grin-line"></span><span class="hero-cat-teeth"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+          <div class="hero-cat-smoke cat-smoke-a"></div><div class="hero-cat-smoke cat-smoke-b"></div>
+        </div>
       </div>
     </section>
 
     <section class="livepix-panel" id="apoiar" aria-labelledby="livepix-title">
       <div class="livepix-heading">
-        <div class="livepix-copy">
-          <span class="kicker">APOIE A TOCA</span>
-          <h2 id="livepix-title">LivePix</h2>
-          <p>Envie um Pix e sua mensagem pode aparecer na live.</p>
-        </div>
-        <img class="ramen-mascot" src="assets/emote-ramen.webp" alt="NihilGuh comendo ramen" width="220" height="220" loading="lazy" />
-        <a class="open-external" href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">Abrir em nova aba ↗</a>
+        <div class="livepix-copy"><span class="kicker">APOIE A TOCA</span><h2 id="livepix-title">LivePix</h2><p>Escolha como apoiar. O pagamento final é concluído no checkout seguro do LivePix.</p></div>
+        <img class="ramen-mascot" src="assets/emote-ramen.webp" alt="NihilGuh comendo ramen" width="420" height="420" loading="lazy" />
+        <a class="open-external" href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">Abrir LivePix ↗</a>
       </div>
 
-      <div class="livepix-frame-shell" id="livepix-shell">
-        <div class="livepix-loader" id="livepix-loader">
-          <span class="loader-ring" aria-hidden="true"></span>
-          <strong>Carregando LivePix...</strong>
-          <small>O painel é carregado diretamente do LivePix.</small>
+      <div class="livepix-api-shell">
+        <div class="api-status" id="api-status" role="status"><span class="api-dot"></span><span id="api-status-text">Conectando ao LivePix...</span></div>
+        <div class="pix-tabs" role="tablist" aria-label="Formas de apoio">
+          <button class="pix-tab is-active" data-tab="message" type="button" role="tab" aria-selected="true">Mensagem + Pix</button>
+          <button class="pix-tab" data-tab="payment" type="button" role="tab" aria-selected="false">Pix rápido</button>
+          <button class="pix-tab" data-tab="subscription" type="button" role="tab" aria-selected="false">Assinaturas</button>
         </div>
-        <iframe
-          id="livepix-frame"
-          src="https://livepix.gg/justguh"
-          title="Apoie NihilGuh pelo LivePix"
-          allow="payment *; clipboard-write"
-          referrerpolicy="strict-origin-when-cross-origin"></iframe>
-      </div>
 
-      <p class="livepix-fallback" id="livepix-fallback" hidden>
-        Se o LivePix bloquear a visualização incorporada no seu navegador,
-        <a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">abra a página do LivePix ↗</a>
-      </p>
+        <div class="pix-pane is-active" data-pane="message">
+          <form class="pix-form" id="message-form">
+            <div class="field-row two">
+              <label><span>Seu nome</span><input name="username" maxlength="60" autocomplete="nickname" placeholder="Como quer aparecer na live?" required /></label>
+              <label><span>Valor</span><div class="money-input"><b>R$</b><input name="amount" inputmode="decimal" placeholder="10,00" required /></div></label>
+            </div>
+            <div class="quick-values" data-target="message-form"><button type="button" data-value="5">R$ 5</button><button type="button" data-value="10">R$ 10</button><button type="button" data-value="20">R$ 20</button><button type="button" data-value="50">R$ 50</button><button type="button" data-value="100">R$ 100</button></div>
+            <label><span>Mensagem</span><textarea name="message" rows="4" maxlength="500" placeholder="Escreva a mensagem que pode aparecer na live..." required></textarea></label>
+            <button class="pay-button" type="submit"><span>Continuar para o Pix</span><b>↗</b></button><p class="form-feedback" aria-live="polite"></p>
+          </form>
+        </div>
+
+        <div class="pix-pane" data-pane="payment" hidden>
+          <form class="pix-form pix-fast" id="payment-form">
+            <div class="fast-copy"><span class="kicker">SEM MENSAGEM</span><h3>Pix rápido</h3><p>Escolha um valor e vá direto para o checkout do LivePix.</p></div>
+            <label class="big-amount"><span>Valor do apoio</span><div class="money-input"><b>R$</b><input name="amount" inputmode="decimal" placeholder="20,00" required /></div></label>
+            <div class="quick-values" data-target="payment-form"><button type="button" data-value="5">R$ 5</button><button type="button" data-value="10">R$ 10</button><button type="button" data-value="25">R$ 25</button><button type="button" data-value="50">R$ 50</button><button type="button" data-value="100">R$ 100</button></div>
+            <button class="pay-button" type="submit"><span>Gerar pagamento</span><b>↗</b></button><p class="form-feedback" aria-live="polite"></p>
+          </form>
+        </div>
+
+        <div class="pix-pane" data-pane="subscription" hidden>
+          <div class="subscription-loading" id="subscription-loading"><span class="loader-ring"></span><span>Buscando planos do LivePix...</span></div>
+          <div class="plans-grid" id="plans-grid"></div>
+          <form class="pix-form subscription-form" id="subscription-form" hidden>
+            <input type="hidden" name="planId" /><div class="selected-plan" id="selected-plan"></div>
+            <div class="field-row two"><label><span>Seu nome</span><input name="username" maxlength="60" autocomplete="nickname" required /></label><label><span>E-mail</span><input name="email" type="email" autocomplete="email" required /></label></div>
+            <label><span>Recorrência</span><select name="recurrence"><option value="monthly">Mensal</option><option value="quarterly">Trimestral</option><option value="semiannual">Semestral</option><option value="yearly">Anual</option></select></label>
+            <button class="pay-button" type="submit"><span>Continuar assinatura</span><b>↗</b></button><p class="form-feedback" aria-live="polite"></p>
+          </form>
+        </div>
+
+        <div class="api-fallback" id="api-fallback" hidden><strong>O checkout seguro ainda não está conectado.</strong><span>Você ainda pode apoiar diretamente no LivePix.</span><a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">Abrir LivePix ↗</a></div>
+      </div>
     </section>
 
-    <section class="channels" aria-labelledby="channels-title">
-      <div class="section-heading">
-        <div>
-          <span class="kicker">ONDE EU ESTOU</span>
-          <h2 id="channels-title">Canais de live</h2>
-        </div>
-        <p>Se o canal estiver online e o status estiver disponível, aparecerá como <strong>AO VIVO</strong>.</p>
-      </div>
-
+    <section class="channels" id="canais" aria-labelledby="channels-title">
+      <div class="section-heading"><div><span class="kicker">ONDE EU ESTOU</span><h2 id="channels-title">Canais de live</h2></div><p>Se o canal estiver online e o status estiver disponível, aparecerá como <strong>AO VIVO</strong>.</p></div>
       <div class="grid" id="channel-grid">
-        <a class="card twitch" data-link="twitch" data-platform="twitch" target="_blank" rel="noreferrer">
-          <span class="status-pill" data-status="twitch"><i></i> AO VIVO AGORA</span>
-          <span class="brand-icon"><img src="https://cdn.simpleicons.org/twitch/ffffff" alt="" loading="lazy"><b>T</b></span>
-          <span class="card-copy"><strong>Twitch</strong><small>Lives principais</small></span><span class="arrow">↗</span>
-        </a>
-        <a class="card youtube" data-link="youtube" data-platform="youtube" target="_blank" rel="noreferrer">
-          <span class="status-pill" data-status="youtube"><i></i> AO VIVO AGORA</span>
-          <span class="brand-icon"><img src="https://cdn.simpleicons.org/youtube/ffffff" alt="" loading="lazy"><b>▶</b></span>
-          <span class="card-copy"><strong>YouTube</strong><small>Lives e vídeos</small></span><span class="arrow">↗</span>
-        </a>
-        <a class="card tiktok" data-link="tiktok" data-platform="tiktok" target="_blank" rel="noreferrer">
-          <span class="status-pill" data-status="tiktok"><i></i> AO VIVO AGORA</span>
-          <span class="brand-icon"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="" loading="lazy"><b>♪</b></span>
-          <span class="card-copy"><strong>TikTok</strong><small>Lives verticais</small></span><span class="arrow">↗</span>
-        </a>
-        <a class="card kick" data-link="kick" data-platform="kick" target="_blank" rel="noreferrer">
-          <span class="status-pill" data-status="kick"><i></i> AO VIVO AGORA</span>
-          <span class="brand-icon"><img src="https://cdn.simpleicons.org/kick/ffffff" alt="" loading="lazy"><b>K</b></span>
-          <span class="card-copy"><strong>Kick</strong><small>Canal alternativo</small></span><span class="arrow">↗</span>
-        </a>
-        <a class="card trovo" data-link="trovo" data-platform="trovo" target="_blank" rel="noreferrer">
-          <span class="status-pill" data-status="trovo"><i></i> AO VIVO AGORA</span>
-          <span class="brand-icon"><img src="https://cdn.simpleicons.org/trovo/ffffff" alt="" loading="lazy"><b>△</b></span>
-          <span class="card-copy"><strong>Trovo</strong><small>Canal alternativo</small></span><span class="arrow">↗</span>
-        </a>
+        <a class="card twitch" data-link="twitch" data-platform="twitch" target="_blank" rel="noreferrer"><span class="status-pill" data-status="twitch"><i></i> AO VIVO AGORA</span><span class="brand-icon"><img src="https://cdn.simpleicons.org/twitch/ffffff" alt="" loading="lazy"><b>T</b></span><span class="card-copy"><strong>Twitch</strong><small>Lives principais</small></span><span class="arrow">↗</span></a>
+        <a class="card youtube" data-link="youtube" data-platform="youtube" target="_blank" rel="noreferrer"><span class="status-pill" data-status="youtube"><i></i> AO VIVO AGORA</span><span class="brand-icon"><img src="https://cdn.simpleicons.org/youtube/ffffff" alt="" loading="lazy"><b>▶</b></span><span class="card-copy"><strong>YouTube</strong><small>Lives e vídeos</small></span><span class="arrow">↗</span></a>
+        <a class="card tiktok" data-link="tiktok" data-platform="tiktok" target="_blank" rel="noreferrer"><span class="status-pill" data-status="tiktok"><i></i> AO VIVO AGORA</span><span class="brand-icon"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="" loading="lazy"><b>♪</b></span><span class="card-copy"><strong>TikTok</strong><small>Lives verticais</small></span><span class="arrow">↗</span></a>
+        <a class="card kick" data-link="kick" data-platform="kick" target="_blank" rel="noreferrer"><span class="status-pill" data-status="kick"><i></i> AO VIVO AGORA</span><span class="brand-icon"><img src="https://cdn.simpleicons.org/kick/ffffff" alt="" loading="lazy"><b>K</b></span><span class="card-copy"><strong>Kick</strong><small>Canal alternativo</small></span><span class="arrow">↗</span></a>
+        <a class="card trovo" data-link="trovo" data-platform="trovo" target="_blank" rel="noreferrer"><span class="status-pill" data-status="trovo"><i></i> AO VIVO AGORA</span><span class="brand-icon"><img src="https://cdn.simpleicons.org/trovo/ffffff" alt="" loading="lazy"><b>△</b></span><span class="card-copy"><strong>Trovo</strong><small>Canal alternativo</small></span><span class="arrow">↗</span></a>
       </div>
     </section>
 
     <section class="extras" aria-labelledby="extras-title">
-      <div class="section-heading compact">
-        <div><span class="kicker">MAIS LINKS</span><h2 id="extras-title">Comunidade</h2></div>
-      </div>
+      <div class="section-heading compact"><div><span class="kicker">MAIS LINKS</span><h2 id="extras-title">Comunidade</h2></div></div>
       <div class="extra-grid">
-        <a class="extra-card discord" data-link="discord" target="_blank" rel="noreferrer">
-          <span class="extra-icon"><img src="https://cdn.simpleicons.org/discord/ffffff" alt="" loading="lazy"></span>
-          <span><strong>Discord</strong><small>Entre na comunidade</small></span><b>↗</b>
-        </a>
-        <a class="extra-card coret" data-link="coret" target="_blank" rel="noreferrer">
-          <span class="extra-icon coret-mark">C</span>
-          <span><strong>Coret.cloud</strong><small>Projeto externo</small></span><b>↗</b>
-        </a>
+        <a class="extra-card discord" data-link="discord" target="_blank" rel="noreferrer"><span class="extra-icon"><img src="https://cdn.simpleicons.org/discord/ffffff" alt="" loading="lazy"></span><span><strong>Discord</strong><small>Entre na comunidade</small></span><b>↗</b></a>
+        <a class="extra-card coret" data-link="coret" target="_blank" rel="noreferrer"><span class="extra-icon coret-mark">C</span><span><strong>Coret.cloud</strong><small>Projeto externo</small></span><b>↗</b></a>
       </div>
     </section>
 
-    <footer>
-      <span>NIHILGUH // WONDERLAND BROADCAST</span>
-      <a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">LivePix ↗</a>
-    </footer>
+    <footer><span>NIHILGUH // WONDERLAND BROADCAST</span><a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">LivePix ↗</a></footer>
   </main>
 
   <script src="site.config.js"></script>
