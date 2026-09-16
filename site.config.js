@@ -18,5 +18,14 @@ window.NIHIL_CONFIG = {
       enabled: true,
       channel: "nihilguh"
     }
+  },
+
+  /*
+   * O GitHub Pages é estático e NÃO pode armazenar o client_secret do LivePix.
+   * Depois de publicar o proxy seguro (worker/worker.js), coloque a URL aqui.
+   * Exemplo: "https://nihilguh-livepix-api.seu-subdominio.workers.dev"
+   */
+  api: {
+    base: ""
   }
 };
