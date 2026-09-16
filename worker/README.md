@@ -10,7 +10,26 @@ Este Worker expõe somente as operações que o visitante precisa:
 - `POST /subscription` → inicia assinatura (`POST /v2/subscriptions`)
 - `GET /health` → testa autenticação OAuth2
 
-## Publicar com Cloudflare Workers
+## Ativação rápida pelo GitHub Actions
+
+O repositório possui o workflow **Deploy LivePix Worker**. Configure em `Settings → Secrets and variables → Actions` estes quatro secrets:
+
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_API_TOKEN`
+- `LIVEPIX_CLIENT_ID`
+- `LIVEPIX_CLIENT_SECRET`
+
+Depois abra `Actions → Deploy LivePix Worker → Run workflow`.
+
+O workflow:
+
+1. publica o Worker;
+2. testa `/health` contra a API LivePix;
+3. pega a URL `workers.dev` automaticamente;
+4. grava essa URL em `site.config.js`;
+5. dispara o deploy do GitHub Pages.
+
+## Publicação manual com Wrangler
 
 1. Instale Wrangler: `npm i -g wrangler`
 2. Entre na Cloudflare: `wrangler login`
@@ -26,4 +45,4 @@ Este Worker expõe somente as operações que o visitante precisa:
 
 As credenciais não são versionadas. O Worker valida valor, tamanho dos campos, origem CORS e `redirectUrl`.
 
-Como uma credencial foi compartilhada em uma conversa, gere um novo `client_secret` no painel LivePix antes de publicar.
+Se um `client_secret` tiver sido exposto em chat, log ou arquivo público, revogue-o e gere outro antes de publicar.
