@@ -24,23 +24,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Rebuild reference artwork
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -d assets/reference-parts
-          cat assets/reference-parts/0.txt \
-              assets/reference-parts/1.txt \
-              assets/reference-parts/2.txt \
-              assets/reference-parts/3.txt \
-              assets/reference-parts/4.txt \
-              assets/reference-parts/5.txt \
-              assets/reference-parts/6.txt \
-            | tr -d '\n\r\t ' \
-            | base64 --decode > assets/reference-design.webp
-          test -s assets/reference-design.webp
-          file assets/reference-design.webp
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
