@@ -12,14 +12,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="v4.css" />
-  <link rel="stylesheet" href="v5.css" />
+  <link rel="stylesheet" href="cheshire-art.css" />
 </head>
 <body class="intro-running">
   <div class="intro-gate" id="intro-gate" aria-hidden="true">
     <div class="intro-void"></div>
-    <div class="intro-face">
-      <img class="intro-cheshire-art" src="assets/cheshire-site.svg" alt="" />
-    </div>
+    <div class="intro-face"></div>
     <div class="intro-smoke smoke-1"></div>
     <div class="intro-smoke smoke-2"></div>
     <div class="intro-smoke smoke-3"></div>
@@ -29,18 +27,8 @@
   <div class="noise" aria-hidden="true"></div>
   <div class="orb orb-a" aria-hidden="true"></div>
   <div class="orb orb-b" aria-hidden="true"></div>
-
   <div class="wonderland-fx" aria-hidden="true">
-    <span class="suit suit-1">♠</span>
-    <span class="suit suit-2">♥</span>
-    <span class="suit suit-3">♦</span>
-    <span class="suit suit-4">♣</span>
-    <span class="suit suit-5">?</span>
-    <div class="cheshire-ghost">
-      <i class="ghost-eye ghost-eye-left"></i>
-      <i class="ghost-eye ghost-eye-right"></i>
-      <b class="ghost-grin"></b>
-    </div>
+    <span class="suit suit-1">♠</span><span class="suit suit-2">♥</span><span class="suit suit-3">♦</span><span class="suit suit-4">♣</span><span class="suit suit-5">?</span>
   </div>
 
   <main class="shell">
@@ -60,9 +48,7 @@
         <div class="hero-ring hero-ring-inner"></div>
         <div class="hero-glitch-line gl-1"></div>
         <div class="hero-glitch-line gl-2"></div>
-        <div class="hero-cheshire">
-          <img class="hero-cheshire-art" src="assets/cheshire-site.svg" alt="" />
-        </div>
+        <div class="hero-cheshire"></div>
       </div>
     </section>
 
@@ -71,113 +57,40 @@
         <div class="livepix-copy">
           <span class="kicker">APOIE A TOCA</span>
           <h2 id="livepix-title">LivePix</h2>
-          <p>Escolha como apoiar. O pagamento final é concluído no checkout seguro do LivePix.</p>
+          <p>Escolha a forma de apoio e continue no checkout oficial do LivePix.</p>
         </div>
         <img class="ramen-mascot" src="assets/emote-ramen.webp" alt="NihilGuh comendo ramen" width="420" height="420" loading="lazy" />
-        <a class="open-external" href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">Abrir LivePix ↗</a>
       </div>
 
-      <div class="livepix-api-shell">
-        <div class="api-status" id="api-status" role="status">
-          <span class="api-dot"></span>
-          <span id="api-status-text">Conectando ao LivePix...</span>
-        </div>
+      <div class="livepix-choice-grid">
+        <a class="livepix-choice featured" href="https://livepix.gg/justguh" target="_blank" rel="noopener noreferrer">
+          <span class="choice-icon">✦</span>
+          <span class="choice-copy"><small>MENSAGEM + PIX</small><strong>Enviar apoio</strong><em>Nome, mensagem e valor pelo LivePix</em></span>
+          <b>↗</b>
+        </a>
 
-        <div class="pix-tabs" role="tablist" aria-label="Formas de apoio">
-          <button class="pix-tab is-active" data-tab="message" type="button" role="tab" aria-selected="true">Mensagem + Pix</button>
-          <button class="pix-tab" data-tab="payment" type="button" role="tab" aria-selected="false">Pix rápido</button>
-          <button class="pix-tab" data-tab="subscription" type="button" role="tab" aria-selected="false">Assinaturas</button>
-        </div>
+        <a class="livepix-choice" href="https://livepix.gg/justguh" target="_blank" rel="noopener noreferrer">
+          <span class="choice-icon">⚡</span>
+          <span class="choice-copy"><small>PIX RÁPIDO</small><strong>Abrir LivePix</strong><em>Continue direto para a página de apoio</em></span>
+          <b>↗</b>
+        </a>
 
-        <div class="pix-pane is-active" data-pane="message">
-          <form class="pix-form" id="message-form">
-            <div class="field-row two">
-              <label>
-                <span>Seu nome</span>
-                <input name="username" maxlength="60" autocomplete="nickname" placeholder="Como quer aparecer na live?" required />
-              </label>
-              <label>
-                <span>Valor</span>
-                <div class="money-input"><b>R$</b><input name="amount" inputmode="decimal" placeholder="10,00" required /></div>
-              </label>
-            </div>
-            <div class="quick-values" data-target="message-form">
-              <button type="button" data-value="5">R$ 5</button>
-              <button type="button" data-value="10">R$ 10</button>
-              <button type="button" data-value="20">R$ 20</button>
-              <button type="button" data-value="50">R$ 50</button>
-              <button type="button" data-value="100">R$ 100</button>
-            </div>
-            <label>
-              <span>Mensagem</span>
-              <textarea name="message" rows="4" maxlength="500" placeholder="Escreva a mensagem que pode aparecer na live..." required></textarea>
-            </label>
-            <button class="pay-button" type="submit"><span>Continuar para o Pix</span><b>↗</b></button>
-            <p class="form-feedback" aria-live="polite"></p>
-          </form>
-        </div>
+        <a class="livepix-choice" href="https://livepix.gg/justguh/assinatura" target="_blank" rel="noopener noreferrer">
+          <span class="choice-icon">♛</span>
+          <span class="choice-copy"><small>ASSINATURA</small><strong>Apoio recorrente</strong><em>Mensal, trimestral, semestral ou anual</em></span>
+          <b>↗</b>
+        </a>
+      </div>
 
-        <div class="pix-pane" data-pane="payment" hidden>
-          <form class="pix-form pix-fast" id="payment-form">
-            <div class="fast-copy">
-              <span class="kicker">SEM MENSAGEM</span>
-              <h3>Pix rápido</h3>
-              <p>Escolha um valor e vá direto para o checkout do LivePix.</p>
-            </div>
-            <label class="big-amount">
-              <span>Valor do apoio</span>
-              <div class="money-input"><b>R$</b><input name="amount" inputmode="decimal" placeholder="20,00" required /></div>
-            </label>
-            <div class="quick-values" data-target="payment-form">
-              <button type="button" data-value="5">R$ 5</button>
-              <button type="button" data-value="10">R$ 10</button>
-              <button type="button" data-value="25">R$ 25</button>
-              <button type="button" data-value="50">R$ 50</button>
-              <button type="button" data-value="100">R$ 100</button>
-            </div>
-            <button class="pay-button" type="submit"><span>Gerar pagamento</span><b>↗</b></button>
-            <p class="form-feedback" aria-live="polite"></p>
-          </form>
-        </div>
-
-        <div class="pix-pane" data-pane="subscription" hidden>
-          <div class="subscription-loading" id="subscription-loading"><span class="loader-ring"></span><span>Buscando planos do LivePix...</span></div>
-          <div class="plans-grid" id="plans-grid"></div>
-          <form class="pix-form subscription-form" id="subscription-form" hidden>
-            <input type="hidden" name="planId" />
-            <div class="selected-plan" id="selected-plan"></div>
-            <div class="field-row two">
-              <label><span>Seu nome</span><input name="username" maxlength="60" autocomplete="nickname" required /></label>
-              <label><span>E-mail</span><input name="email" type="email" autocomplete="email" required /></label>
-            </div>
-            <label>
-              <span>Recorrência</span>
-              <select name="recurrence">
-                <option value="monthly">Mensal</option>
-                <option value="quarterly">Trimestral</option>
-                <option value="semiannual">Semestral</option>
-                <option value="yearly">Anual</option>
-              </select>
-            </label>
-            <button class="pay-button" type="submit"><span>Continuar assinatura</span><b>↗</b></button>
-            <p class="form-feedback" aria-live="polite"></p>
-          </form>
-        </div>
-
-        <div class="api-fallback" id="api-fallback" hidden>
-          <strong>Checkout seguro aguardando ativação.</strong>
-          <span>Enquanto isso, o LivePix oficial continua disponível.</span>
-          <a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">Abrir LivePix ↗</a>
-        </div>
+      <div class="livepix-safe-note">
+        <span>🔒</span>
+        <p><strong>Pagamento protegido pelo LivePix.</strong> O site continua 100% estático no GitHub Pages e nenhuma chave privada fica exposta no navegador.</p>
       </div>
     </section>
 
     <section class="channels" id="canais" aria-labelledby="channels-title">
       <div class="section-heading">
-        <div>
-          <span class="kicker">ONDE EU ESTOU</span>
-          <h2 id="channels-title">Canais de live</h2>
-        </div>
+        <div><span class="kicker">ONDE EU ESTOU</span><h2 id="channels-title">Canais de live</h2></div>
         <p>Se o canal estiver online e o status estiver disponível, aparecerá como <strong>AO VIVO</strong>.</p>
       </div>
 
@@ -211,9 +124,7 @@
     </section>
 
     <section class="extras" aria-labelledby="extras-title">
-      <div class="section-heading compact">
-        <div><span class="kicker">MAIS LINKS</span><h2 id="extras-title">Comunidade</h2></div>
-      </div>
+      <div class="section-heading compact"><div><span class="kicker">MAIS LINKS</span><h2 id="extras-title">Comunidade</h2></div></div>
       <div class="extra-grid">
         <a class="extra-card discord" data-link="discord" target="_blank" rel="noreferrer">
           <span class="extra-icon"><img src="https://cdn.simpleicons.org/discord/ffffff" alt="" loading="lazy"></span>
@@ -226,10 +137,7 @@
       </div>
     </section>
 
-    <footer>
-      <span>NIHILGUH // WONDERLAND BROADCAST</span>
-      <a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">LivePix ↗</a>
-    </footer>
+    <footer><span>NIHILGUH // WONDERLAND BROADCAST</span><a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">LivePix ↗</a></footer>
   </main>
 
   <script src="site.config.js"></script>
