@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#11091f" />
+  <meta name="description" content="Todos os canais de live do NihilGuh em um só lugar." />
+  <title>NihilGuh — Lives</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="orb orb-a" aria-hidden="true"></div>
+  <div class="orb orb-b" aria-hidden="true"></div>
+
+  <main class="shell">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="eyebrow"><span class="live-dot"></span> MULTIPLATAFORMA</div>
+      <h1 id="page-title">NihilGuh</h1>
+      <p id="subtitle">Lives, caos e Wonderland em vários cantos da internet.</p>
+      <div class="hero-actions">
+        <button class="cta" id="open-livepix" type="button">⚡ Apoiar via Pix</button>
+        <a class="ghost-btn" id="discord-hero" href="#" target="_blank" rel="noreferrer">Entrar no Discord</a>
+      </div>
+    </section>
+
+    <section class="channels" aria-labelledby="channels-title">
+      <div class="section-heading">
+        <div>
+          <span class="kicker">ONDE EU ESTOU</span>
+          <h2 id="channels-title">Canais de live</h2>
+        </div>
+        <p>Escolha sua plataforma e entre na toca.</p>
+      </div>
+
+      <div class="grid" id="channel-grid">
+        <a class="card twitch" data-link="twitch" target="_blank" rel="noreferrer">
+          <span class="icon">T</span><span><strong>Twitch</strong><small>Lives principais</small></span><b>↗</b>
+        </a>
+        <a class="card youtube" data-link="youtube" target="_blank" rel="noreferrer">
+          <span class="icon">▶</span><span><strong>YouTube</strong><small>Lives e vídeos</small></span><b>↗</b>
+        </a>
+        <a class="card tiktok" data-link="tiktok" target="_blank" rel="noreferrer">
+          <span class="icon">♪</span><span><strong>TikTok</strong><small>Live vertical</small></span><b>↗</b>
+        </a>
+        <a class="card kick" data-link="kick" target="_blank" rel="noreferrer">
+          <span class="icon">K</span><span><strong>Kick</strong><small>Canal alternativo</small></span><b>↗</b>
+        </a>
+        <a class="card trovo" data-link="trovo" target="_blank" rel="noreferrer">
+          <span class="icon">△</span><span><strong>Trovo</strong><small>Canal alternativo</small></span><b>↗</b>
+        </a>
+      </div>
+    </section>
+
+    <section class="extras" aria-labelledby="extras-title">
+      <div class="section-heading compact">
+        <div>
+          <span class="kicker">MAIS LINKS</span>
+          <h2 id="extras-title">Comunidade</h2>
+        </div>
+      </div>
+      <div class="extra-grid">
+        <a class="extra-card" data-link="discord" target="_blank" rel="noreferrer"><span>Discord</span><b>Comunidade ↗</b></a>
+        <a class="extra-card disabled" data-link="coret" target="_blank" rel="noreferrer"><span>Coret</span><b>Link externo</b></a>
+      </div>
+    </section>
+
+    <footer>
+      <span>NIHILGUH // WONDERLAND BROADCAST</span>
+      <button id="footer-pix" type="button">LivePix</button>
+    </footer>
+  </main>
+
+  <dialog class="pix-modal" id="pix-modal" aria-labelledby="pix-title">
+    <div class="modal-head">
+      <div><span class="kicker">APOIO</span><h2 id="pix-title">LivePix</h2></div>
+      <button class="close" id="close-livepix" type="button" aria-label="Fechar">×</button>
+    </div>
+    <p>Faça sua contribuição sem sair da página. Se o LivePix bloquear a incorporação, abra diretamente.</p>
+    <div class="pix-frame-wrap" id="pix-frame-wrap">
+      <div class="frame-loader">Carregando LivePix…</div>
+    </div>
+    <a class="open-direct" id="livepix-direct" href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">Abrir LivePix em nova aba ↗</a>
+  </dialog>
+
+  <script src="site.config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
