@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#0b0712" />
   <meta name="description" content="Todos os canais de live do NihilGuh em um só lugar." />
   <title>NihilGuh — Lives</title>
+  <link rel="icon" type="image/webp" href="assets/emote-ramen.webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
@@ -16,30 +17,64 @@
   <div class="orb orb-a" aria-hidden="true"></div>
   <div class="orb orb-b" aria-hidden="true"></div>
 
+  <div class="wonderland-fx" aria-hidden="true">
+    <span class="suit suit-1">♠</span>
+    <span class="suit suit-2">♥</span>
+    <span class="suit suit-3">♦</span>
+    <span class="suit suit-4">♣</span>
+    <span class="suit suit-5">?</span>
+    <div class="cheshire-ghost">
+      <i class="ghost-eye ghost-eye-left"></i>
+      <i class="ghost-eye ghost-eye-right"></i>
+      <b class="ghost-grin"></b>
+    </div>
+  </div>
+
   <main class="shell">
     <section class="hero" aria-labelledby="page-title">
       <div class="hero-copy">
         <div class="eyebrow"><span class="live-dot"></span> NIHILGUH // MULTIPLATAFORMA</div>
         <h1 id="page-title">NihilGuh</h1>
         <p id="subtitle">Lives, caos e Wonderland em vários cantos da internet.</p>
-
-        <a class="support-card" id="support-link" href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">
-          <div class="support-glow" aria-hidden="true"></div>
-          <div class="support-icon">PIX</div>
-          <div class="support-copy">
-            <span class="support-kicker">APOIE A TOCA</span>
-            <strong>LivePix</strong>
-            <small>Envie um Pix e faça sua mensagem aparecer na live.</small>
-          </div>
-          <div class="support-cta">Abrir LivePix <span>↗</span></div>
-        </a>
+        <a class="jump-pix" href="#apoiar"><span>✦</span> Apoiar a toca</a>
       </div>
 
       <div class="hero-art" aria-hidden="true">
         <div class="hero-ring"></div>
-        <img class="hero-character" src="assets/hero-laugh.webp" alt="" width="420" height="420" fetchpriority="high" />
-        <img class="hero-sticker sticker-punch" src="assets/emote-punch.webp" alt="" width="320" height="320" loading="lazy" />
+        <div class="hero-ring hero-ring-inner"></div>
+        <img class="hero-character" src="assets/hero-laugh.webp" alt="" width="480" height="480" fetchpriority="high" />
       </div>
+    </section>
+
+    <section class="livepix-panel" id="apoiar" aria-labelledby="livepix-title">
+      <div class="livepix-heading">
+        <div class="livepix-copy">
+          <span class="kicker">APOIE A TOCA</span>
+          <h2 id="livepix-title">LivePix</h2>
+          <p>Envie um Pix e sua mensagem pode aparecer na live.</p>
+        </div>
+        <img class="ramen-mascot" src="assets/emote-ramen.webp" alt="NihilGuh comendo ramen" width="280" height="280" loading="lazy" />
+        <a class="open-external" href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">Abrir em nova aba ↗</a>
+      </div>
+
+      <div class="livepix-frame-shell" id="livepix-shell">
+        <div class="livepix-loader" id="livepix-loader">
+          <span class="loader-ring" aria-hidden="true"></span>
+          <strong>Carregando LivePix...</strong>
+          <small>O painel é carregado diretamente do LivePix.</small>
+        </div>
+        <iframe
+          id="livepix-frame"
+          src="https://livepix.gg/justguh"
+          title="Apoie NihilGuh pelo LivePix"
+          allow="payment *; clipboard-write"
+          referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      </div>
+
+      <p class="livepix-fallback" id="livepix-fallback" hidden>
+        Se o LivePix bloquear a visualização incorporada no seu navegador,
+        <a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">abra a página do LivePix ↗</a>
+      </p>
     </section>
 
     <section class="channels" aria-labelledby="channels-title">
@@ -48,7 +83,7 @@
           <span class="kicker">ONDE EU ESTOU</span>
           <h2 id="channels-title">Canais de live</h2>
         </div>
-        <p>Se a Twitch estiver ao vivo, o card ganha o selo automaticamente.</p>
+        <p>Se o canal estiver online e o status estiver disponível, aparecerá como <strong>AO VIVO</strong>.</p>
       </div>
 
       <div class="grid" id="channel-grid">
@@ -58,18 +93,22 @@
           <span class="card-copy"><strong>Twitch</strong><small>Lives principais</small></span><span class="arrow">↗</span>
         </a>
         <a class="card youtube" data-link="youtube" data-platform="youtube" target="_blank" rel="noreferrer">
+          <span class="status-pill" data-status="youtube"><i></i> AO VIVO AGORA</span>
           <span class="brand-icon"><img src="https://cdn.simpleicons.org/youtube/ffffff" alt="" loading="lazy"><b>▶</b></span>
           <span class="card-copy"><strong>YouTube</strong><small>Lives e vídeos</small></span><span class="arrow">↗</span>
         </a>
         <a class="card tiktok" data-link="tiktok" data-platform="tiktok" target="_blank" rel="noreferrer">
+          <span class="status-pill" data-status="tiktok"><i></i> AO VIVO AGORA</span>
           <span class="brand-icon"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="" loading="lazy"><b>♪</b></span>
           <span class="card-copy"><strong>TikTok</strong><small>Lives verticais</small></span><span class="arrow">↗</span>
         </a>
         <a class="card kick" data-link="kick" data-platform="kick" target="_blank" rel="noreferrer">
+          <span class="status-pill" data-status="kick"><i></i> AO VIVO AGORA</span>
           <span class="brand-icon"><img src="https://cdn.simpleicons.org/kick/ffffff" alt="" loading="lazy"><b>K</b></span>
           <span class="card-copy"><strong>Kick</strong><small>Canal alternativo</small></span><span class="arrow">↗</span>
         </a>
         <a class="card trovo" data-link="trovo" data-platform="trovo" target="_blank" rel="noreferrer">
+          <span class="status-pill" data-status="trovo"><i></i> AO VIVO AGORA</span>
           <span class="brand-icon"><img src="https://cdn.simpleicons.org/trovo/ffffff" alt="" loading="lazy"><b>△</b></span>
           <span class="card-copy"><strong>Trovo</strong><small>Canal alternativo</small></span><span class="arrow">↗</span>
         </a>
