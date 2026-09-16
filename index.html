@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#11091f" />
+  <meta name="theme-color" content="#0b0712" />
   <meta name="description" content="Todos os canais de live do NihilGuh em um só lugar." />
   <title>NihilGuh — Lives</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -18,12 +18,28 @@
 
   <main class="shell">
     <section class="hero" aria-labelledby="page-title">
-      <div class="eyebrow"><span class="live-dot"></span> MULTIPLATAFORMA</div>
-      <h1 id="page-title">NihilGuh</h1>
-      <p id="subtitle">Lives, caos e Wonderland em vários cantos da internet.</p>
-      <div class="hero-actions">
-        <button class="cta" id="open-livepix" type="button">⚡ Apoiar via Pix</button>
-        <a class="ghost-btn" id="discord-hero" href="#" target="_blank" rel="noreferrer">Entrar no Discord</a>
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="live-dot"></span> NIHILGUH // MULTIPLATAFORMA</div>
+        <h1 id="page-title">NihilGuh</h1>
+        <p id="subtitle">Lives, caos e Wonderland em vários cantos da internet.</p>
+
+        <a class="support-card" id="support-link" href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">
+          <div class="support-glow" aria-hidden="true"></div>
+          <div class="support-icon">PIX</div>
+          <div class="support-copy">
+            <span class="support-kicker">APOIE A TOCA</span>
+            <strong>LivePix</strong>
+            <small>Envie um Pix e faça sua mensagem aparecer na live.</small>
+          </div>
+          <div class="support-cta">Abrir LivePix <span>↗</span></div>
+        </a>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <div class="hero-ring"></div>
+        <img class="hero-character" src="assets/hero-laugh.webp" alt="" width="760" height="760" fetchpriority="high" />
+        <img class="hero-sticker sticker-punch" src="assets/emote-punch.webp" alt="" width="760" height="760" />
+        <img class="hero-sticker sticker-smirk" src="assets/emote-smirk.webp" alt="" width="760" height="760" />
       </div>
     </section>
 
@@ -33,58 +49,58 @@
           <span class="kicker">ONDE EU ESTOU</span>
           <h2 id="channels-title">Canais de live</h2>
         </div>
-        <p>Escolha sua plataforma e entre na toca.</p>
+        <p>Se algum canal estiver ao vivo, ele ganha o selo automaticamente.</p>
       </div>
 
       <div class="grid" id="channel-grid">
-        <a class="card twitch" data-link="twitch" target="_blank" rel="noreferrer">
-          <span class="icon">T</span><span><strong>Twitch</strong><small>Lives principais</small></span><b>↗</b>
+        <a class="card twitch" data-link="twitch" data-platform="twitch" target="_blank" rel="noreferrer">
+          <span class="status-pill" data-status="twitch"><i></i> AO VIVO AGORA</span>
+          <span class="brand-icon"><img src="https://cdn.simpleicons.org/twitch/ffffff" alt="" loading="lazy"><b>T</b></span>
+          <span class="card-copy"><strong>Twitch</strong><small>Lives principais</small></span><span class="arrow">↗</span>
         </a>
-        <a class="card youtube" data-link="youtube" target="_blank" rel="noreferrer">
-          <span class="icon">▶</span><span><strong>YouTube</strong><small>Lives e vídeos</small></span><b>↗</b>
+        <a class="card youtube" data-link="youtube" data-platform="youtube" target="_blank" rel="noreferrer">
+          <span class="brand-icon"><img src="https://cdn.simpleicons.org/youtube/ffffff" alt="" loading="lazy"><b>▶</b></span>
+          <span class="card-copy"><strong>YouTube</strong><small>Lives e vídeos</small></span><span class="arrow">↗</span>
         </a>
-        <a class="card tiktok" data-link="tiktok" target="_blank" rel="noreferrer">
-          <span class="icon">♪</span><span><strong>TikTok</strong><small>Live vertical</small></span><b>↗</b>
+        <a class="card tiktok" data-link="tiktok" data-platform="tiktok" target="_blank" rel="noreferrer">
+          <span class="brand-icon"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="" loading="lazy"><b>♪</b></span>
+          <span class="card-copy"><strong>TikTok</strong><small>Lives verticais</small></span><span class="arrow">↗</span>
         </a>
-        <a class="card kick" data-link="kick" target="_blank" rel="noreferrer">
-          <span class="icon">K</span><span><strong>Kick</strong><small>Canal alternativo</small></span><b>↗</b>
+        <a class="card kick" data-link="kick" data-platform="kick" target="_blank" rel="noreferrer">
+          <span class="brand-icon"><img src="https://cdn.simpleicons.org/kick/ffffff" alt="" loading="lazy"><b>K</b></span>
+          <span class="card-copy"><strong>Kick</strong><small>Canal alternativo</small></span><span class="arrow">↗</span>
         </a>
-        <a class="card trovo" data-link="trovo" target="_blank" rel="noreferrer">
-          <span class="icon">△</span><span><strong>Trovo</strong><small>Canal alternativo</small></span><b>↗</b>
+        <a class="card trovo" data-link="trovo" data-platform="trovo" target="_blank" rel="noreferrer">
+          <span class="brand-icon"><img src="https://cdn.simpleicons.org/trovo/ffffff" alt="" loading="lazy"><b>△</b></span>
+          <span class="card-copy"><strong>Trovo</strong><small>Canal alternativo</small></span><span class="arrow">↗</span>
         </a>
       </div>
+
+      <img class="section-emote emote-fall" src="assets/emote-fall.webp" alt="" loading="lazy" width="760" height="760" aria-hidden="true" />
     </section>
 
     <section class="extras" aria-labelledby="extras-title">
       <div class="section-heading compact">
-        <div>
-          <span class="kicker">MAIS LINKS</span>
-          <h2 id="extras-title">Comunidade</h2>
-        </div>
+        <div><span class="kicker">MAIS LINKS</span><h2 id="extras-title">Comunidade</h2></div>
       </div>
       <div class="extra-grid">
-        <a class="extra-card" data-link="discord" target="_blank" rel="noreferrer"><span>Discord</span><b>Comunidade ↗</b></a>
-        <a class="extra-card disabled" data-link="coret" target="_blank" rel="noreferrer"><span>Coret</span><b>Link externo</b></a>
+        <a class="extra-card discord" data-link="discord" target="_blank" rel="noreferrer">
+          <span class="extra-icon"><img src="https://cdn.simpleicons.org/discord/ffffff" alt="" loading="lazy"></span>
+          <span><strong>Discord</strong><small>Entre na comunidade</small></span><b>↗</b>
+        </a>
+        <a class="extra-card coret" data-link="coret" target="_blank" rel="noreferrer">
+          <span class="extra-icon coret-mark">C</span>
+          <span><strong>Coret.cloud</strong><small>Projeto externo</small></span><b>↗</b>
+        </a>
       </div>
+      <img class="section-emote emote-ramen" src="assets/emote-ramen.webp" alt="" loading="lazy" width="760" height="760" aria-hidden="true" />
     </section>
 
     <footer>
       <span>NIHILGUH // WONDERLAND BROADCAST</span>
-      <button id="footer-pix" type="button">LivePix</button>
+      <a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">LivePix ↗</a>
     </footer>
   </main>
-
-  <dialog class="pix-modal" id="pix-modal" aria-labelledby="pix-title">
-    <div class="modal-head">
-      <div><span class="kicker">APOIO</span><h2 id="pix-title">LivePix</h2></div>
-      <button class="close" id="close-livepix" type="button" aria-label="Fechar">×</button>
-    </div>
-    <p>Faça sua contribuição sem sair da página. Se o LivePix bloquear a incorporação, abra diretamente.</p>
-    <div class="pix-frame-wrap" id="pix-frame-wrap">
-      <div class="frame-loader">Carregando LivePix…</div>
-    </div>
-    <a class="open-direct" id="livepix-direct" href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">Abrir LivePix em nova aba ↗</a>
-  </dialog>
 
   <script src="site.config.js"></script>
   <script src="script.js"></script>
