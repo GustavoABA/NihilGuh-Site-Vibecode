@@ -2,126 +2,138 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#09030f" />
   <meta name="description" content="NihilGuh — lives, comunidade e apoio via LivePix." />
   <title>NihilGuh — Wonderland Broadcast</title>
   <link rel="icon" type="image/webp" href="assets/emote-ramen.webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="showcase.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="site.css" />
 </head>
-<body class="intro-lock">
+<body>
+  <div class="scene-bg" aria-hidden="true"></div>
+  <div class="fog-layer fog-one" aria-hidden="true"></div>
+  <div class="fog-layer fog-two" aria-hidden="true"></div>
+  <div id="tsparticles" aria-hidden="true"></div>
+
   <div class="intro" id="intro" aria-hidden="true">
-    <div class="intro-orbit orbit-a"></div><div class="intro-orbit orbit-b"></div>
-    <img src="assets/cheshire-generated.svg" class="intro-cat" alt="" />
-    <div class="intro-smoke s1"></div><div class="intro-smoke s2"></div><div class="intro-smoke s3"></div>
+    <div class="intro-vignette"></div>
+    <div class="intro-cat reference-crop"></div>
+    <div class="intro-title">WELCOME TO THE RABBIT HOLE</div>
+    <div class="intro-smoke i1"></div>
+    <div class="intro-smoke i2"></div>
+    <div class="intro-smoke i3"></div>
     <div class="intro-flash"></div>
   </div>
 
-  <div class="world-bg" aria-hidden="true">
-    <div class="fog fog-a"></div><div class="fog fog-b"></div>
-    <span class="float-card c1">♠</span><span class="float-card c2">♥</span><span class="float-card c3">♦</span>
-    <span class="chain chain-left"></span><span class="chain chain-right"></span>
-  </div>
+  <main class="site-shell">
+    <section class="hero glassless" id="top">
+      <div class="hero-copy reveal">
+        <a class="logo-art reference-crop" href="#top" aria-label="NihilGuh"></a>
+        <p class="tagline">MAIS QUE LIVES, UM REFÚGIO</p>
+        <h1>“Um lugar onde<br>o caos também<br>é casa.”</h1>
+        <p class="hero-text">Lives, jogos, conversas e um pouco de insanidade. Seja bem-vindo à toca.</p>
 
-  <header class="topbar" id="top">
-    <a class="brand" href="#top" aria-label="NihilGuh">
-      <span class="brand-main">NihilGuh</span><span class="brand-sub">MAIS QUE LIVES, UM REFÚGIO</span>
-    </a>
-    <nav class="nav" aria-label="Navegação">
-      <a class="active" href="#top">INÍCIO</a><a href="#sobre">SOBRE</a><a href="#canais">LIVES</a><a href="#comunidade">COMUNIDADE</a><a href="#apoiar">APOIE</a><a href="https://discord.gg/7F9YbfvUXD" target="_blank" rel="noreferrer">CONTATO</a>
-    </nav>
-    <div class="motto">Sonhe alto, pequeno caos. <span>♡</span></div>
-  </header>
-
-  <main>
-    <section class="hero" id="sobre">
-      <div class="hero-copy">
-        <p class="quote">“Um lugar onde<br>o caos também<br>é casa.”</p>
-        <p class="desc">Lives, jogos, conversas e um pouco de insanidade. Seja bem-vindo à toca.</p>
         <div class="hero-actions">
-          <a class="cta primary" href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer"><span class="ico">▣</span> ASSISTIR AGORA</a>
-          <a class="cta ghost" href="#apoiar"><span class="ico">♥</span> APOIAR A TOCA</a>
+          <a class="neon-btn watch-live" id="watch-live" href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer">
+            <img src="https://cdn.simpleicons.org/twitch/ffffff" alt="" />
+            <span>ASSISTIR AGORA</span>
+            <b>→</b>
+          </a>
+          <a class="neon-btn secondary" href="#apoiar"><span>♥</span><span>APOIAR A TOCA</span></a>
         </div>
-        <div class="social-row" aria-label="Canais">
-          <a href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer" class="social twitch"><span class="social-icon"><img src="https://cdn.simpleicons.org/twitch/a970ff" alt=""></span><small>Twitch</small></a>
-          <a href="https://www.youtube.com/@nihilguh" target="_blank" rel="noreferrer" class="social youtube"><span class="social-icon"><img src="https://cdn.simpleicons.org/youtube/ff2d3b" alt=""></span><small>YouTube</small></a>
-          <a href="https://www.tiktok.com/@nihilguh" target="_blank" rel="noreferrer" class="social tiktok"><span class="social-icon"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt=""></span><small>TikTok</small></a>
-          <a href="https://kick.com/nihilguh" target="_blank" rel="noreferrer" class="social kick"><span class="social-icon"><b>K</b></span><small>Kick</small></a>
-          <a href="https://trovo.live/s/nihilguh" target="_blank" rel="noreferrer" class="social trovo"><span class="social-icon"><b>t</b></span><small>Trovo</small></a>
+
+        <div class="platforms" aria-label="Canais de live">
+          <a class="platform twitch" href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer"><i><img src="https://cdn.simpleicons.org/twitch/a970ff" alt="" /></i><span>Twitch</span></a>
+          <a class="platform youtube" href="https://www.youtube.com/@nihilguh" target="_blank" rel="noreferrer"><i><img src="https://cdn.simpleicons.org/youtube/ff2f3d" alt="" /></i><span>YouTube</span></a>
+          <a class="platform tiktok" href="https://www.tiktok.com/@nihilguh" target="_blank" rel="noreferrer"><i><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="" /></i><span>TikTok</span></a>
+          <a class="platform kick" href="https://kick.com/nihilguh" target="_blank" rel="noreferrer"><i class="letter">K</i><span>Kick</span></a>
+          <a class="platform trovo" href="https://trovo.live/s/nihilguh" target="_blank" rel="noreferrer"><i class="letter">t</i><span>Trovo</span></a>
         </div>
       </div>
 
-      <div class="hero-visual">
-        <img class="cheshire-bg" src="assets/cheshire-generated.svg" alt="" aria-hidden="true" />
-        <div class="scribble">We're All<br>Mad Here <span>♡</span></div>
-        <img class="hero-character" src="assets/hero-laugh.webp" alt="NihilGuh" />
-        <div class="clock" aria-hidden="true"><div class="clock-face"><i></i><b></b></div></div>
-        <div class="tea-note">GOOD<br>CHAOS<br>TODAY?<br>♡</div>
+      <div class="hero-art-wrap reveal">
+        <div class="hero-art reference-crop" role="img" aria-label="NihilGuh em cenário Wonderland"></div>
+        <div class="hero-bloom"></div>
       </div>
     </section>
 
-    <section class="live-ribbon" id="canais" aria-labelledby="live-title">
-      <div class="section-kicker" id="live-title">CANAIS DE LIVE</div>
-      <div class="live-main-card" data-platform="twitch">
-        <img src="assets/emote-punch.webp" alt="" class="avatar" />
-        <div class="live-copy"><div class="live-name">NihilGuh <span class="online-dot"></span> <b class="live-badge">AO VIVO</b></div><small id="live-subtitle">Verificando status da Twitch...</small></div>
-        <a href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer">Ver na Twitch <span>→</span></a>
+    <section class="live-strip glass reveal" id="live-strip" hidden>
+      <div class="live-head">
+        <span class="eyebrow">CANAIS DE LIVE</span>
+        <span class="live-hint">ONLINE AGORA</span>
       </div>
-      <div class="mini-live-grid">
-        <a href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer" class="mini-live"><span class="mini-icon tw">▣</span><span>Twitch<small>Seguir</small></span></a>
-        <a href="https://www.youtube.com/@nihilguh" target="_blank" rel="noreferrer" class="mini-live"><span class="mini-icon yt">▶</span><span>YouTube<small>Seguir</small></span></a>
-        <a href="https://www.tiktok.com/@nihilguh" target="_blank" rel="noreferrer" class="mini-live"><span class="mini-icon tk">♪</span><span>TikTok<small>Seguir</small></span></a>
-        <a href="https://kick.com/nihilguh" target="_blank" rel="noreferrer" class="mini-live"><span class="mini-icon kk">K</span><span>Kick<small>Seguir</small></span></a>
-        <a href="https://trovo.live/s/nihilguh" target="_blank" rel="noreferrer" class="mini-live"><span class="mini-icon tr">t</span><span>Trovo<small>Trovo</small></span></a>
+      <div class="live-content">
+        <div class="live-profile">
+          <img src="assets/emote-punch.webp" alt="NihilGuh" />
+          <div><strong>NihilGuh <span class="green-dot"></span></strong><small>Estou live agora!</small></div>
+          <span class="live-badge">AO VIVO</span>
+        </div>
+        <a class="live-go" href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer">Ver na Twitch <span>→</span></a>
       </div>
-      <p class="live-note">Se o canal estiver online, aparecerá como <strong>AO VIVO</strong>.</p>
     </section>
 
-    <section class="lower-grid">
-      <section class="support-card" id="apoiar" aria-labelledby="support-title">
-        <div class="support-glow"></div>
+    <section class="content-grid">
+      <section class="support-card glass reveal" id="apoiar">
         <div class="support-copy">
-          <span class="section-kicker">APOIE A TOCA</span>
-          <h2 id="support-title">LivePix<span>♛</span></h2>
+          <span class="eyebrow">APOIE A TOCA</span>
+          <div class="livepix-title">LivePix<span>♛</span></div>
           <p>Sua mensagem deixa a live ainda mais especial! ♡</p>
-          <div class="support-tabs"><button class="active" type="button">◉ Enviar Mensagem</button><a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">◉ Pix Rápido</a><a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">◉ Assinaturas</a></div>
-          <form id="livepix-form" class="support-form">
-            <div class="form-row"><label>Seu nome<input name="name" maxlength="60" placeholder="Como você quer aparecer?" /></label><label>Valor (R$)<input id="support-amount" name="amount" inputmode="decimal" placeholder="10,00" /></label></div>
+
+          <div class="support-tabs">
+            <button class="active" type="button">◉ Enviar Mensagem</button>
+            <a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">◉ Pix Rápido</a>
+            <a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">◉ Assinaturas</a>
+          </div>
+
+          <form class="support-form" id="livepix-form">
+            <div class="form-row">
+              <label>Seu nome<input name="name" maxlength="60" placeholder="Como você quer aparecer?" /></label>
+              <label>Valor (R$)<input id="support-amount" name="amount" inputmode="decimal" placeholder="10,00" /></label>
+            </div>
             <label>Mensagem<textarea name="message" maxlength="300" placeholder="Manda um salve, uma mensagem ou o que quiser! ♡"></textarea></label>
-            <div class="form-bottom"><div class="quick-values"><button type="button" data-value="5">5</button><button type="button" data-value="10">10</button><button type="button" data-value="20">20</button><button type="button" data-value="50">50</button></div><button class="send" type="submit">➤ &nbsp; Enviar via LivePix</button></div>
-            <div class="counter"><span id="message-count">0</span>/300</div>
+            <div class="support-actions">
+              <div class="quick-values"><button type="button" data-value="5">5</button><button type="button" data-value="10">10</button><button type="button" data-value="20">20</button><button type="button" data-value="50">50</button></div>
+              <button class="send-btn" type="submit">➤ <span>Enviar via LivePix</span></button>
+            </div>
+            <div class="message-count"><span id="message-count">0</span>/300</div>
           </form>
         </div>
-        <div class="support-art">
-          <div class="thanks">Obrigado<br>pelo apoio!<br>♡</div>
-          <img src="assets/emote-ramen.webp" alt="NihilGuh comendo ramen" />
+
+        <div class="ramen-art-wrap" aria-hidden="true">
+          <div class="thanks-note">Obrigado<br>pelo apoio!<br>♡</div>
+          <div class="ramen-art reference-crop"></div>
         </div>
       </section>
 
-      <aside class="community-card" id="comunidade" aria-labelledby="community-title">
-        <span class="section-kicker">COMUNIDADE</span><h2 id="community-title">Nossas Tocas</h2>
-        <div class="community-grid">
-          <a href="https://coret.cloud" target="_blank" rel="noreferrer" class="community-link featured"><span class="community-icon crown">♕</span><strong>Coret</strong><small>coret.cloud</small></a>
-          <a href="https://x.com/NihilGuh" target="_blank" rel="noreferrer" class="community-link"><span class="community-icon">𝕏</span><strong>Twitter / X</strong><small>@NihilGuh</small></a>
-          <a href="https://instagram.com/NihilGuh" target="_blank" rel="noreferrer" class="community-link"><span class="community-icon insta">◎</span><strong>Instagram</strong><small>@NihilGuh</small></a>
-          <a href="https://discord.gg/7F9YbfvUXD" target="_blank" rel="noreferrer" class="community-link"><span class="community-icon discord">◈</span><strong>Discord</strong><small>Comunidade</small></a>
+      <aside class="community-card glass reveal" id="comunidade">
+        <span class="eyebrow">COMUNIDADE</span>
+        <h2>Nossas Tocas</h2>
+        <div class="community-links">
+          <a href="https://coret.cloud" target="_blank" rel="noreferrer" class="community-item featured"><i>♕</i><strong>Coret</strong><small>coret.cloud</small></a>
+          <a href="https://discord.gg/7F9YbfvUXD" target="_blank" rel="noreferrer" class="community-item"><i><img src="https://cdn.simpleicons.org/discord/ffffff" alt="" /></i><strong>Discord</strong><small>Comunidade</small></a>
+          <a href="https://x.com/NihilGuh" target="_blank" rel="noreferrer" class="community-item"><i>𝕏</i><strong>Twitter / X</strong><small>@NihilGuh</small></a>
+          <a href="https://instagram.com/NihilGuh" target="_blank" rel="noreferrer" class="community-item"><i><img src="https://cdn.simpleicons.org/instagram/ff5f82" alt="" /></i><strong>Instagram</strong><small>@NihilGuh</small></a>
         </div>
-        <div class="wall-quote">“Aqui o tempo passa diferente.”</div>
-        <div class="cat-sign">ᓚᘏᗢ <span>NihilGuh</span></div>
+        <div class="wall-copy">“Aqui o tempo passa diferente.”</div>
+        <div class="cat-mark">ᓚᘏᗢ <span>NihilGuh</span></div>
       </aside>
     </section>
+
+    <footer class="glass reveal">
+      <div class="footer-logo reference-crop" aria-hidden="true"></div>
+      <span>Mais que lives, um refúgio.</span>
+      <span class="footer-love">Feito com ♡ para todos os pequenos caos.</span>
+    </footer>
   </main>
 
-  <footer>
-    <div class="footer-brand"><span>NihilGuh</span><small>Mais que lives, um refúgio.</small></div>
-    <div class="footer-links"><a href="#top">Início</a><a href="#sobre">Sobre</a><a href="#canais">Lives</a><a href="#comunidade">Comunidade</a><a href="#apoiar">Apoie</a><a href="https://discord.gg/7F9YbfvUXD" target="_blank" rel="noreferrer">Contato</a></div>
-    <div class="footer-note">Feito com ♡ para todos os pequenos caos.</div>
-  </footer>
-
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="showcase.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tsparticles/engine@4/tsparticles.engine.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tsparticles/slim@4/tsparticles.slim.bundle.min.js"></script>
+  <script src="site.js"></script>
 </body>
 </html>
