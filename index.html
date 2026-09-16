@@ -7,93 +7,121 @@
   <meta name="description" content="NihilGuh — lives, comunidade e apoio via LivePix." />
   <title>NihilGuh — Wonderland Broadcast</title>
   <link rel="icon" type="image/webp" href="assets/emote-ramen.webp" />
-  <link rel="stylesheet" href="pixel-perfect.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="showcase.css" />
 </head>
-<body>
+<body class="intro-lock">
   <div class="intro" id="intro" aria-hidden="true">
-    <div class="intro-cat"></div>
-    <div class="intro-smoke smoke-a"></div>
-    <div class="intro-smoke smoke-b"></div>
-    <div class="intro-smoke smoke-c"></div>
+    <div class="intro-orbit orbit-a"></div><div class="intro-orbit orbit-b"></div>
+    <img src="assets/cheshire-generated.svg" class="intro-cat" alt="" />
+    <div class="intro-smoke s1"></div><div class="intro-smoke s2"></div><div class="intro-smoke s3"></div>
     <div class="intro-flash"></div>
   </div>
 
-  <main class="page" id="page">
-    <section class="art-stage" aria-label="NihilGuh Wonderland Broadcast">
-      <div class="status-overlay" id="status-overlay">
-        <span class="status-dot"></span><span id="status-text">VERIFICANDO LIVE</span>
+  <div class="world-bg" aria-hidden="true">
+    <div class="fog fog-a"></div><div class="fog fog-b"></div>
+    <span class="float-card c1">♠</span><span class="float-card c2">♥</span><span class="float-card c3">♦</span>
+    <span class="chain chain-left"></span><span class="chain chain-right"></span>
+  </div>
+
+  <header class="topbar" id="top">
+    <a class="brand" href="#top" aria-label="NihilGuh">
+      <span class="brand-main">NihilGuh</span><span class="brand-sub">MAIS QUE LIVES, UM REFÚGIO</span>
+    </a>
+    <nav class="nav" aria-label="Navegação">
+      <a class="active" href="#top">INÍCIO</a><a href="#sobre">SOBRE</a><a href="#canais">LIVES</a><a href="#comunidade">COMUNIDADE</a><a href="#apoiar">APOIE</a><a href="https://discord.gg/7F9YbfvUXD" target="_blank" rel="noreferrer">CONTATO</a>
+    </nav>
+    <div class="motto">Sonhe alto, pequeno caos. <span>♡</span></div>
+  </header>
+
+  <main>
+    <section class="hero" id="sobre">
+      <div class="hero-copy">
+        <p class="quote">“Um lugar onde<br>o caos também<br>é casa.”</p>
+        <p class="desc">Lives, jogos, conversas e um pouco de insanidade. Seja bem-vindo à toca.</p>
+        <div class="hero-actions">
+          <a class="cta primary" href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer"><span class="ico">▣</span> ASSISTIR AGORA</a>
+          <a class="cta ghost" href="#apoiar"><span class="ico">♥</span> APOIAR A TOCA</a>
+        </div>
+        <div class="social-row" aria-label="Canais">
+          <a href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer" class="social twitch"><span class="social-icon"><img src="https://cdn.simpleicons.org/twitch/a970ff" alt=""></span><small>Twitch</small></a>
+          <a href="https://www.youtube.com/@nihilguh" target="_blank" rel="noreferrer" class="social youtube"><span class="social-icon"><img src="https://cdn.simpleicons.org/youtube/ff2d3b" alt=""></span><small>YouTube</small></a>
+          <a href="https://www.tiktok.com/@nihilguh" target="_blank" rel="noreferrer" class="social tiktok"><span class="social-icon"><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt=""></span><small>TikTok</small></a>
+          <a href="https://kick.com/nihilguh" target="_blank" rel="noreferrer" class="social kick"><span class="social-icon"><b>K</b></span><small>Kick</small></a>
+          <a href="https://trovo.live/s/nihilguh" target="_blank" rel="noreferrer" class="social trovo"><span class="social-icon"><b>t</b></span><small>Trovo</small></a>
+        </div>
       </div>
 
-      <a class="hotspot nav inicio" href="#top" aria-label="Início"></a>
-      <a class="hotspot nav sobre" href="#canais" aria-label="Sobre"></a>
-      <a class="hotspot nav lives" href="#canais" aria-label="Lives"></a>
-      <a class="hotspot nav comunidade" href="#comunidade" aria-label="Comunidade"></a>
-      <a class="hotspot nav apoie" href="#apoiar" aria-label="Apoie"></a>
-      <a class="hotspot nav contato" href="https://discord.gg/7F9YbfvUXD" target="_blank" rel="noreferrer" aria-label="Contato"></a>
-
-      <a class="hotspot hero-watch" href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer" aria-label="Assistir agora na Twitch"></a>
-      <a class="hotspot hero-support" href="#apoiar" aria-label="Apoiar a toca"></a>
-
-      <a class="hotspot icon twitch" href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer" aria-label="Twitch"></a>
-      <a class="hotspot icon youtube" href="https://www.youtube.com/@nihilguh" target="_blank" rel="noreferrer" aria-label="YouTube"></a>
-      <a class="hotspot icon tiktok" href="https://www.tiktok.com/@nihilguh" target="_blank" rel="noreferrer" aria-label="TikTok"></a>
-      <a class="hotspot icon kick" href="https://kick.com/nihilguh" target="_blank" rel="noreferrer" aria-label="Kick"></a>
-      <a class="hotspot icon trovo" href="https://trovo.live/s/nihilguh" target="_blank" rel="noreferrer" aria-label="Trovo"></a>
-
-      <div id="canais" class="anchor anchor-canais"></div>
-      <a class="hotspot live-main" href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer" aria-label="Ver NihilGuh na Twitch"></a>
-      <a class="hotspot live-sm twitch-sm" href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer" aria-label="Twitch"></a>
-      <a class="hotspot live-sm youtube-sm" href="https://www.youtube.com/@nihilguh" target="_blank" rel="noreferrer" aria-label="YouTube"></a>
-      <a class="hotspot live-sm tiktok-sm" href="https://www.tiktok.com/@nihilguh" target="_blank" rel="noreferrer" aria-label="TikTok"></a>
-      <a class="hotspot live-sm kick-sm" href="https://kick.com/nihilguh" target="_blank" rel="noreferrer" aria-label="Kick"></a>
-      <a class="hotspot live-sm trovo-sm" href="https://trovo.live/s/nihilguh" target="_blank" rel="noreferrer" aria-label="Trovo"></a>
-
-      <div id="apoiar" class="anchor anchor-apoiar"></div>
-      <form class="livepix-form" id="livepix-form">
-        <label class="sr-only" for="support-name">Seu nome</label>
-        <input id="support-name" name="name" class="field field-name" maxlength="60" autocomplete="nickname" placeholder="Como você quer aparecer?" />
-        <label class="sr-only" for="support-amount">Valor</label>
-        <input id="support-amount" name="amount" class="field field-amount" inputmode="decimal" placeholder="10,00" />
-        <label class="sr-only" for="support-message">Mensagem</label>
-        <textarea id="support-message" name="message" class="field field-message" maxlength="300" placeholder="Manda um salve, uma mensagem ou o que quiser! ♡"></textarea>
-
-        <button class="quick q5" type="button" data-value="5" aria-label="R$ 5"></button>
-        <button class="quick q10" type="button" data-value="10" aria-label="R$ 10"></button>
-        <button class="quick q20" type="button" data-value="20" aria-label="R$ 20"></button>
-        <button class="quick q50" type="button" data-value="50" aria-label="R$ 50"></button>
-
-        <button class="pix-submit" type="submit" aria-label="Enviar via LivePix"></button>
-      </form>
-
-      <a class="hotspot pix-tab tab-message" href="#apoiar" aria-label="Enviar mensagem"></a>
-      <a class="hotspot pix-tab tab-fast" href="https://livepix.gg/justguh" target="_blank" rel="noreferrer" aria-label="Pix rápido"></a>
-      <a class="hotspot pix-tab tab-sub" href="https://livepix.gg/justguh" target="_blank" rel="noreferrer" aria-label="Assinaturas"></a>
-
-      <div id="comunidade" class="anchor anchor-comunidade"></div>
-      <a class="hotspot community coret" href="https://coret.cloud" target="_blank" rel="noreferrer" aria-label="Coret.cloud"></a>
-      <a class="hotspot community twitter" href="https://x.com/NihilGuh" target="_blank" rel="noreferrer" aria-label="Twitter X"></a>
-      <a class="hotspot community instagram" href="https://instagram.com/NihilGuh" target="_blank" rel="noreferrer" aria-label="Instagram"></a>
-
-      <a class="hotspot footer-livepix" href="https://livepix.gg/justguh" target="_blank" rel="noreferrer" aria-label="LivePix"></a>
-      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+      <div class="hero-visual">
+        <img class="cheshire-bg" src="assets/cheshire-generated.svg" alt="" aria-hidden="true" />
+        <div class="scribble">We're All<br>Mad Here <span>♡</span></div>
+        <img class="hero-character" src="assets/hero-laugh.webp" alt="NihilGuh" />
+        <div class="clock" aria-hidden="true"><div class="clock-face"><i></i><b></b></div></div>
+        <div class="tea-note">GOOD<br>CHAOS<br>TODAY?<br>♡</div>
+      </div>
     </section>
 
-    <section class="mobile-fallback" aria-label="Links do NihilGuh">
-      <h1>NihilGuh</h1>
-      <p>Lives, jogos, conversa e um pouco de caos.</p>
-      <div class="mobile-links">
-        <a href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer">Twitch</a>
-        <a href="https://www.youtube.com/@nihilguh" target="_blank" rel="noreferrer">YouTube</a>
-        <a href="https://www.tiktok.com/@nihilguh" target="_blank" rel="noreferrer">TikTok</a>
-        <a href="https://kick.com/nihilguh" target="_blank" rel="noreferrer">Kick</a>
-        <a href="https://trovo.live/s/nihilguh" target="_blank" rel="noreferrer">Trovo</a>
-        <a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">LivePix</a>
-        <a href="https://coret.cloud" target="_blank" rel="noreferrer">Coret.cloud</a>
-        <a href="https://discord.gg/7F9YbfvUXD" target="_blank" rel="noreferrer">Discord</a>
+    <section class="live-ribbon" id="canais" aria-labelledby="live-title">
+      <div class="section-kicker" id="live-title">CANAIS DE LIVE</div>
+      <div class="live-main-card" data-platform="twitch">
+        <img src="assets/emote-punch.webp" alt="" class="avatar" />
+        <div class="live-copy"><div class="live-name">NihilGuh <span class="online-dot"></span> <b class="live-badge">AO VIVO</b></div><small id="live-subtitle">Verificando status da Twitch...</small></div>
+        <a href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer">Ver na Twitch <span>→</span></a>
       </div>
+      <div class="mini-live-grid">
+        <a href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer" class="mini-live"><span class="mini-icon tw">▣</span><span>Twitch<small>Seguir</small></span></a>
+        <a href="https://www.youtube.com/@nihilguh" target="_blank" rel="noreferrer" class="mini-live"><span class="mini-icon yt">▶</span><span>YouTube<small>Seguir</small></span></a>
+        <a href="https://www.tiktok.com/@nihilguh" target="_blank" rel="noreferrer" class="mini-live"><span class="mini-icon tk">♪</span><span>TikTok<small>Seguir</small></span></a>
+        <a href="https://kick.com/nihilguh" target="_blank" rel="noreferrer" class="mini-live"><span class="mini-icon kk">K</span><span>Kick<small>Seguir</small></span></a>
+        <a href="https://trovo.live/s/nihilguh" target="_blank" rel="noreferrer" class="mini-live"><span class="mini-icon tr">t</span><span>Trovo<small>Trovo</small></span></a>
+      </div>
+      <p class="live-note">Se o canal estiver online, aparecerá como <strong>AO VIVO</strong>.</p>
+    </section>
+
+    <section class="lower-grid">
+      <section class="support-card" id="apoiar" aria-labelledby="support-title">
+        <div class="support-glow"></div>
+        <div class="support-copy">
+          <span class="section-kicker">APOIE A TOCA</span>
+          <h2 id="support-title">LivePix<span>♛</span></h2>
+          <p>Sua mensagem deixa a live ainda mais especial! ♡</p>
+          <div class="support-tabs"><button class="active" type="button">◉ Enviar Mensagem</button><a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">◉ Pix Rápido</a><a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">◉ Assinaturas</a></div>
+          <form id="livepix-form" class="support-form">
+            <div class="form-row"><label>Seu nome<input name="name" maxlength="60" placeholder="Como você quer aparecer?" /></label><label>Valor (R$)<input id="support-amount" name="amount" inputmode="decimal" placeholder="10,00" /></label></div>
+            <label>Mensagem<textarea name="message" maxlength="300" placeholder="Manda um salve, uma mensagem ou o que quiser! ♡"></textarea></label>
+            <div class="form-bottom"><div class="quick-values"><button type="button" data-value="5">5</button><button type="button" data-value="10">10</button><button type="button" data-value="20">20</button><button type="button" data-value="50">50</button></div><button class="send" type="submit">➤ &nbsp; Enviar via LivePix</button></div>
+            <div class="counter"><span id="message-count">0</span>/300</div>
+          </form>
+        </div>
+        <div class="support-art">
+          <div class="thanks">Obrigado<br>pelo apoio!<br>♡</div>
+          <img src="assets/emote-ramen.webp" alt="NihilGuh comendo ramen" />
+        </div>
+      </section>
+
+      <aside class="community-card" id="comunidade" aria-labelledby="community-title">
+        <span class="section-kicker">COMUNIDADE</span><h2 id="community-title">Nossas Tocas</h2>
+        <div class="community-grid">
+          <a href="https://coret.cloud" target="_blank" rel="noreferrer" class="community-link featured"><span class="community-icon crown">♕</span><strong>Coret</strong><small>coret.cloud</small></a>
+          <a href="https://x.com/NihilGuh" target="_blank" rel="noreferrer" class="community-link"><span class="community-icon">𝕏</span><strong>Twitter / X</strong><small>@NihilGuh</small></a>
+          <a href="https://instagram.com/NihilGuh" target="_blank" rel="noreferrer" class="community-link"><span class="community-icon insta">◎</span><strong>Instagram</strong><small>@NihilGuh</small></a>
+          <a href="https://discord.gg/7F9YbfvUXD" target="_blank" rel="noreferrer" class="community-link"><span class="community-icon discord">◈</span><strong>Discord</strong><small>Comunidade</small></a>
+        </div>
+        <div class="wall-quote">“Aqui o tempo passa diferente.”</div>
+        <div class="cat-sign">ᓚᘏᗢ <span>NihilGuh</span></div>
+      </aside>
     </section>
   </main>
 
-  <script src="pixel-perfect.js"></script>
+  <footer>
+    <div class="footer-brand"><span>NihilGuh</span><small>Mais que lives, um refúgio.</small></div>
+    <div class="footer-links"><a href="#top">Início</a><a href="#sobre">Sobre</a><a href="#canais">Lives</a><a href="#comunidade">Comunidade</a><a href="#apoiar">Apoie</a><a href="https://discord.gg/7F9YbfvUXD" target="_blank" rel="noreferrer">Contato</a></div>
+    <div class="footer-note">Feito com ♡ para todos os pequenos caos.</div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="showcase.js"></script>
 </body>
 </html>
