@@ -1,30 +1,30 @@
-# NihilGuh — Página de Lives
+# NihilGuh — Wonderland Broadcast
 
-Landing page leve e animada para centralizar os canais de live do **NihilGuh** e apoio via **LivePix**.
+Landing page leve para centralizar canais, comunidade e apoio via LivePix.
 
-## Inclui
+## Site
 
-- Twitch
-- YouTube
-- TikTok
-- Kick
-- Trovo
-- Coret
-- Discord
-- Modal LivePix: `https://livepix.gg/justguh`
+- Twitch, YouTube, TikTok, Kick e Trovo
+- Discord e Coret.cloud
+- detector de live da Twitch
+- entrada animada inspirada nos alertas Wonderland/Cheshire
+- assets locais otimizados
+- favicon com emote de ramen
+- GitHub Pages via `.github/workflows/pages.yml`
 
-## Desempenho
+## LivePix
 
-- HTML/CSS/JS puro
-- Sem framework
-- Animações leves com `transform` e `opacity`
-- `prefers-reduced-motion`
-- LivePix carregado somente quando o modal é aberto
+O iframe foi removido porque o LivePix bloqueia incorporação externa com `X-Frame-Options: sameorigin` e `frame-ancestors 'none'`.
 
-## Configuração
+A página agora tem uma interface própria com:
 
-Os links ficam em `site.config.js` para você trocar sem mexer no restante do site.
+- mensagem + Pix
+- Pix rápido
+- planos de assinatura
+- recorrência mensal, trimestral, semestral e anual
 
-## Publicação
+As chamadas passam por `worker/worker.js`, mantendo o `client_secret` fora do GitHub Pages.
 
-O workflow em `.github/workflows/pages.yml` publica a branch `main` no GitHub Pages.
+> Para ativar os pagamentos, publique o Worker e preencha `api.base` em `site.config.js`.
+
+A API oficial do LivePix usa OAuth2 e retorna uma `redirectUrl` de checkout para pagamentos, mensagens e assinaturas.
