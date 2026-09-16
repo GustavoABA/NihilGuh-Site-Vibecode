@@ -11,16 +11,39 @@
     if (href) el.href = href;
   });
 
-  const supportLink = document.getElementById('support-link');
-  if (supportLink && links.livepix) supportLink.href = links.livepix;
-
-  document.querySelectorAll('.brand-icon img').forEach((img) => {
+  // Fallback local caso algum CDN de ícones falhe.
+  document.querySelectorAll('.brand-icon img, .extra-icon img').forEach((img) => {
     img.addEventListener('error', () => {
       img.style.display = 'none';
       const fallback = img.nextElementSibling;
       if (fallback) fallback.style.display = 'block';
     }, { once: true });
   });
+
+  // LivePix: carrega diretamente dentro do card e nunca deixa o loader preso.
+  const livepixFrame = document.getElementById('livepix-frame');
+  const livepixLoader = document.getElementById('livepix-loader');
+  const livepixFallback = document.getElementById('livepix-fallback');
+  const pixUrl = links.livepix || 'https://livepix.gg/justguh';
+  let livepixReady = false;
+
+  if (livepixFrame) {
+    livepixFrame.addEventListener('load', () => {
+      livepixReady = true;
+      livepixLoader?.classList.add('is-hidden');
+      if (livepixFallback) livepixFallback.hidden = true;
+    });
+
+    // Reatribuir o src garante que o listener esteja registrado antes da carga.
+    livepixFrame.src = pixUrl;
+
+    window.setTimeout(() => {
+      if (!livepixReady) {
+        livepixLoader?.classList.add('is-hidden');
+        if (livepixFallback) livepixFallback.hidden = false;
+      }
+    }, 9000);
+  }
 
   function setLive(platform, isLive) {
     const card = document.querySelector(`[data-platform="${platform}"]`);
@@ -48,9 +71,9 @@
   }
 
   checkTwitchLive();
-  const timer = setInterval(() => {
+  const statusTimer = setInterval(() => {
     if (document.visibilityState === 'visible') checkTwitchLive();
   }, 60000);
 
-  window.addEventListener('pagehide', () => clearInterval(timer), { once: true });
+  window.addEventListener('pagehide', () => clearInterval(statusTimer), { once: true });
 })();
