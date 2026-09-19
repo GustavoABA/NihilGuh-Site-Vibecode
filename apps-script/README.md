@@ -20,7 +20,7 @@ Abas: CONFIG, LIVES, METAS, VISITANTES, EVENTOS e PAINEL.
 2. Extensões → Apps Script.
 3. Cole o conteúdo de `apps-script/Code.gs`.
 4. Execute `setup()` uma vez e autorize.
-5. Copie a `ADMIN_KEY` mostrada no log/resultado.
+5. Copie a `ADMIN_KEY` e a `BRIDGE_KEY` mostradas no log/resultado.
 6. Implantar → Nova implantação → Aplicativo da Web.
 7. Executar como: você. Acesso: qualquer pessoa.
 8. Copie a URL terminada em `/exec`.
@@ -38,3 +38,12 @@ O gatilho criado pelo `setup()` consulta a DecAPI a cada minuto. Cinco checks of
 - adicionar minutos.
 
 A URL do backend e a chave de administrador ficam apenas no localStorage do navegador usado no painel.
+
+
+## StreamElements
+
+O backend aceita eventos do widget em `streamelements/` pela ação `streamEvent`.
+
+A `BRIDGE_KEY` é gerada pelo `setup()` e não deve ser colocada no GitHub. Depois do deploy do Web App, abra `admin.html` com sua ADMIN_KEY e use **Mostrar BRIDGE_KEY**, ou copie a chave diretamente do resultado de `setup()`.
+
+Os eventos de Twitch, YouTube e Kick são salvos na aba EVENTOS e atualizam as metas automáticas da sessão ativa.

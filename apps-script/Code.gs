@@ -5,12 +5,18 @@ const TABS = { CONFIG:'CONFIG', LIVES:'LIVES', METAS:'METAS', VISITANTES:'VISITA
 function setup() {
   const props = PropertiesService.getScriptProperties();
   if (!props.getProperty('ADMIN_KEY')) props.setProperty('ADMIN_KEY', Utilities.getUuid().replace(/-/g,''));
+  if (!props.getProperty('BRIDGE_KEY')) props.setProperty('BRIDGE_KEY', Utilities.getUuid().replace(/-/g,''));
   const triggers = ScriptApp.getProjectTriggers().filter(t => t.getHandlerFunction() === 'pollTwitchStatus');
   triggers.forEach(t => ScriptApp.deleteTrigger(t));
   ScriptApp.newTrigger('pollTwitchStatus').timeBased().everyMinutes(1).create();
   pollTwitchStatus();
   Logger.log('ADMIN_KEY=' + props.getProperty('ADMIN_KEY'));
-  return { ok:true, adminKey:props.getProperty('ADMIN_KEY') };
+  Logger.log('BRIDGE_KEY=' + props.getProperty('BRIDGE_KEY'));
+  return {
+    ok:true,
+    adminKey:props.getProperty('ADMIN_KEY'),
+    bridgeKey:props.getProperty('BRIDGE_KEY')
+  };
 }
 
 function doGet(e) {
@@ -18,18 +24,24 @@ function doGet(e) {
     const p = (e && e.parameter) || {};
     const action = p.action || 'state';
     let data;
+
     if (action === 'state') data = publicState_();
     else if (action === 'history') data = history_(Number(p.days || 5));
     else if (action === 'visit') data = registerVisit_(String(p.visitorId || ''));
-    else {
+    else if (action === 'streamEvent') {
+      requireBridge_(p.bridgeKey);
+      data = streamEvent_(p);
+    } else {
       requireAdmin_(p.adminKey);
       if (action === 'sync') data = (pollTwitchStatus(), publicState_());
       else if (action === 'forceStart') data = forceStart_();
       else if (action === 'forceEnd') data = forceEnd_();
       else if (action === 'completeGoal') data = completeGoal_(String(p.goalId || ''), 'admin');
       else if (action === 'addMinutes') data = addMinutes_(Number(p.minutes || 0));
+      else if (action === 'bridgeInfo') data = { bridgeKey:PropertiesService.getScriptProperties().getProperty('BRIDGE_KEY') || '' };
       else throw new Error('unknown_action');
     }
+
     return output_(p.callback, { ok:true, ...data });
   } catch (err) {
     return output_((e && e.parameter && e.parameter.callback) || '', { ok:false, error:String(err.message || err) });
@@ -49,6 +61,7 @@ function sh_(name){ return ss_().getSheetByName(name); }
 function now_(){ return new Date(); }
 function date_(d){ return Utilities.formatDate(d || now_(), TZ, 'yyyy-MM-dd'); }
 function stamp_(d){ return Utilities.formatDate(d || now_(), TZ, "yyyy-MM-dd'T'HH:mm:ssXXX"); }
+function truncate_(value, max){ value=String(value || ''); return value.length > max ? value.slice(0,max) : value; }
 
 function config_() {
   const values = sh_(TABS.CONFIG).getDataRange().getValues();
@@ -193,6 +206,118 @@ function updateVisitorGoals_(id,count) {
   }
 }
 
+function streamEvent_(p) {
+  const active=activeSession_();
+  if(!active) return { recorded:false, reason:'offline' };
+
+  const id=String(active.values[0]);
+  const provider=normalizeProvider_(p.platform);
+  const listener=truncate_(p.listener,100);
+  const eventId=truncate_(p.eventId,230);
+  const user=truncate_(p.user,180);
+  const message=truncate_(p.message,500);
+  const currency=truncate_(p.currency,30);
+  const raw=truncate_(p.raw,5000);
+  const amountRaw=String(p.amount === undefined ? '' : p.amount);
+  const amountNum=Number(amountRaw);
+  const amount=Number.isFinite(amountNum) ? amountNum : truncate_(amountRaw,80);
+
+  if(!listener) throw new Error('missing_listener');
+  if(eventId && eventSeen_(eventId)) return { recorded:false, duplicate:true, eventId };
+
+  const normalized=classifyStreamEvent_(provider,listener,p);
+  sh_(TABS.EVENTOS).appendRow([
+    stamp_(),id,normalized,'streamelements',listener,amount,
+    provider,user,listener,eventId,currency,message,raw
+  ]);
+
+  updateStreamGoals_(id);
+  syncLiveRow_(activeSession_());
+  updatePanel_();
+
+  return { recorded:true, sessionId:id, platform:provider, type:normalized };
+}
+
+function normalizeProvider_(value) {
+  const p=String(value || '').toLowerCase().trim();
+  return ['twitch','youtube','kick'].includes(p) ? p : 'unknown';
+}
+
+function classifyStreamEvent_(provider, listener, p) {
+  const l=String(listener || '').toLowerCase();
+
+  if(l === 'follower-latest') return 'stream_growth';
+
+  if(l === 'subscriber-latest') {
+    if(provider === 'youtube') return 'stream_growth';
+    if(String(p.isCommunityGift || '') === 'true' && String(p.bulkGifted || '') !== 'true') return 'stream_other';
+    if(provider === 'twitch' || provider === 'kick') return 'stream_support';
+  }
+
+  if([
+    'tip-latest','cheer-latest','kicks-latest','superchat-latest','super-chat-latest',
+    'supersticker-latest','super-sticker-latest','jewels-latest','sponsor-latest',
+    'member-latest','membership-latest','supporter-latest'
+  ].includes(l)) return 'stream_support';
+
+  if(l === 'raid-latest') return 'stream_raid';
+
+  return 'stream_other';
+}
+
+function eventSeen_(eventId) {
+  if(!eventId) return false;
+  const vals=sh_(TABS.EVENTOS).getDataRange().getValues();
+  for(let r=vals.length-1;r>=1;r--) if(String(vals[r][9] || '') === eventId) return true;
+  return false;
+}
+
+function updateStreamGoals_(sessionId) {
+  const events=sh_(TABS.EVENTOS).getDataRange().getValues();
+  const counts={
+    growth_total:0,growth_twitch:0,growth_youtube:0,growth_kick:0,
+    support_total:0,raid:0,platforms:0
+  };
+  const providers=new Set();
+
+  for(let r=1;r<events.length;r++){
+    if(String(events[r][1])!==sessionId || String(events[r][3])!=='streamelements') continue;
+    const type=String(events[r][2]);
+    const provider=String(events[r][6]).toLowerCase();
+
+    if(type==='stream_growth'){
+      counts.growth_total++;
+      if(provider==='twitch') counts.growth_twitch++;
+      if(provider==='youtube') counts.growth_youtube++;
+      if(provider==='kick') counts.growth_kick++;
+      if(['twitch','youtube','kick'].includes(provider)) providers.add(provider);
+    } else if(type==='stream_support'){
+      counts.support_total++;
+      if(['twitch','youtube','kick'].includes(provider)) providers.add(provider);
+    } else if(type==='stream_raid'){
+      counts.raid++;
+      if(['twitch','youtube','kick'].includes(provider)) providers.add(provider);
+    }
+  }
+  counts.platforms=providers.size;
+
+  const goals=sh_(TABS.METAS), vals=goals.getDataRange().getValues(), completedAt=stamp_();
+  for(let r=1;r<vals.length;r++){
+    if(String(vals[r][0])!==sessionId) continue;
+    const type=String(vals[r][4]);
+    if(!(type in counts)) continue;
+
+    const progress=Number(counts[type] || 0);
+    goals.getRange(r+1,7).setValue(progress);
+
+    if(vals[r][7]!==true && progress>=Number(vals[r][5]||0)){
+      goals.getRange(r+1,8).setValue(true);
+      goals.getRange(r+1,10).setValue(completedAt);
+      event_('goal_complete',sessionId,'streamelements',String(vals[r][2]),Number(vals[r][8]||0));
+    }
+  }
+}
+
 function completeGoal_(goalId, origin) {
   const active=activeSession_(); if(!active) throw new Error('no_active_session');
   const id=String(active.values[0]), s=sh_(TABS.METAS), vals=s.getDataRange().getValues();
@@ -214,7 +339,7 @@ function addMinutes_(minutes) {
   syncLiveRow_(activeSession_()); updatePanel_(); return publicState_();
 }
 
-function forceStart_(){ const a=startSession_('admin'); PropertiesService.getScriptProperties().setProperty('OFFLINE_COUNT','0'); return publicState_(); }
+function forceStart_(){ startSession_('admin'); PropertiesService.getScriptProperties().setProperty('OFFLINE_COUNT','0'); return publicState_(); }
 function forceEnd_(){ const a=activeSession_(); if(!a) return { ended:false }; return closeSession_(a.row,'admin'); }
 
 function publicState_() {
@@ -271,4 +396,9 @@ function publicStateNoSync_() {
 function requireAdmin_(key) {
   const expected=PropertiesService.getScriptProperties().getProperty('ADMIN_KEY');
   if(!expected || !key || String(key)!==String(expected)) throw new Error('unauthorized');
+}
+
+function requireBridge_(key) {
+  const expected=PropertiesService.getScriptProperties().getProperty('BRIDGE_KEY');
+  if(!expected || !key || String(key)!==String(expected)) throw new Error('bridge_unauthorized');
 }

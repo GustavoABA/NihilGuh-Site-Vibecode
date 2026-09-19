@@ -1,0 +1,35 @@
+{
+  "backendUrl": {
+    "type": "text",
+    "label": "URL do Apps Script (/exec)",
+    "value": ""
+  },
+  "bridgeKey": {
+    "type": "text",
+    "label": "BRIDGE_KEY",
+    "value": ""
+  },
+  "platform": {
+    "type": "dropdown",
+    "label": "Plataforma deste canal",
+    "value": "twitch",
+    "options": {
+      "twitch": "Twitch",
+      "youtube": "YouTube",
+      "kick": "Kick"
+    }
+  },
+  "enabled": {
+    "type": "checkbox",
+    "label": "Enviar eventos para NihilGuh",
+    "value": true
+  },
+  "widgetName": {
+    "type": "hidden",
+    "value": "NihilGuh Event Bridge"
+  },
+  "widgetDuration": {
+    "type": "hidden",
+    "value": 1
+  }
+}
