@@ -63,7 +63,7 @@ function config_() {
   for (let r=1; r<values.length; r++) if (values[r][7]) map[String(values[r][7])] = values[r][8];
   return {
     goals,
-    baseMinutes:Number(map['Tempo base da live (min)'] || 90),
+    baseMinutes:Number(map['Tempo base da live (min)'] || 240),
     offlineChecks:Number(map['Checks offline para encerrar'] || 5),
     channel:String(map['Canal Twitch'] || 'nihilguh'),
     decapi:String(map['DecAPI URL'] || 'https://decapi.me/twitch/uptime?channel=nihilguh&offline_msg=offline')
@@ -141,8 +141,8 @@ function closeSession_(row, origin) {
 
 function stats_(sessionId) {
   const liveVals=sh_(TABS.LIVES).getDataRange().getValues();
-  let base=90;
-  for(let r=1;r<liveVals.length;r++) if(String(liveVals[r][0])===sessionId){base=Number(liveVals[r][5]||90);break;}
+  let base=240;
+  for(let r=1;r<liveVals.length;r++) if(String(liveVals[r][0])===sessionId){base=Number(liveVals[r][5]||240);break;}
   const gVals=sh_(TABS.METAS).getDataRange().getValues();
   let gained=0,completed=0,goalCount=0;
   for(let r=1;r<gVals.length;r++) if(String(gVals[r][0])===sessionId){
