@@ -220,7 +220,6 @@ function forceEnd_(){ const a=activeSession_(); if(!a) return { ended:false }; r
 function publicState_() {
   const active=activeSession_();
   if(!active) return { twitchState:PropertiesService.getScriptProperties().getProperty('TWITCH_STATE') || 'unknown', session:null, goals:[] };
-  syncLiveRow_(active);
   const row=sh_(TABS.LIVES).getRange(active.row,1,1,11).getValues()[0];
   const id=String(row[0]), vals=sh_(TABS.METAS).getDataRange().getValues(), goals=[];
   for(let r=1;r<vals.length;r++) if(String(vals[r][0])===id) goals.push({
