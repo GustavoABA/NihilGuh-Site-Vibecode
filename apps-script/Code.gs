@@ -80,7 +80,8 @@ function config_() {
     offlineChecks:Number(map['Checks offline para encerrar'] || 5),
     channel:String(map['Canal Twitch'] || 'nihilguh'),
     decapi:String(map['DecAPI URL'] || 'https://decapi.me/twitch/uptime?channel=nihilguh&offline_msg=offline'),
-    livepixPerMinute:Number(map['LivePix R$ por minuto'] || 10)
+    livepixPerMinute:Number(map['LivePix R$ por minuto'] || 10),
+    livepixBridgePlatform:String(map['LivePix bridge platform'] || 'twitch').toLowerCase()
   };
 }
 
@@ -230,7 +231,8 @@ function streamEvent_(p) {
   if(!listener) throw new Error('missing_listener');
   if(eventId && eventSeen_(eventId)) return { recorded:false, duplicate:true, eventId };
 
-  const normalized=classifyStreamEvent_(provider,listener,p);
+  const cfg=config_();
+  const normalized=classifyStreamEvent_(provider,listener,p,cfg.livepixBridgePlatform);
   sh_(TABS.EVENTOS).appendRow([
     stamp_(),id,normalized,'streamelements',listener,amount,
     provider,user,listener,eventId,currency,message,raw
@@ -249,10 +251,10 @@ function normalizeProvider_(value) {
   return ['twitch','youtube','kick'].includes(p) ? p : 'unknown';
 }
 
-function classifyStreamEvent_(provider, listener, p) {
+function classifyStreamEvent_(provider, listener, p, livepixBridgePlatform) {
   const l=String(listener || '').toLowerCase();
 
-  if(l === 'tip-latest' && String(p.isLivePix || '') === 'true') return 'livepix_donation';
+  if(l === 'tip-latest' && String(p.isLivePix || '') === 'true' && provider === livepixBridgePlatform) return 'livepix_donation';
   if(l === 'follower-latest') return 'stream_growth';
 
   if(l === 'subscriber-latest') {
