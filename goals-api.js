@@ -19,7 +19,7 @@
           error ? reject(error) : resolve(data);
         }
 
-        window[callback] = data => cleanup(null, data);
+        window[callback] = data => {\n          if (data && data.ok === false) cleanup(new Error(data.error || 'api_error'));\n          else cleanup(null, data);\n        };
         const qs = new URLSearchParams({ action, callback, ...params, _: Date.now().toString() });
         script.src = base + '?' + qs.toString();
         script.onerror = () => cleanup(new Error('network_error'));
