@@ -59,6 +59,7 @@
     if (g.tipo === 'support_total') return `${g.progresso}/${g.alvo} apoios`;
     if (g.tipo === 'raid') return `${g.progresso}/${g.alvo} raids`;
     if (g.tipo === 'platforms') return `${g.progresso}/${g.alvo} plataformas`;
+    if (g.tipo === 'livepix_amount') return `R$ ${Number(g.progresso||0).toFixed(2)} / R$ ${Number(g.alvo||0).toFixed(2)}`;
     return g.concluida ? 'concluída' : 'meta da live';
   }
 
@@ -105,7 +106,7 @@
                   <span>${esc(progressLabel(g))}</span>
                 </div>
               </div>
-              <div class="goal-reward">+${esc(g.recompensa_min)} min</div>
+              <div class="goal-reward">${g.tipo === 'livepix_amount' ? '+1 min / R$10' : '+' + esc(g.recompensa_min) + ' min'}</div>
             </div>`).join('')}
         </div>
       ` : `
