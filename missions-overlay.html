@@ -58,13 +58,31 @@ body{display:grid;place-items:center}
 .pill{padding:8px 11px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(255,255,255,.035);font-size:12px;color:rgba(255,255,255,.75)}
 .fade-in{animation:fadeIn .55s cubic-bezier(.2,.8,.2,1)}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.fade-in{animation:none}}
+#goal-alert{position:absolute;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:26px;background:radial-gradient(circle at 50% 45%,rgba(155,68,255,.34),rgba(5,2,10,.97) 72%);overflow:hidden}
+#goal-alert.show{display:flex;animation:alertFlash .45s ease-out}
+#goal-alert::before{content:"";position:absolute;inset:-35%;background:conic-gradient(from 0deg,transparent,rgba(208,151,255,.16),transparent 28%,rgba(122,49,214,.18),transparent 55%);animation:spin 5s linear infinite}
+.alert-card{position:relative;z-index:2;width:100%;text-align:center;padding:26px 24px;border:1px solid rgba(221,174,255,.58);border-radius:24px;background:rgba(18,6,31,.86);box-shadow:0 0 58px rgba(160,74,255,.42),inset 0 0 35px rgba(206,151,255,.08)}
+.alert-kicker{font-size:12px;font-weight:950;letter-spacing:.24em;color:#e3bbff;margin-bottom:13px}
+.alert-title{font-size:39px;line-height:1.02;font-weight:950;letter-spacing:-.045em;text-wrap:balance}
+.alert-reward{font-size:25px;font-weight:950;color:#79ffac;margin-top:18px;text-shadow:0 0 24px rgba(121,255,172,.28)}
+.alert-grin{font-size:42px;line-height:1;margin-top:13px;filter:drop-shadow(0 0 16px rgba(205,146,255,.45))}
+@keyframes alertFlash{0%{opacity:0;transform:scale(.83)}65%{opacity:1;transform:scale(1.035)}100%{transform:scale(1)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.fade-in,#goal-alert.show{animation:none}#goal-alert::before{animation:none}}
 </style>
 <script src="site.config.js"></script>
 <script src="goals-api.js"></script>
 </head>
 <body>
 <div id="app"></div>
+<div id="goal-alert" aria-live="assertive" aria-atomic="true">
+  <div class="alert-card">
+    <div class="alert-kicker">META CONCLUÍDA</div>
+    <div class="alert-title" id="alert-title"></div>
+    <div class="alert-reward" id="alert-reward"></div>
+    <div class="alert-grin">◖⌣◗</div>
+  </div>
+</div>
 <script>
 (() => {
   const app = document.getElementById('app');
@@ -77,10 +95,120 @@ body{display:grid;place-items:center}
   let phase = { kind:'goal', index:0, endsAt:0 };
   let phaseStarted = false;
   let lastSessionId = '';
+  let alertSessionId = '';
+  let announcedGoals = new Set();
+  let alertQueue = [];
+  let alertActive = false;
 
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
   }[c]));
+
+  function alertKey(sessionId){
+    return 'nihilguh_goal_alerts_' + sessionId;
+  }
+
+  function saveAnnounced(){
+    if (!alertSessionId) return;
+    try { localStorage.setItem(alertKey(alertSessionId), JSON.stringify([...announcedGoals])); } catch {}
+  }
+
+  function detectGoalAlerts(nextState){
+    const sessionId = nextState?.session?.session_id || '';
+    if (!sessionId) return;
+
+    const completed = (nextState.goals || []).filter(g => g.concluida);
+    if (sessionId !== alertSessionId) {
+      alertSessionId = sessionId;
+      alertQueue = [];
+      alertActive = false;
+      let stored = null;
+      try { stored = JSON.parse(localStorage.getItem(alertKey(sessionId)) || 'null'); } catch {}
+      announcedGoals = Array.isArray(stored)
+        ? new Set(stored)
+        : new Set(completed.map(g => g.goal_id));
+      saveAnnounced();
+      return;
+    }
+
+    for (const goal of completed) {
+      if (!announcedGoals.has(goal.goal_id)) {
+        announcedGoals.add(goal.goal_id);
+        alertQueue.push(goal);
+      }
+    }
+    saveAnnounced();
+    playNextAlert();
+  }
+
+  function playElectronicCue(){
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const gain = ctx.createGain();
+      gain.connect(ctx.destination);
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.75);
+
+      [220,330,495].forEach((freq,i) => {
+        const osc = ctx.createOscillator();
+        osc.type = i === 1 ? 'square' : 'sawtooth';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + i*0.08);
+        osc.frequency.exponentialRampToValueAtTime(freq*1.7, ctx.currentTime + 0.45 + i*0.08);
+        osc.connect(gain);
+        osc.start(ctx.currentTime + i*0.08);
+        osc.stop(ctx.currentTime + 0.7);
+      });
+      setTimeout(() => ctx.close().catch(()=>{}), 1100);
+    } catch {}
+  }
+
+  function speakGoal(goal){
+    if (!('speechSynthesis' in window)) return;
+    try {
+      speechSynthesis.cancel();
+      const reward = goal.tipo === 'livepix_amount'
+        ? 'O apoio continua valendo um minuto a cada dez reais.'
+        : (Number(goal.recompensa_min || 0) > 0
+          ? 'Mais ' + Number(goal.recompensa_min) + ' minutos de live.'
+          : '');
+      const utter = new SpeechSynthesisUtterance('Meta concluída. ' + goal.meta + '. ' + reward);
+      utter.lang = 'pt-BR';
+      utter.rate = 0.88;
+      utter.pitch = 0.62;
+      utter.volume = 1;
+      const voices = speechSynthesis.getVoices();
+      const pt = voices.find(v => /^pt-BR/i.test(v.lang)) || voices.find(v => /^pt/i.test(v.lang));
+      if (pt) utter.voice = pt;
+      speechSynthesis.speak(utter);
+    } catch {}
+  }
+
+  function playNextAlert(){
+    if (alertActive || !alertQueue.length) return;
+    alertActive = true;
+    const goal = alertQueue.shift();
+    const layer = document.getElementById('goal-alert');
+    const title = document.getElementById('alert-title');
+    const reward = document.getElementById('alert-reward');
+    if (!layer || !title || !reward) { alertActive=false; return; }
+
+    title.textContent = goal.meta;
+    reward.textContent = goal.tipo === 'livepix_amount'
+      ? 'META LIVEPIX ATINGIDA'
+      : '+' + Number(goal.recompensa_min || 0) + ' MIN DE LIVE';
+    layer.classList.add('show');
+    playElectronicCue();
+    setTimeout(() => speakGoal(goal), 520);
+
+    setTimeout(() => {
+      layer.classList.remove('show');
+      alertActive = false;
+      setTimeout(playNextAlert, 450);
+    }, 7600);
+  }
 
   function siteUrl(){
     const u = new URL('./', window.location.href);
@@ -273,6 +401,7 @@ body{display:grid;place-items:center}
     try {
       const next = await api.state();
       const oldSession = state?.session?.session_id || '';
+      detectGoalAlerts(next);
       state = next;
       if (state?.session?.session_id !== oldSession) phaseStarted = false;
       render(false);
