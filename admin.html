@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#09030f"><title>NihilGuh — Controle da Toca</title>
+<link rel="stylesheet" href="site.css"><link rel="stylesheet" href="visual-fix.css?v=4"><link rel="stylesheet" href="goals.css">
+<style>
+body{min-height:100vh}.admin{width:min(1050px,94vw);margin:40px auto;padding:26px}.admin-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.box{padding:20px;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:rgba(12,5,20,.65)}.controls{display:flex;gap:8px;flex-wrap:wrap}.controls button,.controls input{padding:11px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#170b24;color:#fff}.controls button{cursor:pointer;font-weight:800}.admin-goal{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}label{display:block;font-size:12px;opacity:.7;margin:10px 0 5px}.wide{width:100%;box-sizing:border-box}@media(max-width:760px){.admin-grid{grid-template-columns:1fr}}
+</style>
+<script src="site.config.js"></script><script src="goals-api.js"></script></head>
+<body><main class="admin glass"><span class="eyebrow">NIHILGUH // CONTROLE DA TOCA</span><h1>Painel de emergência e metas</h1>
+<div class="box"><label>URL do Web App / Apps Script</label><input class="wide" id="backend" placeholder="https://script.google.com/macros/s/.../exec"><label>Chave de administrador</label><input class="wide" id="key" type="password" placeholder="ADMIN_KEY"><div class="controls" style="margin-top:12px"><button id="save">Salvar neste navegador</button><button id="sync">Sincronizar agora</button></div></div>
+<div class="admin-grid" style="margin-top:18px"><section class="box"><h2>Live atual</h2><div id="state">Carregando…</div><div class="controls" style="margin-top:14px"><button data-min="5">+5 min</button><button data-min="10">+10 min</button><button data-min="30">+30 min</button></div><div class="controls" style="margin-top:8px"><button id="start">Forçar início</button><button id="end">Forçar encerramento</button></div></section><section class="box"><h2>Metas</h2><div id="goals">—</div></section></div>
+<div id="msg" style="margin-top:12px;opacity:.72"></div></main>
+<script>
+(() => {
+ const api=NihilGuhAPI,$=id=>document.getElementById(id), backend=$('backend'),key=$('key'),msg=$('msg');
+ backend.value=api.backendUrl; key.value=localStorage.getItem('nihilguh_admin_key')||'';
+ function say(t){msg.textContent=t}
+ async function refresh(){if(!api.backendUrl){$('state').textContent='Configure o backend.';return;}try{const s=await api.state();$('state').innerHTML=s.session?'<b>'+s.session.status+'</b><br>'+s.session.session_id+'<br>'+s.session.tempo_total_min+' min totais · +'+s.session.tempo_ganho_min+' min':'OFFLINE / sem sessão ativa';$('goals').innerHTML=(s.goals||[]).map(g=>'<div class="admin-goal"><span>'+(g.concluida?'✓ ':'○ ')+g.meta+' ('+g.progresso+'/'+g.alvo+')</span>'+(!g.concluida?'<button data-goal="'+g.goal_id+'">Concluir</button>':'')+'</div>').join('')||'Sem metas ativas';document.querySelectorAll('[data-goal]').forEach(b=>b.onclick=()=>run('completeGoal',{goalId:b.dataset.goal}));}catch(e){say('Falha ao carregar: '+e.message)}}
+ async function run(action,p={}){try{say('Executando…');await api.admin(action,key.value,p);say('OK');await refresh();}catch(e){say('Erro: '+e.message)}}
+ $('save').onclick=()=>{api.backendUrl=backend.value.trim();localStorage.setItem('nihilguh_admin_key',key.value.trim());say('Configuração salva neste navegador.');refresh()};
+ $('sync').onclick=()=>run('sync');$('start').onclick=()=>run('forceStart');$('end').onclick=()=>run('forceEnd');
+ document.querySelectorAll('[data-min]').forEach(b=>b.onclick=()=>run('addMinutes',{minutes:b.dataset.min}));
+ refresh();setInterval(refresh,20000);
+})();
+</script></body></html>
