@@ -71,3 +71,10 @@ Regra usada:
 - os marcos R$50 e R$100 aparecem como metas, mas não adicionam bônus fixo extra.
 
 Se você também usa a página de tips nativa do StreamElements ou outro provedor de tips, desative **Tratar TIPs como doações LivePix** nesse bridge para não misturar as origens.
+
+
+### Bridge oficial do LivePix
+
+A aba CONFIG possui `LivePix bridge platform`. O padrão é `twitch`.
+
+Somente TIPs recebidos pelo bridge dessa plataforma são tratados como LivePix para cálculo de tempo. Isso evita contabilização duplicada caso o mesmo alerta esteja disponível em mais de uma conta StreamElements.
