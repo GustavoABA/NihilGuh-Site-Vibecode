@@ -50,6 +50,18 @@
     } else setTimeout(()=>el.remove(),2600);
   }
 
+  function progressLabel(g) {
+    if (g.tipo === 'visitors') return `${g.progresso}/${g.alvo} visitantes`;
+    if (g.tipo === 'growth_total') return `${g.progresso}/${g.alvo} novos na comunidade`;
+    if (g.tipo === 'growth_twitch') return `${g.progresso}/${g.alvo} Twitch`;
+    if (g.tipo === 'growth_youtube') return `${g.progresso}/${g.alvo} YouTube`;
+    if (g.tipo === 'growth_kick') return `${g.progresso}/${g.alvo} Kick`;
+    if (g.tipo === 'support_total') return `${g.progresso}/${g.alvo} apoios`;
+    if (g.tipo === 'raid') return `${g.progresso}/${g.alvo} raids`;
+    if (g.tipo === 'platforms') return `${g.progresso}/${g.alvo} plataformas`;
+    return g.concluida ? 'concluída' : 'meta da live';
+  }
+
   function render(state, history) {
     lastState = state;
     const live = Boolean(state?.session && state.session.status === 'ONLINE');
@@ -90,7 +102,7 @@
               <div>
                 <div class="goal-title">${esc(g.meta)}</div>
                 <div class="goal-meta">
-                  <span>${g.tipo === 'visitors' ? `${esc(g.progresso)}/${esc(g.alvo)} visitantes` : (g.concluida ? 'concluída' : 'meta da live')}</span>
+                  <span>${esc(progressLabel(g))}</span>
                 </div>
               </div>
               <div class="goal-reward">+${esc(g.recompensa_min)} min</div>
