@@ -113,6 +113,27 @@ body{display:grid;place-items:center}
     if (goal?.tipo === 'visitors') {
       return `${goal.alvo} pessoas diferentes precisam acessar o site durante esta live. Cada navegador conta uma vez nesta sessão.`;
     }
+    if (goal?.tipo === 'growth_total') {
+      return 'Follows na Twitch e Kick + inscritos no YouTube contam juntos nesta missão.';
+    }
+    if (goal?.tipo === 'growth_twitch') {
+      return 'Novos follows detectados pelo StreamElements na Twitch.';
+    }
+    if (goal?.tipo === 'growth_youtube') {
+      return 'Novos inscritos detectados pelo StreamElements no YouTube.';
+    }
+    if (goal?.tipo === 'growth_kick') {
+      return 'Novos follows detectados pelo StreamElements na Kick.';
+    }
+    if (goal?.tipo === 'support_total') {
+      return 'Subs, memberships, tips, cheers, KICKs e Super Chats registrados pelo StreamElements contam como apoio.';
+    }
+    if (goal?.tipo === 'raid') {
+      return 'Receba uma raid durante a transmissão para liberar mais tempo de toca.';
+    }
+    if (goal?.tipo === 'platforms') {
+      return 'Twitch, YouTube e Kick precisam registrar participação de crescimento, apoio ou raid na mesma live.';
+    }
     if (/secret|secreta|\?\?\?/i.test(meta)) {
       return 'Uma missão escondida da transmissão. A condição é revelada durante a live.';
     }
@@ -200,7 +221,9 @@ body{display:grid;place-items:center}
     const pct = Math.min(100, Math.round(Number(goal.progresso || 0) / Math.max(1, Number(goal.alvo || 1)) * 100));
     const progressText = goal.tipo === 'visitors'
       ? `${goal.progresso}/${goal.alvo} visitantes`
-      : (goal.concluida ? 'concluída' : 'aguardando conclusão');
+      : (goal.tipo === 'manual'
+        ? (goal.concluida ? 'concluída' : 'aguardando conclusão')
+        : `${goal.progresso}/${goal.alvo}`);
 
     app.innerHTML = `
       <section class="frame${anim}">
