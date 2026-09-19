@@ -134,6 +134,9 @@ body{display:grid;place-items:center}
     if (goal?.tipo === 'platforms') {
       return 'Twitch, YouTube e Kick precisam registrar participação de crescimento, apoio ou raid na mesma live.';
     }
+    if (goal?.tipo === 'livepix_amount') {
+      return 'Apoios pelo LivePix acumulam durante a sessão. Cada R$10 completos adicionam 1 minuto ao tempo restante da live.';
+    }
     if (/secret|secreta|\?\?\?/i.test(meta)) {
       return 'Uma missão escondida da transmissão. A condição é revelada durante a live.';
     }
@@ -221,9 +224,11 @@ body{display:grid;place-items:center}
     const pct = Math.min(100, Math.round(Number(goal.progresso || 0) / Math.max(1, Number(goal.alvo || 1)) * 100));
     const progressText = goal.tipo === 'visitors'
       ? `${goal.progresso}/${goal.alvo} visitantes`
-      : (goal.tipo === 'manual'
-        ? (goal.concluida ? 'concluída' : 'aguardando conclusão')
-        : `${goal.progresso}/${goal.alvo}`);
+      : (goal.tipo === 'livepix_amount'
+        ? `R$ ${Number(goal.progresso||0).toFixed(2)} / R$ ${Number(goal.alvo||0).toFixed(2)}`
+        : (goal.tipo === 'manual'
+          ? (goal.concluida ? 'concluída' : 'aguardando conclusão')
+          : `${goal.progresso}/${goal.alvo}`));
 
     app.innerHTML = `
       <section class="frame${anim}">
@@ -237,11 +242,13 @@ body{display:grid;place-items:center}
           <div class="explain">${esc(explanation(goal))}</div>
           ${goal.tipo === 'visitors'
             ? `<div class="cta">ACESSE <b>${esc(siteLabel())}</b></div>`
-            : ''}
+            : (goal.tipo === 'livepix_amount'
+              ? '<div class="cta">APOIE EM <b>livepix.gg/justguh</b></div>'
+              : '')}
           <div class="progress"><i style="width:${goal.concluida ? 100 : pct}%"></i></div>
         </div>
         <div class="footer">
-          <div class="reward">+${esc(goal.recompensa_min)} MIN DE LIVE</div>
+          <div class="reward">${goal.tipo === 'livepix_amount' ? '+1 MIN / R$10' : '+' + esc(goal.recompensa_min) + ' MIN DE LIVE'}</div>
           <div class="phase-left">próxima tela em <span id="phase-clock">${clock(phaseClock())}</span></div>
         </div>
       </section>`;

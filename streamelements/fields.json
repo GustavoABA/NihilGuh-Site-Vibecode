@@ -31,5 +31,10 @@
   "widgetDuration": {
     "type": "hidden",
     "value": 1
+  },
+  "treatTipsAsLivePix": {
+    "type": "checkbox",
+    "label": "Tratar TIPs como doações LivePix",
+    "value": true
   }
 }

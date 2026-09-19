@@ -54,3 +54,27 @@ A aba `EVENTOS` registra:
 `timestamp | session_id | tipo | origem | detalhe | valor | plataforma | usuario | listener | event_id | moeda | mensagem | raw_json`
 
 Eventos recebidos quando não existe uma sessão de live ativa são ignorados. Eventos com `event_id` já registrado são descartados como duplicados.
+
+
+## LivePix → tempo de live
+
+A LivePix pode ser integrada ao StreamElements. No bridge que recebe os alertas do LivePix, deixe **Tratar TIPs como doações LivePix** ativado.
+
+Recomendação: deixe essa opção ativada em apenas um dos três bridges para evitar que o mesmo TIP seja interpretado mais de uma vez caso sua configuração do StreamElements replique alertas entre contas. O backend ainda possui deduplicação por `event_id`.
+
+Regra usada:
+- o valor em BRL é acumulado por sessão;
+- a cada R$10 completos, +1 minuto;
+- valores quebrados acumulam (ex.: R$6 + R$4 = +1 min);
+- o evento original fica salvo como `livepix_donation`;
+- o minuto concedido fica salvo como `livepix_time`;
+- os marcos R$50 e R$100 aparecem como metas, mas não adicionam bônus fixo extra.
+
+Se você também usa a página de tips nativa do StreamElements ou outro provedor de tips, desative **Tratar TIPs como doações LivePix** nesse bridge para não misturar as origens.
+
+
+### Bridge oficial do LivePix
+
+A aba CONFIG possui `LivePix bridge platform`. O padrão é `twitch`.
+
+Somente TIPs recebidos pelo bridge dessa plataforma são tratados como LivePix para cálculo de tempo. Isso evita contabilização duplicada caso o mesmo alerta esteja disponível em mais de uma conta StreamElements.

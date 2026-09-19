@@ -3,7 +3,8 @@ let bridgeConfig = {
   backendUrl: '',
   bridgeKey: '',
   platform: 'twitch',
-  channelName: ''
+  channelName: '',
+  treatTipsAsLivePix: true
 };
 
 window.addEventListener('onWidgetLoad', function (obj) {
@@ -16,6 +17,7 @@ window.addEventListener('onWidgetLoad', function (obj) {
   bridgeConfig.bridgeKey = String(fieldData.bridgeKey || '').trim();
   bridgeConfig.platform = String(fieldData.platform || 'twitch').toLowerCase();
   bridgeConfig.channelName = String(channel.username || '');
+  bridgeConfig.treatTipsAsLivePix = fieldData.treatTipsAsLivePix !== false;
 });
 
 window.addEventListener('onEventReceived', function (obj) {
@@ -59,6 +61,7 @@ window.addEventListener('onEventReceived', function (obj) {
     gifted: String(Boolean(event.gifted)),
     bulkGifted: String(Boolean(event.bulkGifted)),
     isCommunityGift: String(Boolean(event.isCommunityGift)),
+    isLivePix: String(listener === 'tip-latest' && bridgeConfig.treatTipsAsLivePix),
     raw: compactRaw
   });
 

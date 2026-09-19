@@ -47,3 +47,13 @@ O backend aceita eventos do widget em `streamelements/` pela ação `streamEvent
 A `BRIDGE_KEY` é gerada pelo `setup()` e não deve ser colocada no GitHub. Depois do deploy do Web App, abra `admin.html` com sua ADMIN_KEY e use **Mostrar BRIDGE_KEY**, ou copie a chave diretamente do resultado de `setup()`.
 
 Os eventos de Twitch, YouTube e Kick são salvos na aba EVENTOS e atualizam as metas automáticas da sessão ativa.
+
+
+## LivePix
+
+Quando o Event Bridge identifica um `tip-latest` marcado como LivePix, o backend registra o valor em BRL na sessão ativa.
+
+A regra padrão vem da aba CONFIG:
+`LivePix R$ por minuto = 10`
+
+O tempo concedido é `floor(total_livepix_da_sessao / 10)`, descontando os minutos já concedidos anteriormente. Dessa forma valores parciais acumulam sem duplicar tempo.
