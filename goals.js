@@ -115,9 +115,15 @@
     }
     root.hidden = false;
     try {
-      const [state, history] = await Promise.all([api.state(), api.history(5)]);
+      let state = await api.state();
+      const sessionId = state?.session?.status === 'ONLINE' ? state.session.session_id : '';
+      if (sessionId && localStorage.getItem('nihilguh_counted_session') !== sessionId) {
+        await api.visit();
+        localStorage.setItem('nihilguh_counted_session', sessionId);
+        state = await api.state();
+      }
+      const history = await api.history(5);
       render(state, history);
-      if (state?.session?.status === 'ONLINE') api.visit().catch(()=>{});
     } catch (err) {
       console.warn('Live goals indisponível:', err);
       root.innerHTML = '<div class="goals-offline-note">Metas temporariamente indisponíveis. O detector normal da live continua funcionando.</div>';
