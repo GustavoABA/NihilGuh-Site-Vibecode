@@ -110,9 +110,10 @@
 
   async function refresh() {
     if (!api.backendUrl) {
-      root.innerHTML = '<div class="goals-offline-note">Sistema de metas preparado. Falta apenas publicar o Apps Script e informar a URL do backend.</div>';
+      root.hidden = true;
       return;
     }
+    root.hidden = false;
     try {
       const [state, history] = await Promise.all([api.state(), api.history(5)]);
       render(state, history);
