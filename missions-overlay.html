@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=600,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>NihilGuh — Rotação de Metas 600x400</title>
+<style>
+:root{
+  --bg:rgba(8,3,14,.94);
+  --panel:rgba(19,7,31,.96);
+  --purple:#b66cff;
+  --lilac:#e0b7ff;
+  --white:#fff;
+  --muted:rgba(255,255,255,.68);
+  --green:#71ff9b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:600px;height:400px;overflow:hidden;background:transparent;color:var(--white);font-family:Inter,Arial,sans-serif}
+body{display:grid;place-items:center}
+#app{width:600px;height:400px}
+.frame{
+  width:600px;height:400px;padding:22px 24px;
+  position:relative;overflow:hidden;
+  border:1px solid rgba(210,158,255,.45);
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 82% 10%,rgba(177,92,255,.23),transparent 36%),
+    radial-gradient(circle at 12% 92%,rgba(91,39,150,.18),transparent 38%),
+    linear-gradient(145deg,var(--bg),var(--panel));
+  box-shadow:inset 0 0 70px rgba(0,0,0,.28),0 0 38px rgba(130,56,215,.25);
+}
+.frame::before,.frame::after{
+  content:"";position:absolute;border-radius:50%;filter:blur(1px);opacity:.42;pointer-events:none
+}
+.frame::before{width:180px;height:180px;right:-70px;top:-82px;border:1px solid rgba(224,183,255,.26)}
+.frame::after{width:240px;height:240px;left:-130px;bottom:-170px;border:1px solid rgba(182,108,255,.2)}
+.header{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;position:relative;z-index:2}
+.kicker{font-size:12px;font-weight:900;letter-spacing:.19em;color:var(--lilac)}
+.badge{font-size:11px;font-weight:900;letter-spacing:.12em;padding:7px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.04)}
+.badge.done{color:var(--green);border-color:rgba(113,255,155,.32);background:rgba(113,255,155,.07)}
+.content{position:relative;z-index:2;height:302px;display:flex;flex-direction:column;justify-content:center}
+.goal-index{font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:9px}
+.title{font-size:35px;line-height:1.04;font-weight:950;letter-spacing:-.045em;max-width:520px;text-wrap:balance}
+.explain{font-size:16px;line-height:1.4;color:var(--muted);max-width:505px;margin-top:15px}
+.cta{margin-top:18px;padding:11px 14px;border-radius:14px;border:1px solid rgba(211,158,255,.25);background:rgba(177,92,255,.07);font-size:14px}
+.cta b{color:var(--lilac)}
+.progress{height:8px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.08);margin-top:15px}
+.progress > i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8b3fe7,#e3b5ff);box-shadow:0 0 16px rgba(191,119,255,.5)}
+.footer{position:absolute;left:24px;right:24px;bottom:20px;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:14px}
+.reward{font-weight:950;color:var(--lilac);font-size:18px}
+.phase-left{font-size:12px;color:rgba(255,255,255,.48);font-variant-numeric:tabular-nums}
+.timer-content{position:relative;z-index:2;height:310px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.timer-label{font-size:13px;font-weight:900;letter-spacing:.2em;color:var(--lilac);margin-bottom:14px}
+.clock{font-size:78px;line-height:1;font-weight:950;letter-spacing:-.065em;font-variant-numeric:tabular-nums;text-shadow:0 0 38px rgba(177,92,255,.28)}
+.timer-sub{font-size:15px;color:var(--muted);margin-top:17px}
+.timer-stats{display:flex;gap:10px;margin-top:22px}
+.pill{padding:8px 11px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(255,255,255,.035);font-size:12px;color:rgba(255,255,255,.75)}
+.fade-in{animation:fadeIn .55s cubic-bezier(.2,.8,.2,1)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.fade-in{animation:none}}
+</style>
+<script src="site.config.js"></script>
+<script src="goals-api.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(() => {
+  const app = document.getElementById('app');
+  const api = window.NihilGuhAPI;
+  const GOAL_MS = 60 * 1000;
+  const TIMER_MS = 30 * 60 * 1000;
+  const REFRESH_MS = 15 * 1000;
+
+  let state = null;
+  let phase = { kind:'goal', index:0, endsAt:0 };
+  let phaseStarted = false;
+  let lastSessionId = '';
+
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+  }[c]));
+
+  function siteUrl(){
+    const u = new URL('./', window.location.href);
+    return u.href.replace(/\/$/, '');
+  }
+
+  function siteLabel(){
+    const u = new URL(siteUrl());
+    return (u.host + u.pathname).replace(/\/$/, '');
+  }
+
+  function liveSeconds(){
+    if (!state?.session) return 0;
+    const start = new Date(state.session.inicio).getTime();
+    const total = Number(state.session.tempo_total_min || 0) * 60;
+    return Math.max(0, Math.floor(total - (Date.now() - start) / 1000));
+  }
+
+  function clock(seconds){
+    const h=Math.floor(seconds/3600),m=Math.floor((seconds%3600)/60),s=seconds%60;
+    return [h,m,s].map(v=>String(v).padStart(2,'0')).join(':');
+  }
+
+  function phaseClock(){
+    return Math.max(0, Math.ceil((phase.endsAt - Date.now()) / 1000));
+  }
+
+  function explanation(goal){
+    const meta = String(goal?.meta || '');
+    if (goal?.tipo === 'visitors') {
+      return `${goal.alvo} pessoas diferentes precisam acessar o site durante esta live. Cada navegador conta uma vez nesta sessão.`;
+    }
+    if (/secret|secreta|\?\?\?/i.test(meta)) {
+      return 'Uma missão escondida da transmissão. A condição é revelada durante a live.';
+    }
+    if (/desafio|game|jogo|boss/i.test(meta)) {
+      return 'Complete o desafio definido para a transmissão e libere mais tempo de live.';
+    }
+    return 'Conclua esta missão durante a transmissão para adicionar mais tempo à live.';
+  }
+
+  function ensurePhase(){
+    if (!state?.session) return;
+    const id = state.session.session_id;
+    const goals = state.goals || [];
+
+    if (id !== lastSessionId) {
+      lastSessionId = id;
+      phase = goals.length ? {kind:'goal',index:0,endsAt:Date.now()+GOAL_MS} : {kind:'timer',index:0,endsAt:Date.now()+TIMER_MS};
+      phaseStarted = true;
+      return;
+    }
+
+    if (!phaseStarted) {
+      phase = goals.length ? {kind:'goal',index:0,endsAt:Date.now()+GOAL_MS} : {kind:'timer',index:0,endsAt:Date.now()+TIMER_MS};
+      phaseStarted = true;
+    }
+  }
+
+  function advancePhase(){
+    const goals = state?.goals || [];
+    if (!state?.session) return;
+
+    if (phase.kind === 'goal') {
+      const next = phase.index + 1;
+      if (next < goals.length) {
+        phase = {kind:'goal',index:next,endsAt:Date.now()+GOAL_MS};
+      } else {
+        phase = {kind:'timer',index:0,endsAt:Date.now()+TIMER_MS};
+      }
+    } else {
+      phase = goals.length ? {kind:'goal',index:0,endsAt:Date.now()+GOAL_MS} : {kind:'timer',index:0,endsAt:Date.now()+TIMER_MS};
+    }
+    render(true);
+  }
+
+  function render(forceAnimation=false){
+    if (!state?.session || state.session.status !== 'ONLINE') {
+      app.innerHTML = '';
+      return;
+    }
+
+    ensurePhase();
+    const goals = state.goals || [];
+
+    if (phase.kind === 'goal' && !goals[phase.index]) {
+      phase = {kind:'timer',index:0,endsAt:Date.now()+TIMER_MS};
+    }
+
+    const anim = forceAnimation ? ' fade-in' : '';
+
+    if (phase.kind === 'timer') {
+      app.innerHTML = `
+        <section class="frame${anim}">
+          <div class="header">
+            <div class="kicker">NIHILGUH // TEMPO DA TOCA</div>
+            <div class="badge">${state.session.metas_batidas}/${state.session.metas_total} METAS</div>
+          </div>
+          <div class="timer-content">
+            <div class="timer-label">TEMPO RESTANTE DE LIVE</div>
+            <div class="clock" id="live-clock">${clock(liveSeconds())}</div>
+            <div class="timer-sub">A comunidade já conquistou <b>+${esc(state.session.tempo_ganho_min)} min</b>.</div>
+            <div class="timer-stats">
+              <span class="pill">${esc(state.session.tempo_base_min)} min base</span>
+              <span class="pill">${esc(state.session.tempo_total_min)} min totais</span>
+            </div>
+          </div>
+          <div class="footer">
+            <div class="reward">A toca fecha quando o relógio zerar.</div>
+            <div class="phase-left">metas voltam em <span id="phase-clock">${clock(phaseClock())}</span></div>
+          </div>
+        </section>`;
+      return;
+    }
+
+    const goal = goals[phase.index];
+    const pct = Math.min(100, Math.round(Number(goal.progresso || 0) / Math.max(1, Number(goal.alvo || 1)) * 100));
+    const progressText = goal.tipo === 'visitors'
+      ? `${goal.progresso}/${goal.alvo} visitantes`
+      : (goal.concluida ? 'concluída' : 'aguardando conclusão');
+
+    app.innerHTML = `
+      <section class="frame${anim}">
+        <div class="header">
+          <div class="kicker">MISSÃO DA TOCA</div>
+          <div class="badge ${goal.concluida ? 'done' : ''}">${goal.concluida ? '✓ CONCLUÍDA' : esc(progressText)}</div>
+        </div>
+        <div class="content">
+          <div class="goal-index">MISSÃO ${phase.index + 1} DE ${goals.length}</div>
+          <div class="title">${esc(goal.meta)}</div>
+          <div class="explain">${esc(explanation(goal))}</div>
+          ${goal.tipo === 'visitors'
+            ? `<div class="cta">ACESSE <b>${esc(siteLabel())}</b></div>`
+            : ''}
+          <div class="progress"><i style="width:${goal.concluida ? 100 : pct}%"></i></div>
+        </div>
+        <div class="footer">
+          <div class="reward">+${esc(goal.recompensa_min)} MIN DE LIVE</div>
+          <div class="phase-left">próxima tela em <span id="phase-clock">${clock(phaseClock())}</span></div>
+        </div>
+      </section>`;
+  }
+
+  function tick(){
+    if (!state?.session) return;
+    if (Date.now() >= phase.endsAt) advancePhase();
+
+    const phaseEl = document.getElementById('phase-clock');
+    if (phaseEl) phaseEl.textContent = clock(phaseClock());
+
+    const liveEl = document.getElementById('live-clock');
+    if (liveEl) liveEl.textContent = clock(liveSeconds());
+  }
+
+  async function refresh(){
+    if (!api?.backendUrl) {
+      app.innerHTML = '';
+      return;
+    }
+    try {
+      const next = await api.state();
+      const oldSession = state?.session?.session_id || '';
+      state = next;
+      if (state?.session?.session_id !== oldSession) phaseStarted = false;
+      render(false);
+    } catch (err) {
+      console.warn('Rotating goals overlay unavailable:', err);
+    }
+  }
+
+  refresh();
+  setInterval(refresh, REFRESH_MS);
+  setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>
