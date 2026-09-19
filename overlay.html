@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NihilGuh — Metas Overlay</title>
+<style>
+html,body{margin:0;background:transparent;color:#fff;font-family:Inter,Arial,sans-serif;overflow:hidden}
+.wrap{width:min(760px,94vw);padding:18px 22px;border:1px solid rgba(206,148,255,.42);border-radius:22px;background:linear-gradient(135deg,rgba(12,4,20,.91),rgba(38,12,58,.82));box-shadow:0 0 50px rgba(124,49,210,.28);backdrop-filter:blur(12px)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:18px}
+.kicker{font-size:13px;letter-spacing:.16em;color:#d9aaff;font-weight:800}
+.clock{font-size:36px;font-weight:900;letter-spacing:-.04em}
+.goal{margin-top:12px;font-size:17px}
+.bar{height:7px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:9px}.fill{height:100%;background:linear-gradient(90deg,#8c45e8,#e3a7ff);width:0}
+.small{font-size:12px;opacity:.68;margin-top:7px}
+</style>
+<script src="site.config.js"></script><script src="goals-api.js"></script>
+</head><body><div id="app"></div>
+<script>
+(() => {
+ const app=document.getElementById('app'),api=NihilGuhAPI; let state=null;
+ const clock=s=>[Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(v=>String(v).padStart(2,'0')).join(':');
+ const seconds=()=>{if(!state?.session)return 0;return Math.max(0,Math.floor(Number(state.session.tempo_total_min||0)*60-(Date.now()-new Date(state.session.inicio))/1000));};
+ function render(){
+  if(!state?.session){app.innerHTML='';return;}
+  const goals=state.goals||[], next=goals.find(g=>!g.concluida)||goals[goals.length-1];
+  const pct=next?Math.min(100,Math.round(Number(next.progresso||0)/Math.max(1,Number(next.alvo||1))*100)):100;
+  app.innerHTML='<div class="wrap"><div class="top"><div><div class="kicker">MISSÕES DA TOCA</div><div class="small">'+state.session.metas_batidas+'/'+state.session.metas_total+' metas · +'+state.session.tempo_ganho_min+' min</div></div><div class="clock" id="clock">'+clock(seconds())+'</div></div>'+(next?'<div class="goal">'+next.meta+' <b>+'+next.recompensa_min+' min</b></div><div class="bar"><div class="fill" style="width:'+pct+'%"></div></div><div class="small">'+(next.tipo==='visitors'?next.progresso+'/'+next.alvo+' visitantes':'aguardando conclusão')+'</div>':'')+'</div>';
+ }
+ async function refresh(){if(!api.backendUrl){app.innerHTML='';return;}try{state=await api.state();render();}catch(e){}}
+ setInterval(()=>{const c=document.getElementById('clock');if(c)c.textContent=clock(seconds())},1000);
+ refresh();setInterval(refresh,15000);
+})();
+</script></body></html>
