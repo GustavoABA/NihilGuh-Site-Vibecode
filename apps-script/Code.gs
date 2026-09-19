@@ -79,7 +79,8 @@ function config_() {
     baseMinutes:Number(map['Tempo base da live (min)'] || 240),
     offlineChecks:Number(map['Checks offline para encerrar'] || 5),
     channel:String(map['Canal Twitch'] || 'nihilguh'),
-    decapi:String(map['DecAPI URL'] || 'https://decapi.me/twitch/uptime?channel=nihilguh&offline_msg=offline')
+    decapi:String(map['DecAPI URL'] || 'https://decapi.me/twitch/uptime?channel=nihilguh&offline_msg=offline'),
+    livepixPerMinute:Number(map['LivePix R$ por minuto'] || 10)
   };
 }
 
@@ -163,7 +164,11 @@ function stats_(sessionId) {
     if(gVals[r][7]===true){completed++;gained+=Number(gVals[r][8]||0);}
   }
   const eVals=sh_(TABS.EVENTOS).getDataRange().getValues();
-  for(let r=1;r<eVals.length;r++) if(String(eVals[r][1])===sessionId && String(eVals[r][2])==='manual_time') gained+=Number(eVals[r][5]||0);
+  for(let r=1;r<eVals.length;r++) {
+    if(String(eVals[r][1])!==sessionId) continue;
+    const eventType=String(eVals[r][2]);
+    if(eventType==='manual_time' || eventType==='livepix_time') gained+=Number(eVals[r][5]||0);
+  }
   return {base,gained,total:base+gained,completed,goalCount};
 }
 
@@ -231,6 +236,7 @@ function streamEvent_(p) {
     provider,user,listener,eventId,currency,message,raw
   ]);
 
+  if(normalized==='livepix_donation') updateLivePix_(id);
   updateStreamGoals_(id);
   syncLiveRow_(activeSession_());
   updatePanel_();
@@ -246,6 +252,7 @@ function normalizeProvider_(value) {
 function classifyStreamEvent_(provider, listener, p) {
   const l=String(listener || '').toLowerCase();
 
+  if(l === 'tip-latest' && String(p.isLivePix || '') === 'true') return 'livepix_donation';
   if(l === 'follower-latest') return 'stream_growth';
 
   if(l === 'subscriber-latest') {
@@ -291,7 +298,7 @@ function updateStreamGoals_(sessionId) {
       if(provider==='youtube') counts.growth_youtube++;
       if(provider==='kick') counts.growth_kick++;
       if(['twitch','youtube','kick'].includes(provider)) providers.add(provider);
-    } else if(type==='stream_support'){
+    } else if(type==='stream_support' || type==='livepix_donation'){
       counts.support_total++;
       if(['twitch','youtube','kick'].includes(provider)) providers.add(provider);
     } else if(type==='stream_raid'){
@@ -314,6 +321,42 @@ function updateStreamGoals_(sessionId) {
       goals.getRange(r+1,8).setValue(true);
       goals.getRange(r+1,10).setValue(completedAt);
       event_('goal_complete',sessionId,'streamelements',String(vals[r][2]),Number(vals[r][8]||0));
+    }
+  }
+}
+
+function updateLivePix_(sessionId) {
+  const cfg=config_();
+  const events=sh_(TABS.EVENTOS).getDataRange().getValues();
+  let total=0;
+  let awarded=0;
+
+  for(let r=1;r<events.length;r++){
+    if(String(events[r][1])!==sessionId) continue;
+    const type=String(events[r][2]);
+    if(type==='livepix_donation'){
+      const currency=String(events[r][10] || 'BRL').toUpperCase();
+      if(currency && currency!=='BRL') continue;
+      total+=Number(events[r][5] || 0);
+    } else if(type==='livepix_time'){
+      awarded+=Number(events[r][5] || 0);
+    }
+  }
+
+  const earned=Math.floor(total / Math.max(1, cfg.livepixPerMinute));
+  const delta=Math.max(0, earned-awarded);
+  if(delta>0){
+    event_('livepix_time',sessionId,'livepix','R$ '+total.toFixed(2)+' acumulados',delta);
+  }
+
+  const goals=sh_(TABS.METAS), vals=goals.getDataRange().getValues(), completedAt=stamp_();
+  for(let r=1;r<vals.length;r++){
+    if(String(vals[r][0])!==sessionId || String(vals[r][4])!=='livepix_amount') continue;
+    goals.getRange(r+1,7).setValue(total);
+    if(vals[r][7]!==true && total>=Number(vals[r][5]||0)){
+      goals.getRange(r+1,8).setValue(true);
+      goals.getRange(r+1,10).setValue(completedAt);
+      event_('goal_complete',sessionId,'livepix',String(vals[r][2]),0);
     }
   }
 }
