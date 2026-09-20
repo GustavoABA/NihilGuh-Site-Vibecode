@@ -41,7 +41,9 @@
 
     state(){ return API.call('state'); },
     history(days = cfg.historyDays || 5){ return API.call('history', { days }); },
+    records(){ return API.call('records'); },
     visit(){ return API.call('visit', { visitorId: API.visitorId() }); },
+    vote(optionId){ return API.call('vote', { visitorId: API.visitorId(), optionId }); },
     admin(action, adminKey, params = {}){ return API.call(action, { ...params, adminKey }); }
   };
 
