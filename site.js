@@ -1,11 +1,11 @@
 (() => {
-  const ART_PARTS = 7;
+  const ART_PARTS = 11;
 
   async function hydrateReferenceArt() {
     try {
       const parts = await Promise.all(
         Array.from({ length: ART_PARTS }, (_, i) =>
-          fetch(`assets/reference-parts/${i}.txt?v=3`, { cache: 'no-store' }).then(r => {
+          fetch(`assets/reference-v3/${i}.txt?v=6`, { cache: 'no-store' }).then(r => {
             if (!r.ok) throw new Error(`Parte ${i} não encontrada`);
             return r.text();
           })
