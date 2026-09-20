@@ -24,6 +24,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Rebuild verified reference artwork
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64
+
+          parts = []
+          for i in range(11):
+              p = Path(f"assets/reference-v3/{i}.txt")
+              if not p.exists():
+                  raise SystemExit(f"missing {p}")
+              parts.append(p.read_text(encoding="utf-8").strip())
+
+          encoded = "".join(parts)
+          if len(encoded) != 125016:
+              raise SystemExit(f"unexpected base64 length: {len(encoded)}")
+
+          data = base64.b64decode(encoded, validate=True)
+          if len(data) != 93760 or data[:4] != b"RIFF" or data[8:12] != b"WEBP":
+              raise SystemExit("invalid WEBP payload")
+
+          Path("assets/reference-design.webp").write_bytes(data)
+          print("reference-design.webp rebuilt:", len(data), "bytes")
+          PY
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
