@@ -84,6 +84,7 @@ function config_() {
     channel:String(map['Canal Twitch'] || 'nihilguh'),
     decapi:String(map['DecAPI URL'] || 'https://decapi.me/twitch/uptime?channel=nihilguh&offline_msg=offline'),
     livepixPerMinute:Number(map['LivePix R$ por minuto'] || 10),
+    maxBonusMinutes:Number(map['Máximo de bônus da live (min)'] || 240),
     livepixBridgePlatform:String(map['LivePix bridge platform'] || 'twitch').toLowerCase()
   };
 }
@@ -175,6 +176,8 @@ function stats_(sessionId) {
     const eventType=String(eVals[r][2]);
     if(INTERACTION_TIME_EVENTS.includes(eventType)) gained+=Number(eVals[r][5]||0);
   }
+  const maxBonus=Number(config_().maxBonusMinutes || 240);
+  gained=Math.min(Math.max(0,gained),maxBonus);
   return {base,gained,total:base+gained,completed,goalCount};
 }
 
