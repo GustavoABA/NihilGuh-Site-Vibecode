@@ -12,10 +12,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="site.css?v=6" />
   <link rel="stylesheet" href="goals.css?v=1" />
-  <link rel="stylesheet" href="assets-v2.css?v=1" />
+  <link rel="stylesheet" href="assets-v2.css?v=3" />
 </head>
 <body>
-  <div class="scene-bg" aria-hidden="true"></div>
+  <div class="scene-bg" aria-hidden="true">
+    <img class="scene-bg-image" src="assets/bg-wonderland.webp?v=3" alt="" decoding="async" fetchpriority="high" />
+  </div>
   <div class="fog-layer fog-one" aria-hidden="true"></div>
   <div class="fog-layer fog-two" aria-hidden="true"></div>
   <div id="tsparticles" aria-hidden="true"></div>
@@ -33,7 +35,9 @@
   <main class="site-shell">
     <section class="hero glassless" id="top">
       <div class="hero-copy reveal">
-        <a class="logo-art reference-crop" href="#top" aria-label="NihilGuh"></a>
+        <a class="logo-art" href="#top" aria-label="NihilGuh">
+          <img src="assets/logo-nihilguh.webp?v=3" alt="NihilGuh" decoding="async" fetchpriority="high" />
+        </a>
         <p class="tagline">MAIS QUE LIVES, UM REFÚGIO</p>
         <h1>“Um lugar onde<br>o caos também<br>é casa.”</h1>
         <p class="hero-text">Lives, jogos, conversas e um pouco de insanidade. Seja bem-vindo à toca.</p>
@@ -57,7 +61,9 @@
       </div>
 
       <div class="hero-art-wrap reveal">
-        <div class="hero-art reference-crop" role="img" aria-label="NihilGuh em cenário Wonderland"></div>
+        <div class="hero-art" role="img" aria-label="NihilGuh em cenário Wonderland">
+          <img src="assets/hero-resting.webp?v=3" alt="" decoding="async" fetchpriority="high" />
+        </div>
         <div class="hero-bloom"></div>
       </div>
     </section>
@@ -106,7 +112,9 @@
 
         <div class="ramen-art-wrap" aria-hidden="true">
           <div class="thanks-note">Obrigado<br>pelo apoio!<br>♡</div>
-          <div class="ramen-art reference-crop"></div>
+          <div class="ramen-art">
+            <img src="assets/ramen-catboy.webp?v=3" alt="" loading="lazy" decoding="async" />
+          </div>
         </div>
       </section>
 
@@ -125,7 +133,9 @@
     </section>
 
     <footer class="glass reveal">
-      <div class="footer-logo reference-crop" aria-hidden="true"></div>
+      <div class="footer-logo" aria-hidden="true">
+        <img src="assets/logo-nihilguh.webp?v=3" alt="" loading="lazy" decoding="async" />
+      </div>
       <span>Mais que lives, um refúgio.</span>
       <span class="footer-love">Feito com ♡ para todos os pequenos caos.</span>
     </footer>
