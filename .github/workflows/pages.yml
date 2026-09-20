@@ -50,6 +50,69 @@ jobs:
           print("reference-design.webp rebuilt:", len(data), "bytes")
           PY
 
+      - name: Rebuild standalone visual assets at higher quality
+        shell: bash
+        run: |
+          python -m pip install --quiet pillow
+          python - <<'PY'
+          from pathlib import Path
+          import base64
+          from PIL import Image, ImageFilter, ImageFile
+
+          ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+          def rebuild_from_parts(folder, outfile, append=''):
+              parts = sorted(Path(folder).glob('*.txt'))
+              if not parts:
+                  return False
+              encoded = ''.join(p.read_text(encoding='utf-8').strip() for p in parts) + append
+              while len(encoded) % 4:
+                  encoded += '='
+              data = base64.b64decode(encoded)
+              if data[:4] != b'RIFF' or data[8:12] != b'WEBP':
+                  raise SystemExit(f'invalid source for {outfile}')
+              Path(outfile).write_bytes(data)
+              return True
+
+          # These are the complete standalone assets captured before the temporary
+          # low-resolution blobs were committed. The hero lost two trailing base64
+          # characters during the interrupted upload, both zero-value bytes.
+          rebuild_from_parts('assets/generated-parts/bg-wonderland', 'assets/bg-wonderland.webp')
+          rebuild_from_parts('assets/generated-parts/logo-nihilguh', 'assets/logo-nihilguh.webp')
+          rebuild_from_parts('assets/generated-parts/hero-resting', 'assets/hero-resting.webp', 'AA')
+
+          targets = {
+              'assets/bg-wonderland.webp': 2600,
+              'assets/logo-nihilguh.webp': 3000,
+              'assets/hero-resting.webp': 1800,
+              'assets/ramen-catboy.webp': 1800,
+          }
+
+          for path, target_w in targets.items():
+              p = Path(path)
+              if not p.exists():
+                  continue
+              try:
+                  im = Image.open(p)
+                  im.load()
+              except Exception as exc:
+                  print('skip decode', p, exc)
+                  continue
+
+              if im.width < target_w:
+                  ratio = target_w / im.width
+                  size = (target_w, max(1, round(im.height * ratio)))
+                  im = im.resize(size, Image.Resampling.LANCZOS)
+
+              # Mild sharpening counters browser interpolation without creating
+              # crunchy outlines or halos.
+              if im.mode not in ('RGB','RGBA'):
+                  im = im.convert('RGBA' if 'A' in im.getbands() else 'RGB')
+              im = im.filter(ImageFilter.UnsharpMask(radius=.85, percent=108, threshold=2))
+              im.save(p, 'WEBP', quality=94, method=6, alpha_quality=100, exact=True)
+              print(p, im.size, p.stat().st_size)
+          PY
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
