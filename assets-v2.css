@@ -1,0 +1,109 @@
+
+/* Dedicated generated visual assets — no more sprite cropping */
+.scene-bg{
+  background-image:url("assets/bg-wonderland.webp")!important;
+  background-position:center top!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  filter:brightness(.48) saturate(1.18)!important;
+  transform:scale(1.01)!important;
+}
+.scene-bg::after{
+  background:
+    radial-gradient(circle at 52% 28%,rgba(121,45,187,.08),transparent 34%),
+    linear-gradient(180deg,rgba(5,1,9,.04),rgba(7,3,13,.34) 58%,rgba(3,1,6,.82))!important;
+}
+
+.reference-crop{background-repeat:no-repeat!important}
+
+.logo-art{
+  width:min(370px,82vw)!important;
+  height:auto!important;
+  aspect-ratio:2172/724!important;
+  background-image:url("assets/logo-nihilguh.webp")!important;
+  background-size:contain!important;
+  background-position:left center!important;
+  background-repeat:no-repeat!important;
+  filter:drop-shadow(0 0 22px rgba(188,96,255,.32))!important;
+  border-radius:0!important;
+}
+.footer-logo{
+  width:150px!important;
+  height:auto!important;
+  aspect-ratio:2172/724!important;
+  background-image:url("assets/logo-nihilguh.webp")!important;
+  background-size:contain!important;
+  background-position:left center!important;
+  background-repeat:no-repeat!important;
+  opacity:.92!important;
+}
+
+.hero-art-wrap{
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:flex-end!important;
+  overflow:visible!important;
+}
+.hero-art{
+  width:100%!important;
+  height:100%!important;
+  min-height:520px!important;
+  aspect-ratio:auto!important;
+  background-image:url("assets/hero-resting.webp")!important;
+  background-size:contain!important;
+  background-position:right bottom!important;
+  background-repeat:no-repeat!important;
+  border-radius:0!important;
+  filter:drop-shadow(0 28px 45px rgba(0,0,0,.42)) saturate(1.04)!important;
+  mask-image:none!important;
+  -webkit-mask-image:none!important;
+}
+.hero-bloom{
+  right:4%!important;
+  top:18%!important;
+  width:56%!important;
+  height:58%!important;
+}
+
+.ramen-art{
+  background-image:url("assets/ramen-catboy.webp")!important;
+  background-size:contain!important;
+  background-position:center bottom!important;
+  background-repeat:no-repeat!important;
+  filter:drop-shadow(0 20px 34px rgba(0,0,0,.34)) saturate(1.04)!important;
+  mask-image:none!important;
+  -webkit-mask-image:none!important;
+}
+.ramen-art-wrap{overflow:visible!important}
+
+.intro-cat{
+  background-image:url("assets/bg-wonderland.webp")!important;
+  background-size:190% auto!important;
+  background-position:23% 2%!important;
+  background-repeat:no-repeat!important;
+  filter:saturate(1.25) brightness(1.12) drop-shadow(0 0 45px rgba(172,70,255,.6))!important;
+}
+
+.community-card::after{
+  background-image:url("assets/hero-resting.webp")!important;
+  background-size:contain!important;
+  background-repeat:no-repeat!important;
+  background-position:right bottom!important;
+  width:180px!important;
+  height:145px!important;
+  right:-28px!important;
+  bottom:-28px!important;
+  opacity:.13!important;
+  filter:saturate(.85) brightness(.72)!important;
+}
+
+@media(max-width:1120px){
+  .hero-art{min-height:500px!important;background-position:center bottom!important}
+}
+@media(max-width:760px){
+  .scene-bg{background-position:48% top!important}
+  .logo-art{width:min(310px,88vw)!important}
+  .hero-art{min-height:390px!important;background-size:contain!important;background-position:center bottom!important}
+  .ramen-art-wrap{min-height:340px!important}
+  .ramen-art{background-size:contain!important;background-position:center bottom!important}
+}
