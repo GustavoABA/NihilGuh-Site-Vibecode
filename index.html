@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="site.css?v=6" />
   <link rel="stylesheet" href="goals.css?v=1" />
   <link rel="stylesheet" href="assets-v2.css?v=3" />
+  <link rel="stylesheet" href="interactions.css?v=1" />
 </head>
 <body>
   <div class="scene-bg" aria-hidden="true">
@@ -83,7 +84,9 @@
       </div>
     </section>
 
-    <section class="goals-card glass reveal" id="live-goals" aria-live="polite">\n      <div class="goals-offline-note">Carregando missões da toca…</div>\n    </section>\n\n    <section class="content-grid">
+    <section class="goals-card glass reveal" id="live-goals" aria-live="polite">\n      <div class="goals-offline-note">Carregando missões da toca…</div>\n    </section>\n\n    <section class="live-game glass reveal" id="community-game" aria-live="polite"></section>
+
+    <section class="content-grid">
       <section class="support-card glass reveal" id="apoiar">
         <div class="support-copy">
           <span class="eyebrow">APOIE A TOCA</span>
@@ -147,5 +150,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@tsparticles/engine@4/tsparticles.engine.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tsparticles/slim@4/tsparticles.slim.bundle.min.js"></script>
   <script src="site.config.js"></script>\n  <script src="goals-api.js"></script>\n  <script src="site.js"></script>\n  <script src="goals.js"></script>
+  <script src="interactions.js"></script>
 </body>
 </html>
