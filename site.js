@@ -48,8 +48,6 @@
     const watchLive = document.getElementById('watch-live');
     const toast = document.getElementById('toast');
 
-    await hydrateReferenceArt();
-
     function removeIntro() {
       if (!intro) return;
       intro.classList.add('done');
