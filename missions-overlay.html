@@ -82,6 +82,7 @@ body{display:grid;place-items:center}
 
   function urgentView(){
     const g=game();
+    if(g.ending) return '<section class="frame critical"><div class="header"><div class="kicker">A TOCA ESTÁ FECHANDO</div><div class="badges"><span class="badge urgent">FIM DA SESSÃO</span></div></div><div class="main boss-main"><div class="boss-face">◖⌣◗</div><div class="title">ATÉ A PRÓXIMA QUEDA</div><div class="explain">A Morte Súbita terminou. O relógio chegou ao fim e a sequência de encerramento foi iniciada.</div></div><div class="footer"><div class="reward">WE’RE ALL MAD HERE.</div><div class="phase-left">00:00:00</div></div></section>';
     if(g.suddenDeath&&g.suddenDeath.status==='active') return missionView('☠ MORTE SÚBITA',g.suddenDeath,true);
     if(g.lastChance&&g.lastChance.status==='active') return missionView('⚠ ÚLTIMA CHANCE',g.lastChance,true);
     if(g.communityMission&&g.communityMission.status==='active') return missionView('A TOCA ESCOLHEU',g.communityMission,false);
