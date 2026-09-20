@@ -25,19 +25,22 @@ function doGet(e) {
     const action = p.action || 'state';
     let data;
 
-    if (action === 'state') data = publicState_();
+    if (action === 'state') { interactionTick_(); data = publicState_(); }
     else if (action === 'history') data = history_(Number(p.days || 5));
+    else if (action === 'records') data = { records:interactionRecords_() };
     else if (action === 'visit') data = registerVisit_(String(p.visitorId || ''));
+    else if (action === 'vote') data = interactionVote_(String(p.visitorId || ''), String(p.optionId || ''));
     else if (action === 'streamEvent') {
       requireBridge_(p.bridgeKey);
       data = streamEvent_(p);
     } else {
       requireAdmin_(p.adminKey);
-      if (action === 'sync') data = (pollTwitchStatus(), publicState_());
+      if (action === 'sync') data = (pollTwitchStatus(), interactionTick_(), publicState_());
       else if (action === 'forceStart') data = forceStart_();
       else if (action === 'forceEnd') data = forceEnd_();
       else if (action === 'completeGoal') data = completeGoal_(String(p.goalId || ''), 'admin');
       else if (action === 'addMinutes') data = addMinutes_(Number(p.minutes || 0));
+      else if (['triggerChaos','triggerVote','triggerRandom','triggerLastChance','bossDamage','resetGame'].includes(action)) data = interactionAdmin_(action,p);
       else if (action === 'bridgeInfo') data = { bridgeKey:PropertiesService.getScriptProperties().getProperty('BRIDGE_KEY') || '' };
       else throw new Error('unknown_action');
     }
@@ -140,6 +143,7 @@ function startSession_(origin) {
   const goals = sh_(TABS.METAS);
   cfg.goals.forEach(g => goals.appendRow([id,date_(d),g.id,g.meta,g.tipo,g.alvo,0,false,g.reward,'']));
   event_('session_start',id,origin || 'manual',cfg.baseMinutes);
+  interactionSessionStart_(id,d);
   updatePanel_();
   return activeSession_();
 }
@@ -150,6 +154,7 @@ function closeSession_(row, origin) {
   const stats = stats_(id);
   live.getRange(row,4,1,7).setValues([[stamp_(), 'ENCERRADA', live.getRange(row,6).getValue(), stats.gained, stats.total, stats.completed, stats.goalCount]]);
   event_('session_end',id,origin || 'manual',stats.total);
+  interactionSessionEnd_(id);
   updatePanel_();
   return { ended:true, sessionId:id };
 }
@@ -168,7 +173,7 @@ function stats_(sessionId) {
   for(let r=1;r<eVals.length;r++) {
     if(String(eVals[r][1])!==sessionId) continue;
     const eventType=String(eVals[r][2]);
-    if(eventType==='manual_time' || eventType==='livepix_time') gained+=Number(eVals[r][5]||0);
+    if(INTERACTION_TIME_EVENTS.includes(eventType)) gained+=Number(eVals[r][5]||0);
   }
   return {base,gained,total:base+gained,completed,goalCount};
 }
@@ -188,6 +193,7 @@ function registerVisit_(visitorId) {
   for(let r=1;r<vals.length;r++) if(String(vals[r][0])===id && String(vals[r][2])===visitorId){row=r+1;break;}
   if(row) visitors.getRange(row,5).setValue(stamp_());
   else visitors.appendRow([id,date_(),visitorId,stamp_(),stamp_()]);
+  if(!row) interactionEvent_(id,{type:'visit',listener:'site_visit',amount:1});
   const count=uniqueVisitors_(id);
   updateVisitorGoals_(id,count);
   syncLiveRow_(activeSession_());
@@ -240,6 +246,7 @@ function streamEvent_(p) {
 
   if(normalized==='livepix_donation') updateLivePix_(id);
   updateStreamGoals_(id);
+  interactionEvent_(id,{type:normalized,listener,provider,amount,user});
   syncLiveRow_(activeSession_());
   updatePanel_();
 
@@ -400,7 +407,7 @@ function publicState_() {
     session_id:id,data:String(row[1]),inicio:String(row[2]),fim:String(row[3]||''),status:String(row[4]),
     tempo_base_min:Number(row[5]||0),tempo_ganho_min:Number(row[6]||0),tempo_total_min:Number(row[7]||0),
     metas_batidas:Number(row[8]||0),metas_total:Number(row[9]||0)
-  }, goals };
+  }, goals, game:interactionPublicState_(id) };
 }
 
 function history_(days) {
@@ -420,6 +427,9 @@ function history_(days) {
 
 function event_(type, sessionId, origin, detail, value) {
   sh_(TABS.EVENTOS).appendRow([stamp_(),sessionId || '',type || '',origin || '',detail || '',value === undefined ? '' : value]);
+  if(type === 'goal_complete' && typeof interactionGoalComplete_ === 'function') {
+    interactionGoalComplete_(sessionId, detail);
+  }
 }
 
 function updatePanel_() {
