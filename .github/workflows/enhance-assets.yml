@@ -46,5 +46,6 @@ jobs:
             echo "No visual changes."
           else
             git commit -m "Enhance site artwork with anime super-resolution"
+            git pull --rebase origin main
             git push
           fi
