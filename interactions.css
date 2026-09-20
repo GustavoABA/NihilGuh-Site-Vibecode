@@ -1,0 +1,32 @@
+
+.live-game{margin-top:18px;border-radius:22px;padding:20px;position:relative;overflow:hidden}
+.live-game::before{content:"";position:absolute;inset:-30%;background:radial-gradient(circle at 25% 30%,rgba(166,68,255,.16),transparent 34%),radial-gradient(circle at 78% 20%,rgba(230,125,255,.08),transparent 28%);pointer-events:none}
+.game-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(310px,.75fr);gap:18px}
+.boss-card,.event-card,.vote-card,.records-card,.loot-card{border:1px solid rgba(211,155,255,.14);background:rgba(7,3,13,.58);border-radius:18px;padding:17px}
+.boss-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.boss-name{font-family:'Cormorant Garamond',serif;font-size:2rem;line-height:1;font-weight:700;margin:5px 0 0}
+.boss-hp-text{font-size:.72rem;color:#d7b6ef;font-weight:800;font-variant-numeric:tabular-nums}
+.boss-stage{position:relative;margin-top:14px;padding:16px;border-radius:15px;background:linear-gradient(135deg,rgba(73,23,111,.2),rgba(4,2,8,.72));overflow:hidden}
+.boss-face{font-size:3.2rem;filter:drop-shadow(0 0 20px rgba(200,116,255,.46));transform-origin:center;display:inline-block}
+.boss-stage.hit .boss-face{animation:bossHit .42s cubic-bezier(.2,.8,.2,1)}
+.boss-stage.dead .boss-face{animation:bossDead 1.2s ease both}
+.boss-bar{height:13px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.07);border-radius:999px;overflow:hidden;margin-top:12px}
+.boss-bar>i{display:block;height:100%;width:var(--boss-pct,100%);background:linear-gradient(90deg,#6f21c9,#ba54ff,#f0a6ff);box-shadow:0 0 18px rgba(187,84,255,.55);transition:width .55s cubic-bezier(.2,.8,.2,1)}
+.boss-help{font-size:.74rem;color:#a996bb;margin-top:10px;line-height:1.45}
+.game-stack{display:grid;gap:12px}
+.event-card strong{display:block;font-size:1.05rem;margin:5px 0;color:#f3dcff}.event-card p{margin:0;color:#ad9abb;font-size:.78rem;line-height:1.45}
+.event-card.chaos{border-color:rgba(255,76,214,.4);box-shadow:inset 0 0 35px rgba(255,56,214,.07)}.event-card.urgent{border-color:rgba(255,76,105,.5);animation:urgentPulse 1.25s ease-in-out infinite}.event-card.success{border-color:rgba(98,255,155,.38)}
+.mission-progress{height:7px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;margin-top:11px}.mission-progress i{display:block;height:100%;background:linear-gradient(90deg,#9d48f1,#e7b2ff);border-radius:inherit;transition:width .4s}
+.vote-card h3,.records-card h3,.loot-card h3{font-family:'Cormorant Garamond',serif;font-size:1.6rem;margin:4px 0 12px}
+.vote-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vote-option{border:1px solid rgba(210,159,255,.18);background:rgba(18,8,29,.78);color:#fff;border-radius:13px;padding:13px;text-align:left;cursor:pointer;transition:.18s}.vote-option:hover{transform:translateY(-2px);border-color:#b764ff}.vote-option[disabled]{opacity:.55;cursor:default;transform:none}.vote-option b,.vote-option small{display:block}.vote-option small{color:#a995ba;margin-top:5px;line-height:1.35}.vote-count{margin-top:8px;color:#dca8ff;font-size:.68rem;font-weight:900}
+.records-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.record{padding:11px;border-radius:12px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05)}.record span,.record b{display:block}.record span{font-size:.61rem;letter-spacing:.08em;color:#a38fb5;text-transform:uppercase}.record b{margin-top:6px;font-size:.92rem}.record small{display:block;margin-top:3px;color:#7f6e90;font-size:.62rem}
+.loot-list{display:flex;gap:8px;flex-wrap:wrap}.loot-chip{padding:8px 10px;border-radius:999px;background:rgba(157,72,241,.1);border:1px solid rgba(191,112,255,.2);font-size:.7rem;color:#dfb7ff}
+.game-offline{position:relative;z-index:1;text-align:center;padding:16px;color:#a995ba}
+body.mode-chaos .live-game{box-shadow:0 0 55px rgba(255,54,222,.13),var(--shadow)}body.mode-critical .live-game{box-shadow:0 0 52px rgba(255,61,101,.15),var(--shadow)}
+@keyframes bossHit{0%,100%{transform:none}20%{transform:translate(-8px,2px) rotate(-4deg) scale(1.08);filter:brightness(2)}40%{transform:translate(7px,-3px) rotate(3deg)}65%{transform:translate(-3px,1px) rotate(-1deg)}}
+@keyframes bossDead{0%{transform:scale(1);opacity:1}40%{transform:scale(1.35) rotate(-8deg);filter:brightness(3) blur(1px)}100%{transform:scale(.4) rotate(18deg);opacity:.15;filter:blur(8px)}}
+@keyframes urgentPulse{50%{box-shadow:0 0 28px rgba(255,65,102,.22),inset 0 0 25px rgba(255,52,92,.05)}}
+@media(max-width:900px){.game-grid{grid-template-columns:1fr}.records-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.live-game{padding:13px}.vote-options{grid-template-columns:1fr}.records-grid{grid-template-columns:1fr 1fr}.boss-name{font-size:1.65rem}}
+@media(prefers-reduced-motion:reduce){.boss-stage.hit .boss-face,.boss-stage.dead .boss-face,.event-card.urgent{animation:none!important}}
