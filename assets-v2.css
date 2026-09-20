@@ -1,40 +1,64 @@
+/* Dedicated visual assets rendered as real <img> elements.
+   This avoids background-sprite resampling, CSS masks and filter rasterization. */
 
-/* Dedicated generated visual assets — no more sprite cropping */
 .scene-bg{
-  background-image:url("assets/bg-wonderland.webp")!important;
-  background-position:center top!important;
-  background-size:cover!important;
-  background-repeat:no-repeat!important;
-  filter:brightness(.48) saturate(1.18)!important;
-  transform:scale(1.01)!important;
+  position:fixed!important;
+  inset:0!important;
+  overflow:hidden!important;
+  background:none!important;
+  filter:none!important;
+  transform:none!important;
 }
-.scene-bg::after{
+.scene-bg-image{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  object-position:center top;
+  image-rendering:auto;
+  -webkit-font-smoothing:antialiased;
+  backface-visibility:hidden;
+}
+.scene-bg::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
   background:
-    radial-gradient(circle at 52% 28%,rgba(121,45,187,.08),transparent 34%),
-    linear-gradient(180deg,rgba(5,1,9,.04),rgba(7,3,13,.34) 58%,rgba(3,1,6,.82))!important;
+    radial-gradient(circle at 52% 28%,rgba(121,45,187,.07),transparent 35%),
+    linear-gradient(180deg,rgba(5,1,9,.06),rgba(7,3,13,.34) 58%,rgba(3,1,6,.82));
 }
+.scene-bg::after{display:none!important}
 
 .reference-crop{background-repeat:no-repeat!important}
 
 .logo-art{
+  display:block!important;
   width:min(370px,82vw)!important;
   height:auto!important;
-  aspect-ratio:2172/724!important;
-  background-image:url("assets/logo-nihilguh.webp")!important;
-  background-size:contain!important;
-  background-position:left center!important;
-  background-repeat:no-repeat!important;
-  filter:drop-shadow(0 0 22px rgba(188,96,255,.32))!important;
+  aspect-ratio:auto!important;
+  background:none!important;
+  filter:none!important;
   border-radius:0!important;
+}
+.logo-art img,.footer-logo img{
+  display:block;
+  width:100%;
+  height:auto;
+  object-fit:contain;
+  image-rendering:auto;
+}
+.logo-art img{
+  filter:drop-shadow(0 0 18px rgba(188,96,255,.28));
 }
 .footer-logo{
   width:150px!important;
   height:auto!important;
-  aspect-ratio:2172/724!important;
-  background-image:url("assets/logo-nihilguh.webp")!important;
-  background-size:contain!important;
-  background-position:left center!important;
-  background-repeat:no-repeat!important;
+  aspect-ratio:auto!important;
+  background:none!important;
   opacity:.92!important;
 }
 
@@ -46,17 +70,27 @@
 }
 .hero-art{
   width:100%!important;
-  height:100%!important;
-  min-height:520px!important;
+  min-height:0!important;
+  height:auto!important;
   aspect-ratio:auto!important;
-  background-image:url("assets/hero-resting.webp")!important;
-  background-size:contain!important;
-  background-position:right bottom!important;
-  background-repeat:no-repeat!important;
+  background:none!important;
   border-radius:0!important;
-  filter:drop-shadow(0 28px 45px rgba(0,0,0,.42)) saturate(1.04)!important;
+  filter:none!important;
   mask-image:none!important;
   -webkit-mask-image:none!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:flex-end!important;
+}
+.hero-art img{
+  display:block;
+  width:min(100%,800px);
+  height:auto;
+  max-height:560px;
+  object-fit:contain;
+  object-position:right bottom;
+  image-rendering:auto;
+  filter:none;
 }
 .hero-bloom{
   right:4%!important;
@@ -66,26 +100,38 @@
 }
 
 .ramen-art{
-  background-image:url("assets/ramen-catboy.webp")!important;
-  background-size:contain!important;
-  background-position:center bottom!important;
-  background-repeat:no-repeat!important;
-  filter:drop-shadow(0 20px 34px rgba(0,0,0,.34)) saturate(1.04)!important;
+  position:absolute!important;
+  inset:0!important;
+  background:none!important;
+  filter:none!important;
   mask-image:none!important;
   -webkit-mask-image:none!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+}
+.ramen-art img{
+  display:block;
+  width:min(100%,800px);
+  height:auto;
+  max-height:100%;
+  object-fit:contain;
+  object-position:center bottom;
+  image-rendering:auto;
+  filter:none;
 }
 .ramen-art-wrap{overflow:visible!important}
 
 .intro-cat{
-  background-image:url("assets/bg-wonderland.webp")!important;
+  background-image:url("assets/bg-wonderland.webp?v=3")!important;
   background-size:190% auto!important;
   background-position:23% 2%!important;
   background-repeat:no-repeat!important;
-  filter:saturate(1.25) brightness(1.12) drop-shadow(0 0 45px rgba(172,70,255,.6))!important;
+  filter:saturate(1.18) brightness(1.08) drop-shadow(0 0 38px rgba(172,70,255,.55))!important;
 }
 
 .community-card::after{
-  background-image:url("assets/hero-resting.webp")!important;
+  background-image:url("assets/hero-resting.webp?v=3")!important;
   background-size:contain!important;
   background-repeat:no-repeat!important;
   background-position:right bottom!important;
@@ -93,17 +139,17 @@
   height:145px!important;
   right:-28px!important;
   bottom:-28px!important;
-  opacity:.13!important;
-  filter:saturate(.85) brightness(.72)!important;
+  opacity:.12!important;
+  filter:none!important;
 }
 
 @media(max-width:1120px){
-  .hero-art{min-height:500px!important;background-position:center bottom!important}
+  .hero-art img{width:min(100%,720px);max-height:500px}
 }
 @media(max-width:760px){
-  .scene-bg{background-position:48% top!important}
+  .scene-bg-image{object-position:48% top}
   .logo-art{width:min(310px,88vw)!important}
-  .hero-art{min-height:390px!important;background-size:contain!important;background-position:center bottom!important}
+  .hero-art img{width:min(100%,620px);max-height:420px;object-position:center bottom}
   .ramen-art-wrap{min-height:340px!important}
-  .ramen-art{background-size:contain!important;background-position:center bottom!important}
+  .ramen-art img{width:min(100%,620px);object-position:center bottom}
 }
