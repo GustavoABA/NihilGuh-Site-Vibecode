@@ -151,7 +151,6 @@
       root.hidden=true;
       return;
     }
-    root.hidden=false;
     try{
       state=await api.state();
       if(forceRecords || !records || Date.now()-recordsAt>120000){
