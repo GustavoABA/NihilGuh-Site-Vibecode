@@ -947,3 +947,272 @@ footer > span{
     grid-template-columns:1fr!important;
   }
 }
+
+
+/* ---------- Responsive structure fix — responsive35 ---------- */
+html,
+body{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  overflow-x:hidden!important;
+}
+
+body{
+  background-position:center top!important;
+  background-size:cover!important;
+}
+
+.world-stage{
+  max-width:var(--stage-max)!important;
+  min-width:0!important;
+}
+
+.site-shell{
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  margin:0!important;
+}
+
+/* Keep browser autofill inside the dark visual system. */
+.support-form input:-webkit-autofill,
+.support-form input:-webkit-autofill:hover,
+.support-form input:-webkit-autofill:focus{
+  -webkit-text-fill-color:#fff!important;
+  caret-color:#fff!important;
+  -webkit-box-shadow:0 0 0 1000px #0b0612 inset!important;
+  box-shadow:0 0 0 1000px #0b0612 inset!important;
+  border-color:rgba(210,164,255,.28)!important;
+}
+
+/* Error feedback appears once, in the toast. */
+.toast{
+  width:max-content;
+  max-width:calc(100vw - 24px);
+  text-align:center;
+  line-height:1.35;
+}
+
+/* Tablet / narrow desktop becomes a true single-column hero. */
+@media(max-width:1180px){
+  .world-stage{
+    width:calc(100% - 24px)!important;
+    max-width:100%!important;
+  }
+
+  .hero{
+    width:100%!important;
+    min-height:0!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:16px!important;
+    padding-top:12px!important;
+  }
+
+  .hero-copy{
+    width:100%!important;
+    max-width:680px!important;
+    min-width:0!important;
+    padding:0!important;
+  }
+
+  .hero h1{
+    width:max-content!important;
+    max-width:100%!important;
+    font-size:clamp(2.7rem,7vw,4rem)!important;
+  }
+
+  .hero-art-wrap{
+    order:0!important;
+    width:100%!important;
+    min-height:420px!important;
+    padding:0 0 2.5rem!important;
+    margin:0!important;
+    justify-content:center!important;
+  }
+
+  .hero-art{
+    width:100%!important;
+    height:100%!important;
+    justify-content:center!important;
+    aspect-ratio:auto!important;
+    border-radius:0!important;
+    mask:none!important;
+    -webkit-mask:none!important;
+  }
+
+  .hero-art img{
+    width:min(520px,82vw)!important;
+    max-width:520px!important;
+    max-height:420px!important;
+    margin:0 0 -2.5rem!important;
+    object-position:center bottom!important;
+  }
+
+  .content-grid{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+
+  .support-card{
+    grid-template-columns:minmax(0,1.2fr) minmax(260px,.8fr)!important;
+  }
+}
+
+@media(max-width:700px){
+  .world-stage{
+    width:100%!important;
+    max-width:100%!important;
+    margin:0!important;
+  }
+
+  .site-shell{
+    width:100%!important;
+    max-width:100%!important;
+    padding:12px 10px 28px!important;
+  }
+
+  .scene-bg{
+    inset:0!important;
+    -webkit-mask-image:none!important;
+    mask-image:none!important;
+  }
+
+  .hero{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    width:100%!important;
+    overflow:visible!important;
+  }
+
+  .hero-copy{
+    width:100%!important;
+    max-width:none!important;
+    padding:0!important;
+  }
+
+  .logo-art{
+    width:min(280px,78vw)!important;
+  }
+
+  .hero h1{
+    width:max-content!important;
+    max-width:100%!important;
+    font-size:clamp(2.45rem,11vw,3.25rem)!important;
+    line-height:.94!important;
+  }
+
+  .hero-text{
+    max-width:100%!important;
+    font-size:.92rem!important;
+  }
+
+  .hero-actions{
+    width:100%!important;
+    max-width:none!important;
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+
+  .neon-btn{
+    width:100%!important;
+    max-width:100%!important;
+  }
+
+  .platforms{
+    width:100%!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  }
+
+  .hero-art-wrap{
+    order:0!important;
+    width:100%!important;
+    min-height:300px!important;
+    padding-bottom:1.5rem!important;
+  }
+
+  .hero-art img{
+    width:min(360px,88vw)!important;
+    max-width:360px!important;
+    max-height:300px!important;
+    margin-bottom:-1.5rem!important;
+  }
+
+  .goals-card,
+  .support-card,
+  .community-card,
+  footer{
+    width:100%!important;
+    max-width:100%!important;
+  }
+
+  .support-card{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+
+  .ramen-art-wrap{
+    order:-1!important;
+    min-height:230px!important;
+  }
+
+  .ramen-art img{
+    width:min(235px,72vw)!important;
+    max-width:235px!important;
+    max-height:220px!important;
+  }
+
+  .thanks-note{
+    left:12px!important;
+    top:12px!important;
+    font-size:.95rem!important;
+  }
+
+  .support-copy{
+    width:100%!important;
+    min-width:0!important;
+    padding:18px 14px!important;
+  }
+
+  .support-tabs{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+
+  .form-row,
+  .support-actions{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+
+  .quick-values{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  }
+
+  .community-links{
+    grid-template-columns:1fr 1fr!important;
+  }
+}
+
+@media(max-width:420px){
+  .site-shell{
+    padding-inline:8px!important;
+  }
+
+  .hero h1{
+    font-size:clamp(2.3rem,10.8vw,2.9rem)!important;
+  }
+
+  .hero-art-wrap{
+    min-height:270px!important;
+  }
+
+  .hero-art img{
+    width:min(330px,90vw)!important;
+    max-width:330px!important;
+    max-height:270px!important;
+  }
+
+  .support-tabs{
+    grid-template-columns:1fr!important;
+  }
+
+  .community-links{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+}
