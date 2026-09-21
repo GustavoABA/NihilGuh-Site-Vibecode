@@ -1,0 +1,14 @@
+NIHILGUH — DEPLOY DO APPS SCRIPT
+
+1. Abra https://script.new
+2. Apague o conteúdo de Code.gs.
+3. Cole todo o conteúdo de apps-script/ALL_IN_ONE.gs.
+4. Execute a função setup() uma vez e autorize.
+5. Clique em Implantar > Nova implantação > Aplicativo da Web.
+6. Executar como: Eu.
+7. Quem tem acesso: Qualquer pessoa.
+8. Clique em Implantar.
+9. Copie a URL final que termina em /exec.
+10. Abra o site uma vez com ?backend=URL_DO_EXEC para salvar a conexão.
+
+A URL /exec é emitida pelo Google somente após a implantação do projeto na sua conta.
