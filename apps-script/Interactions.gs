@@ -1,7 +1,7 @@
 
 /**
  * NihilGuh — Live Interaction Engine
- * Boss da Toca, Última Chance, Modo Caos, votação, combos,
+ * Boss do Mundo Louco, Última Chance, Modo Caos, votação, combos,
  * eventos controlados, Morte Súbita, loot e recordes.
  *
  * State is intentionally small and lives in ScriptProperties.
@@ -151,7 +151,7 @@ function interactionMetricSnapshot_(sessionId) {
 
 function interactionMissionTemplates_(kind) {
   const common = [
-    {id:'visitors',label:'Abrir a Toca',description:'Novos visitantes únicos entram no site.',metric:'visitors',target:5,rewardMinutes:15,bossDamage:80},
+    {id:'visitors',label:'Abrir o Mundo Louco',description:'Novos visitantes únicos entram no Mundo Louco.',metric:'visitors',target:5,rewardMinutes:15,bossDamage:80},
     {id:'growth',label:'Sorrisos Novos',description:'Novos follows/inscrições entram na comunidade.',metric:'growth_total',target:3,rewardMinutes:15,bossDamage:90},
     {id:'livepix',label:'Oferenda ao Caos',description:'A comunidade acumula apoio pelo LivePix.',metric:'livepix_amount',target:20,rewardMinutes:20,bossDamage:120}
   ];
@@ -224,7 +224,7 @@ function interactionBossDamage_(game, sessionId, amount, source, detail) {
     game.boss.defeated = true;
     game.boss.defeatedAt = stamp_();
     event_('boss_defeated', sessionId, 'community', game.boss.name, INTERACTION_CFG.bossDefeatMinutes);
-    interactionAddMinutes_(sessionId, 'boss_bonus', INTERACTION_CFG.bossDefeatMinutes, 'Boss da Toca derrotado');
+    interactionAddMinutes_(sessionId, 'boss_bonus', INTERACTION_CFG.bossDefeatMinutes, 'Boss do Mundo Louco derrotado');
     interactionUnlockLoot_(game, sessionId, 'wallpaper_boss', 'Wallpaper — Cheshire do Abismo', 'assets/reference-design.webp');
   }
   return dealt;
@@ -292,7 +292,7 @@ function interactionStartChaos_(game, sessionId, forcedType) {
   const options = [
     {type:'livepix_double',label:'OFERENDAS 2×',description:'LivePix gera o dobro do bônus de tempo nesta janela.'},
     {type:'growth_double',label:'SEGUIDORES 2×',description:'Follows/inscrições contam em dobro para missões e ferem mais o boss.'},
-    {type:'boss_frenzy',label:'FRENESI DO BOSS',description:'Todo dano causado ao Boss da Toca vale o dobro.'}
+    {type:'boss_frenzy',label:'FRENESI DO BOSS',description:'Todo dano causado ao Boss do Mundo Louco vale o dobro.'}
   ];
   const selected = options.find(x => x.type === forcedType) || interactionPick_(options);
   const now = interactionNowMs_();
