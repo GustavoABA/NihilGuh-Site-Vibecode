@@ -47,6 +47,7 @@ function doGet(e) {
       else if (action === 'addMinutes') data = addMinutes_(Number(p.minutes || 0));
       else if (['triggerChaos','triggerVote','triggerRandom','triggerLastChance','bossDamage','resetGame'].includes(action)) data = interactionAdmin_(action,p);
       else if (action === 'bridgeInfo') data = { bridgeKey:PropertiesService.getScriptProperties().getProperty('BRIDGE_KEY') || '' };
+      else if (action === 'livepixTest') data = { connected:Boolean(livepixAccessToken_()) };
       else throw new Error('unknown_action');
     }
 
@@ -109,7 +110,7 @@ function livepixAccessToken_() {
       grant_type:'client_credentials',
       client_id:clientId,
       client_secret:clientSecret,
-      scope:'messages:write messages:read payments:read'
+      scope:'messages:write'
     },
     muteHttpExceptions:true,
     followRedirects:true
