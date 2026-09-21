@@ -256,3 +256,183 @@
   }
   .hero-art-wrap{top:1rem!important;margin-bottom:-1.5rem!important}
 }
+
+
+/* ===== Center stage layout — center16 =====
+   The Wonderland background now belongs only to the centered site stage.
+   The outer viewport stays dark/clean. Hero is rendered as a normal complete image. */
+html,body{
+  background:#050208!important;
+}
+
+.world-stage{
+  position:relative!important;
+  width:min(1440px,calc(100% - 42px))!important;
+  min-height:100vh!important;
+  margin:0 auto!important;
+  overflow:visible!important;
+  isolation:isolate!important;
+}
+
+.site-shell{
+  position:relative!important;
+  z-index:2!important;
+  width:100%!important;
+  margin:0!important;
+  padding:24px 0 34px!important;
+}
+
+/* Background lives only inside the centered wrapper. */
+.world-stage .scene-bg{
+  position:absolute!important;
+  inset:0!important;
+  z-index:-5!important;
+  overflow:hidden!important;
+  background:#09030f!important;
+  filter:none!important;
+  opacity:1!important;
+  transform:none!important;
+  border-radius:0!important;
+}
+
+.world-stage .scene-bg-image{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  display:block!important;
+  object-fit:cover!important;
+  object-position:center top!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0!important;
+  filter:blur(2.2px) brightness(.87) saturate(1.03)!important;
+  transform:scale(1.012)!important;
+  transform-origin:center center!important;
+  opacity:1!important;
+}
+
+/* Blur is restricted to the centered stage. */
+.world-stage .scene-bg::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:1!important;
+  pointer-events:none!important;
+  background:
+    linear-gradient(180deg,rgba(4,1,8,.06) 0%,rgba(4,1,8,.13) 50%,rgba(3,1,7,.42) 100%),
+    radial-gradient(circle at 50% 30%,transparent 0 42%,rgba(4,1,8,.07) 72%,rgba(3,1,7,.20) 100%)!important;
+}
+.world-stage .scene-bg::after{display:none!important}
+
+/* Fog and particles are also contained by the central stage. */
+.world-stage .fog-layer{
+  position:absolute!important;
+}
+.world-stage #tsparticles{
+  position:absolute!important;
+  inset:0!important;
+  overflow:hidden!important;
+  pointer-events:none!important;
+  z-index:-2!important;
+}
+
+/* Hero: normal complete transparent image, no negative margins, no crop, no side margin. */
+.hero{
+  overflow:visible!important;
+}
+.hero-art-wrap{
+  position:relative!important;
+  z-index:4!important;
+  top:0!important;
+  margin:0!important;
+  padding:0!important;
+  min-height:480px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  overflow:visible!important;
+}
+.hero-art{
+  position:relative!important;
+  z-index:4!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  display:block!important;
+  overflow:visible!important;
+  background:none!important;
+  mask:none!important;
+  -webkit-mask:none!important;
+}
+.hero-art img{
+  position:relative!important;
+  z-index:4!important;
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  filter:none!important;
+  opacity:1!important;
+  transform:none!important;
+  image-rendering:auto!important;
+}
+
+/* Remove the old overlap/negative-margin pass entirely. */
+.goals-card,
+.live-game{
+  position:relative!important;
+  z-index:3!important;
+}
+
+@media(max-width:1120px){
+  .world-stage{
+    width:min(100% - 24px,980px)!important;
+  }
+  .site-shell{width:100%!important}
+  .hero-art-wrap{
+    min-height:0!important;
+    margin:0!important;
+    top:0!important;
+  }
+  .hero-art img{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+  }
+}
+
+@media(max-width:760px){
+  .world-stage{
+    width:calc(100% - 18px)!important;
+  }
+  .world-stage .scene-bg-image{
+    object-position:52% top!important;
+    filter:blur(1.6px) brightness(.86) saturate(1.02)!important;
+    transform:scale(1.008)!important;
+  }
+  .hero-art-wrap{
+    min-height:0!important;
+    margin:0!important;
+    top:0!important;
+    padding:0!important;
+  }
+  .hero-art{
+    margin:0!important;
+    padding:0!important;
+  }
+  .hero-art img{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:0!important;
+    object-position:center center!important;
+  }
+}

@@ -12,16 +12,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="site.css?v=6" />
   <link rel="stylesheet" href="goals.css?v=1" /><link rel="stylesheet" href="interactions.css?v=1" />
-  <link rel="stylesheet" href="render-clean.css?v=pix15" />
+  <link rel="stylesheet" href="render-clean.css?v=center16" />
 </head>
 <body>
-  <div class="scene-bg" aria-hidden="true">
-    <img class="scene-bg-image" src="assets/bg.webp?v=hq13" alt="" decoding="async" fetchpriority="high" />
-  </div>
-  <div class="fog-layer fog-one" aria-hidden="true"></div>
-  <div class="fog-layer fog-two" aria-hidden="true"></div>
-  <div id="tsparticles" aria-hidden="true"></div>
-
   <div class="intro" id="intro" aria-hidden="true">
     <div class="intro-vignette"></div>
     <div class="intro-cat"></div>
@@ -32,7 +25,15 @@
     <div class="intro-flash"></div>
   </div>
 
-  <main class="site-shell">
+  <div class="world-stage">
+    <div class="scene-bg" aria-hidden="true">
+      <img class="scene-bg-image" src="assets/bg.webp?v=center16" alt="" decoding="async" fetchpriority="high" />
+    </div>
+    <div class="fog-layer fog-one" aria-hidden="true"></div>
+    <div class="fog-layer fog-two" aria-hidden="true"></div>
+    <div id="tsparticles" aria-hidden="true"></div>
+
+    <main class="site-shell">
     <section class="hero glassless" id="top">
       <div class="hero-copy reveal">
         <a class="logo-art" href="#top" aria-label="NihilGuh">
@@ -146,7 +147,8 @@
       <span>Mais que lives, um refúgio.</span>
       <span class="footer-love">Feito com ♡ para todos os pequenos caos.</span>
     </footer>
-  </main>
+    </main>
+  </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
