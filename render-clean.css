@@ -1,54 +1,143 @@
+/* NihilGuh UX/UI refactor — ux30
+   One visual layer for layout, assets and responsive behavior.
+   Functional styles remain in site.css, goals.css and interactions.css. */
 
-/* NihilGuh render pipeline v10
-   Main artwork is loaded as four independent, real files. No sprite crops,
-   no base64 reconstruction, no blur/filter on logo/character artwork. */
+:root{
+  --stage-max:1440px;
+  --stage-gutter:clamp(16px,2.4vw,36px);
+  --panel-bg:rgba(10,4,18,.68);
+  --panel-bg-strong:rgba(8,3,15,.82);
+  --panel-line:rgba(213,164,255,.18);
+  --focus:#dda7ff;
+}
+
+html{background:#050208}
+
+body{
+  background:
+    linear-gradient(180deg,rgba(4,1,8,.04) 0%,rgba(4,1,8,.12) 56%,rgba(3,1,7,.32) 100%),
+    url("assets/bg.webp?v=hq13") center top / cover fixed no-repeat;
+}
+
+[hidden]{display:none!important}
+
+/* ---------- Central content atmosphere ---------- */
+.world-stage{
+  position:relative;
+  width:min(var(--stage-max),calc(100% - 48px));
+  min-height:100vh;
+  margin:0 auto;
+  isolation:isolate;
+}
 
 .scene-bg{
-  position:fixed!important;
-  inset:0!important;
-  z-index:-5!important;
-  overflow:hidden!important;
-  background:#09030f!important;
-  filter:none!important;
-  opacity:1!important;
-  transform:none!important;
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+  background:rgba(8,3,14,.14);
+  -webkit-backdrop-filter:blur(7px) brightness(.82) saturate(1.04);
+  backdrop-filter:blur(7px) brightness(.82) saturate(1.04);
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 4%,#000 96%,transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0,#000 4%,#000 96%,transparent 100%);
 }
-.scene-bg-image{
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  max-width:none!important;
-  display:block!important;
-  object-fit:cover!important;
-  object-position:center top!important;
-  filter:none!important;
-  opacity:1!important;
-  transform:none!important;
-  image-rendering:auto!important;
-  backface-visibility:visible!important;
-}
-.scene-bg::before{
-  content:""!important;
-  position:absolute!important;
-  inset:0!important;
-  z-index:1!important;
-  pointer-events:none!important;
-  background:
-    linear-gradient(180deg,rgba(4,1,8,.08) 0%,rgba(4,1,8,.18) 52%,rgba(3,1,7,.58) 100%),
-    radial-gradient(circle at 50% 26%,transparent 0 38%,rgba(3,1,7,.12) 72%,rgba(3,1,7,.32) 100%)!important;
-  filter:none!important;
-  opacity:1!important;
-}
-.scene-bg::after{display:none!important}
 
-/* Glass belongs to panels only. It must never wrap the artwork itself with a filter. */
-.glass{
-  background:rgba(10,4,18,.56)!important;
-  border:1px solid rgba(207,151,255,.18)!important;
-  -webkit-backdrop-filter:blur(10px)!important;
-  backdrop-filter:blur(10px)!important;
+.scene-bg-image{display:none}
+
+.scene-bg::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(180deg,rgba(5,2,10,.03),rgba(5,2,10,.10) 52%,rgba(3,1,7,.30)),
+    radial-gradient(circle at 50% 22%,transparent 0 38%,rgba(3,1,7,.08) 72%,rgba(3,1,7,.18) 100%);
 }
+
+.scene-bg::after{display:none}
+
+.fog-layer{
+  position:absolute;
+  z-index:1;
+  pointer-events:none;
+  width:70%;
+  height:32rem;
+  border-radius:50%;
+  filter:blur(72px);
+  opacity:.13;
+  mix-blend-mode:screen;
+}
+.fog-one{left:-18%;top:18rem}
+.fog-two{right:-18%;top:5rem}
+
+#tsparticles{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  overflow:hidden;
+}
+
+.site-shell{
+  position:relative;
+  z-index:2;
+  width:100%;
+  margin:0;
+  padding:clamp(18px,2.2vw,30px) var(--stage-gutter) 48px;
+}
+
+/* ---------- Shared panels ---------- */
+.glass{
+  background:linear-gradient(180deg,rgba(16,8,29,.68),rgba(8,3,15,.80));
+  border:1px solid var(--panel-line);
+  box-shadow:0 20px 60px rgba(0,0,0,.30);
+  -webkit-backdrop-filter:blur(16px) saturate(1.08);
+  backdrop-filter:blur(16px) saturate(1.08);
+}
+
+section[id],aside[id]{scroll-margin-top:24px}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible{
+  outline:2px solid var(--focus);
+  outline-offset:3px;
+}
+
+/* ---------- Real artwork assets ---------- */
+.logo-art{
+  display:block;
+  width:clamp(250px,23vw,350px);
+  height:auto;
+  aspect-ratio:auto;
+  overflow:visible;
+  background:none;
+  mask:none;
+  -webkit-mask:none;
+  filter:none;
+}
+.logo-art img,
+.footer-logo img{
+  display:block;
+  width:100%;
+  max-width:100%;
+  height:auto;
+  object-fit:contain;
+  filter:none;
+  opacity:1;
+  transform:none;
+  image-rendering:auto;
+}
+
+.footer-logo{
+  width:145px;
+  height:auto;
+  aspect-ratio:auto;
+  background:none;
+  opacity:1;
+}
+
 .hero.glassless,
 .hero-art-wrap,
 .hero-art,
@@ -56,651 +145,391 @@
 .ramen-art-wrap,
 .ramen-art,
 .footer-logo{
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
-  filter:none!important;
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
 }
 
-/* Dedicated logo asset. Displayed far below source resolution for crisp retina rendering. */
-.logo-art{
-  display:block!important;
-  width:clamp(260px,25vw,360px)!important;
-  height:auto!important;
-  aspect-ratio:3/1!important;
-  overflow:visible!important;
-  background:none!important;
-  mask:none!important;
-  -webkit-mask:none!important;
-}
-.logo-art img,
-.footer-logo img{
-  width:100%!important;
-  height:auto!important;
-  max-width:100%!important;
-  display:block!important;
-  object-fit:contain!important;
-  filter:none!important;
-  opacity:1!important;
-  transform:none!important;
-  image-rendering:auto!important;
-}
-.footer-logo{
-  width:145px!important;
-  height:auto!important;
-  background:none!important;
-  opacity:1!important;
+/* ---------- Hero ---------- */
+.hero{
+  position:relative;
+  z-index:4;
+  min-height:620px;
+  display:grid;
+  grid-template-columns:minmax(340px,.86fr) minmax(420px,1.14fr);
+  align-items:center;
+  gap:clamp(18px,3vw,52px);
+  overflow:visible;
 }
 
-/* Hero is a standalone transparent image. Never stretch above its useful display size. */
+.hero-copy{
+  position:relative;
+  z-index:5;
+  max-width:540px;
+  padding:0;
+}
+
+.tagline{
+  margin:2px 0 30px clamp(0px,3vw,58px);
+  font-size:.72rem;
+  letter-spacing:.24em;
+}
+
+.hero h1{
+  font-size:clamp(2.75rem,4.15vw,4.8rem);
+  line-height:.91;
+  margin-bottom:18px;
+}
+
+.hero-text{
+  max-width:430px;
+  font-size:1rem;
+  line-height:1.65;
+}
+
+.hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin:25px 0 24px;
+}
+
+.neon-btn{
+  min-height:48px;
+  padding-inline:22px;
+}
+
+.watch-live{display:none}
+.is-live .watch-live{display:inline-flex}
+.is-live .offline-primary{display:none}
+
+.platforms{
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px;
+}
+.platform{
+  min-width:58px;
+  font-size:.78rem;
+}
+.platform i{
+  width:50px;
+  height:50px;
+}
+
 .hero-art-wrap{
-  min-height:480px!important;
-  display:flex!important;
-  align-items:flex-end!important;
-  justify-content:flex-end!important;
-  overflow:visible!important;
+  position:relative;
+  z-index:4;
+  min-height:620px;
+  align-self:stretch;
+  display:flex;
+  align-items:flex-end;
+  justify-content:flex-end;
+  padding:0 0 5rem;
+  margin:0;
+  overflow:visible;
 }
+
 .hero-art{
-  width:100%!important;
-  height:100%!important;
-  min-height:0!important;
-  display:flex!important;
-  align-items:flex-end!important;
-  justify-content:flex-end!important;
-  background:none!important;
-  border-radius:0!important;
-  mask:none!important;
-  -webkit-mask:none!important;
-  overflow:visible!important;
+  position:relative;
+  z-index:4;
+  width:100%;
+  height:100%;
+  min-height:0;
+  margin:0;
+  padding:0;
+  display:flex;
+  align-items:flex-end;
+  justify-content:flex-end;
+  overflow:visible;
+  background:none;
+  border-radius:0;
+  mask:none;
+  -webkit-mask:none;
+  filter:none;
 }
+
 .hero-art img{
-  display:block!important;
-  width:min(620px,100%)!important;
-  max-width:620px!important;
-  height:auto!important;
-  max-height:none!important;
-  object-fit:contain!important;
-  object-position:right bottom!important;
-  filter:none!important;
-  opacity:1!important;
-  transform:none!important;
-  image-rendering:auto!important;
+  position:relative;
+  z-index:4;
+  display:block;
+  width:min(620px,46vw,100%);
+  max-width:620px;
+  height:auto;
+  max-height:540px;
+  margin:0 0 -5rem;
+  padding:0;
+  object-fit:contain;
+  object-position:right bottom;
+  mask:none;
+  -webkit-mask:none;
+  filter:none;
+  opacity:1;
+  transform:none;
+  image-rendering:auto;
 }
+
 .hero-bloom{
-  z-index:-1!important;
-  filter:blur(30px)!important;
-  pointer-events:none!important;
+  position:absolute;
+  right:4%;
+  bottom:10%;
+  z-index:1;
+  width:56%;
+  height:55%;
+  background:radial-gradient(circle,rgba(174,72,255,.18),transparent 68%);
+  filter:blur(32px);
+  pointer-events:none;
 }
 
-/* Ramen artwork is another independent transparent image. */
-.ramen-art-wrap{
-  position:relative!important;
-  min-height:360px!important;
-  overflow:visible!important;
+/* ---------- Live state ---------- */
+.live-strip{
+  margin-top:8px;
+  border-radius:18px;
 }
-.ramen-art{
-  position:absolute!important;
-  inset:0!important;
-  display:flex!important;
-  align-items:flex-end!important;
-  justify-content:center!important;
-  background:none!important;
-  mask:none!important;
-  -webkit-mask:none!important;
-  overflow:visible!important;
-}
-.ramen-art img{
-  display:block!important;
-  width:min(360px,96%)!important;
-  max-width:360px!important;
-  height:auto!important;
-  max-height:350px!important;
-  object-fit:contain!important;
-  object-position:center bottom!important;
-  filter:none!important;
-  opacity:1!important;
-  transform:none!important;
-  image-rendering:auto!important;
+.live-go{
+  min-height:44px;
+  display:inline-flex;
+  align-items:center;
 }
 
-/* Decorative cat uses the dedicated background only for the intro;
-   it never replaces the main artwork files. */
-.intro-cat{
-  background-image:url("assets/bg.webp?v=hq13")!important;
-  background-repeat:no-repeat!important;
-  background-size:190% auto!important;
-  background-position:23% 2%!important;
+/* ---------- Goals ---------- */
+.goals-card{
+  margin:20px 0;
+  padding:clamp(20px,2.2vw,28px);
+  border-radius:24px;
+}
+.goals-card.is-offline{
+  padding-block:20px;
+}
+.goals-card.is-offline .goals-head{margin-bottom:12px}
+.goals-card.is-offline .goals-head h2{
+  font-size:clamp(1.55rem,2.8vw,2.35rem);
+}
+.goals-status{font-size:.75rem}
+.goals-offline-note{
+  padding:14px 16px;
+  font-size:.86rem;
+  line-height:1.5;
+}
+.goals-history{margin-top:18px}
+.goal-row{min-height:58px}
+.goal-meta{font-size:.8rem}
+
+/* ---------- Community game / records ---------- */
+.live-game{
+  margin-top:18px;
+  padding:18px;
+  border-radius:22px;
+}
+.game-offline{display:none}
+.event-card p,
+.boss-help{font-size:.82rem}
+.record span{font-size:.68rem}
+.record b{font-size:1rem}
+
+/* ---------- Lower content ---------- */
+.content-grid{
+  grid-template-columns:minmax(0,1.7fr) minmax(300px,.8fr);
+  gap:18px;
+  margin-top:18px;
 }
 
-/* Remove the old cropped reference-design decoration. */
-.community-card::after{
-  background-image:url("assets/hero.webp?v=hq13")!important;
-  background-repeat:no-repeat!important;
-  background-size:contain!important;
-  background-position:right bottom!important;
-  filter:none!important;
-  opacity:.10!important;
-}
-
-/* Keep assets sharp after entrance animation finishes. */
-.art-settled .logo-art img,
-.art-settled .hero-art img,
-.art-settled .ramen-art img{
-  transform:none!important;
-  filter:none!important;
-}
-
-@media(max-width:1120px){
-  .hero-art-wrap{min-height:430px!important}
-  .hero-art img{width:min(560px,100%)!important;max-width:560px!important}
-}
-@media(max-width:760px){
-  .scene-bg-image{object-position:52% top!important}
-  .logo-art{width:min(310px,86vw)!important}
-  .hero-art-wrap{min-height:340px!important;justify-content:center!important}
-  .hero-art{justify-content:center!important}
-  .hero-art img{width:min(430px,100%)!important;max-width:430px!important;object-position:center bottom!important}
-  .ramen-art-wrap{min-height:300px!important}
-  .ramen-art img{width:min(300px,92%)!important;max-width:300px!important;max-height:300px!important}
-}
-
-
-/* LivePix API checkout */
-.support-tabs button{
-  border:0;
-  font:inherit;
-  color:inherit;
-  cursor:pointer;
-}
+.support-card,.community-card{border-radius:22px}
+.support-form label{font-size:.78rem}
+.support-tabs{height:auto;min-height:42px}
+.support-tabs>*{min-height:42px;font-size:.78rem;padding:8px 10px}
+.quick-values button{min-height:44px}
+.send-btn{min-height:46px;height:auto}
 .livepix-api-status{
-  margin-top:10px;
   min-height:18px;
-  font-size:.68rem;
-  line-height:1.35;
+  margin-top:12px;
+  font-size:.75rem;
+  line-height:1.45;
   color:#b8a7c8;
 }
 .livepix-api-status.ready{color:#bdf8d1}
-.send-btn:disabled{
-  opacity:.62;
-  cursor:wait;
-  filter:saturate(.72);
+.send-btn:disabled{opacity:.62;cursor:wait;filter:saturate(.72)}
+
+.ramen-art-wrap{
+  position:relative;
+  min-height:360px;
+  overflow:visible;
+}
+.ramen-art{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  background:none;
+  mask:none;
+  -webkit-mask:none;
+  overflow:visible;
+}
+.ramen-art img{
+  display:block;
+  width:min(360px,96%);
+  max-width:360px;
+  height:auto;
+  max-height:350px;
+  object-fit:contain;
+  object-position:center bottom;
+  filter:none;
+  opacity:1;
+  transform:none;
 }
 
-
-/* Mundo Louco layout pass ml15 */
-.scene-bg{overflow:hidden!important}
-.scene-bg-image{
-  filter:blur(.55px) brightness(.89) saturate(1.02)!important;
-  transform:scale(1.008)!important;
-  transform-origin:center top!important;
-}
-.scene-bg::before{
-  background:
-    linear-gradient(180deg,rgba(4,1,8,.05) 0%,rgba(4,1,8,.16) 52%,rgba(3,1,7,.52) 100%),
-    radial-gradient(circle at 50% 26%,transparent 0 36%,rgba(3,1,7,.10) 68%,rgba(3,1,7,.28) 100%)!important;
-}
-.hero{position:relative!important;overflow:visible!important;z-index:4!important}
-.hero-art-wrap{
-  position:relative!important;
-  z-index:9!important;
-  top:2.65rem!important;
-  margin-bottom:-5rem!important;
-  overflow:visible!important;
-}
-.hero-art,.hero-art img{position:relative!important;z-index:9!important}
-.goals-card{position:relative!important;z-index:3!important;overflow:visible!important}
-.live-game{position:relative!important;z-index:2!important}
-@media(max-width:760px){
-  .scene-bg-image{
-    filter:blur(.35px) brightness(.88) saturate(1.01)!important;
-    transform:scale(1.006)!important;
-  }
-  .hero-art-wrap{top:1rem!important;margin-bottom:-1.5rem!important}
+.community-card::after{
+  background-image:url("assets/hero.webp?v=hq13");
+  background-repeat:no-repeat;
+  background-size:contain;
+  background-position:right bottom;
+  filter:none;
+  opacity:.08;
 }
 
-
-/* ===== Center stage layout — center16 =====
-   The Wonderland background now belongs only to the centered site stage.
-   The outer viewport stays dark/clean. Hero is rendered as a normal complete image. */
-html,body{
-  background:#050208!important;
+/* ---------- Intro ---------- */
+.intro-cat{
+  background-image:url("assets/bg.webp?v=hq13");
+  background-repeat:no-repeat;
+  background-size:190% auto;
+  background-position:23% 2%;
 }
 
-.world-stage{
-  position:relative!important;
-  width:min(1440px,calc(100% - 42px))!important;
-  min-height:100vh!important;
-  margin:0 auto!important;
-  overflow:visible!important;
-  isolation:isolate!important;
+.intro-skip{
+  position:absolute;
+  top:max(18px,env(safe-area-inset-top));
+  right:max(18px,env(safe-area-inset-right));
+  z-index:5;
+  min-height:42px;
+  padding:0 16px;
+  border:1px solid rgba(220,176,255,.30);
+  border-radius:999px;
+  background:rgba(10,4,18,.62);
+  color:#f6eaff;
+  cursor:pointer;
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
 }
 
-.site-shell{
-  position:relative!important;
-  z-index:2!important;
-  width:100%!important;
-  margin:0!important;
-  padding:24px 0 34px!important;
-}
-
-/* Background lives only inside the centered wrapper. */
-.world-stage .scene-bg{
-  position:absolute!important;
-  inset:0!important;
-  z-index:-5!important;
-  overflow:hidden!important;
-  background:#09030f!important;
-  filter:none!important;
-  opacity:1!important;
-  transform:none!important;
-  border-radius:0!important;
-}
-
-.world-stage .scene-bg-image{
-  position:absolute!important;
-  inset:0!important;
-  width:100%!important;
-  height:100%!important;
-  display:block!important;
-  object-fit:cover!important;
-  object-position:center top!important;
-  max-width:none!important;
-  margin:0!important;
-  padding:0!important;
-  filter:blur(2.2px) brightness(.87) saturate(1.03)!important;
-  transform:scale(1.012)!important;
-  transform-origin:center center!important;
-  opacity:1!important;
-}
-
-/* Blur is restricted to the centered stage. */
-.world-stage .scene-bg::before{
-  content:""!important;
-  position:absolute!important;
-  inset:0!important;
-  z-index:1!important;
-  pointer-events:none!important;
-  background:
-    linear-gradient(180deg,rgba(4,1,8,.06) 0%,rgba(4,1,8,.13) 50%,rgba(3,1,7,.42) 100%),
-    radial-gradient(circle at 50% 30%,transparent 0 42%,rgba(4,1,8,.07) 72%,rgba(3,1,7,.20) 100%)!important;
-}
-.world-stage .scene-bg::after{display:none!important}
-
-/* Fog and particles are also contained by the central stage. */
-.world-stage .fog-layer{
-  position:absolute!important;
-}
-.world-stage #tsparticles{
-  position:absolute!important;
-  inset:0!important;
-  overflow:hidden!important;
-  pointer-events:none!important;
-  z-index:-2!important;
-}
-
-/* Hero: normal complete transparent image, no negative margins, no crop, no side margin. */
-.hero{
-  overflow:visible!important;
-}
-.hero-art-wrap{
-  position:relative!important;
-  z-index:4!important;
-  top:0!important;
-  margin:0!important;
-  padding:0!important;
-  min-height:480px!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:flex-end!important;
-  overflow:visible!important;
-}
-.hero-art{
-  position:relative!important;
-  z-index:4!important;
-  width:100%!important;
-  height:auto!important;
-  min-height:0!important;
-  margin:0!important;
-  padding:0!important;
-  display:block!important;
-  overflow:visible!important;
-  background:none!important;
-  mask:none!important;
-  -webkit-mask:none!important;
-}
-.hero-art img{
-  position:relative!important;
-  z-index:4!important;
-  display:block!important;
-  width:100%!important;
-  max-width:none!important;
-  height:auto!important;
-  max-height:none!important;
-  margin:0!important;
-  padding:0!important;
-  object-fit:contain!important;
-  object-position:center center!important;
-  filter:none!important;
-  opacity:1!important;
-  transform:none!important;
-  image-rendering:auto!important;
-}
-
-/* Remove the old overlap/negative-margin pass entirely. */
-.goals-card,
-.live-game{
-  position:relative!important;
-  z-index:3!important;
-}
-
-@media(max-width:1120px){
-  .world-stage{
-    width:min(100% - 24px,980px)!important;
-  }
-  .site-shell{width:100%!important}
-  .hero-art-wrap{
-    min-height:0!important;
-    margin:0!important;
-    top:0!important;
-  }
-  .hero-art img{
-    width:100%!important;
-    max-width:none!important;
-    margin:0!important;
-  }
-}
-
-@media(max-width:760px){
-  .world-stage{
-    width:calc(100% - 18px)!important;
-  }
-  .world-stage .scene-bg-image{
-    object-position:52% top!important;
-    filter:blur(1.6px) brightness(.86) saturate(1.02)!important;
-    transform:scale(1.008)!important;
-  }
-  .hero-art-wrap{
-    min-height:0!important;
-    margin:0!important;
-    top:0!important;
-    padding:0!important;
-  }
-  .hero-art{
-    margin:0!important;
-    padding:0!important;
-  }
-  .hero-art img{
-    width:100%!important;
-    max-width:none!important;
-    margin:0!important;
-    padding:0!important;
-    object-position:center center!important;
-  }
-}
-
-
-/* ===== Seamless outer background + center-only blur — center19 ===== */
-/*
-  Keep the Wonderland artwork continuous across the whole viewport.
-  The side areas use the normal artwork. Only .world-stage blurs the
-  backdrop behind the central site, so there are no black gutters or
-  mismatched background crops.
-*/
-html{
-  background:#050208!important;
-}
-
-body{
-  background:
-    linear-gradient(180deg,rgba(4,1,8,.06) 0%,rgba(4,1,8,.12) 55%,rgba(3,1,7,.30) 100%),
-    url("assets/bg.webp?v=hq13") center top / cover fixed no-repeat!important;
-}
-
-/* Do not render a second differently-cropped background inside the center. */
-.world-stage .scene-bg{
-  position:absolute!important;
-  inset:0!important;
-  z-index:-5!important;
-  overflow:hidden!important;
-  background:rgba(7,2,13,.06)!important;
-  filter:none!important;
-  transform:none!important;
-  -webkit-backdrop-filter:blur(2.2px) brightness(.87) saturate(1.03)!important;
-  backdrop-filter:blur(2.2px) brightness(.87) saturate(1.03)!important;
-}
-
-.world-stage .scene-bg-image{
-  display:none!important;
-}
-
-/* Preserve the soft center treatment without creating a hard edge. */
-.world-stage .scene-bg::before{
-  content:""!important;
-  position:absolute!important;
-  inset:0!important;
-  z-index:1!important;
-  pointer-events:none!important;
-  background:
-    linear-gradient(180deg,rgba(4,1,8,.04) 0%,rgba(4,1,8,.10) 52%,rgba(3,1,7,.34) 100%),
-    radial-gradient(circle at 50% 30%,transparent 0 42%,rgba(4,1,8,.05) 72%,rgba(3,1,7,.14) 100%)!important;
-}
-
-/* Hero stays the real standalone file, intact. */
-.hero-art img{
-  object-fit:contain!important;
-  filter:none!important;
-  mask:none!important;
-  -webkit-mask:none!important;
-}
-
-@media(max-width:760px){
-  .world-stage .scene-bg{
-    -webkit-backdrop-filter:blur(1.6px) brightness(.86) saturate(1.02)!important;
-    backdrop-filter:blur(1.6px) brightness(.86) saturate(1.02)!important;
-  }
-}
-
-
-/* ===== Hero containment fix — hero20 ===== */
-/* Keep the full 900x780 artwork visible without allowing it to escape the hero section. */
-.hero{
-  min-height:540px!important;
-}
-
-.hero-art-wrap{
-  min-height:540px!important;
-  margin:0!important;
-  padding:0!important;
-  top:0!important;
-  display:flex!important;
-  align-items:flex-end!important;
-  justify-content:flex-end!important;
-  overflow:visible!important;
-}
-
-.hero-art{
-  width:100%!important;
-  height:100%!important;
-  min-height:0!important;
-  margin:0!important;
-  padding:0!important;
-  display:flex!important;
-  align-items:flex-end!important;
-  justify-content:flex-end!important;
-  overflow:visible!important;
-}
-
-.hero-art img{
-  display:block!important;
-  width:min(620px,100%)!important;
-  max-width:620px!important;
-  height:auto!important;
-  max-height:540px!important;
-  margin:0!important;
-  padding:0!important;
-  object-fit:contain!important;
-  object-position:right bottom!important;
-  filter:none!important;
-  transform:none!important;
-}
-
-@media(max-width:1120px){
+/* ---------- Responsive ---------- */
+@media(max-width:1280px){
+  .world-stage{width:calc(100% - 32px)}
+  .site-shell{padding-inline:clamp(18px,2.2vw,28px)}
   .hero{
-    min-height:0!important;
+    min-height:590px;
+    grid-template-columns:minmax(320px,.9fr) minmax(390px,1.1fr);
+    gap:18px;
   }
-  .hero-art-wrap{
-    min-height:430px!important;
-    justify-content:center!important;
-  }
-  .hero-art{
-    justify-content:center!important;
-  }
+  .hero-art-wrap{min-height:590px}
   .hero-art img{
-    width:min(560px,100%)!important;
-    max-width:560px!important;
-    max-height:430px!important;
-    object-position:center bottom!important;
+    width:min(560px,45vw,100%);
+    max-width:560px;
+    max-height:490px;
   }
+  .content-grid{grid-template-columns:1.55fr .85fr}
 }
 
-@media(max-width:760px){
-  .hero-art-wrap{
-    min-height:340px!important;
+@media(max-width:1020px){
+  body{background-attachment:scroll}
+  .world-stage{width:calc(100% - 20px)}
+  .scene-bg{
+    -webkit-backdrop-filter:blur(6px) brightness(.83) saturate(1.03);
+    backdrop-filter:blur(6px) brightness(.83) saturate(1.03);
+    -webkit-mask-image:none;
+    mask-image:none;
   }
-  .hero-art img{
-    width:min(430px,100%)!important;
-    max-width:430px!important;
-    max-height:340px!important;
-  }
-}
-
-
-/* ===== Supported hero + blurred content center — rest21 ===== */
-/* 
-   The character visually sits 5rem lower, while the wrapper reserves the
-   same 5rem so the artwork never overlaps the sections below.
-*/
-.hero{
-  min-height:620px!important;
-  overflow:visible!important;
-}
-
-.hero-art-wrap{
-  min-height:620px!important;
-  padding:0 0 5rem!important;
-  margin:0!important;
-  top:0!important;
-  display:flex!important;
-  align-items:flex-end!important;
-  justify-content:flex-end!important;
-  overflow:visible!important;
-}
-
-.hero-art{
-  width:100%!important;
-  height:100%!important;
-  margin:0!important;
-  padding:0!important;
-  display:flex!important;
-  align-items:flex-end!important;
-  justify-content:flex-end!important;
-  overflow:visible!important;
-}
-
-.hero-art img{
-  display:block!important;
-  width:min(620px,100%)!important;
-  max-width:620px!important;
-  height:auto!important;
-  max-height:540px!important;
-  margin:0 0 -5rem!important;
-  padding:0!important;
-  object-fit:contain!important;
-  object-position:right bottom!important;
-  mask:none!important;
-  -webkit-mask:none!important;
-  filter:none!important;
-  transform:none!important;
-}
-
-/* Full-page artwork stays sharp; only the actual content column is blurred. */
-body{
-  background:
-    linear-gradient(180deg,rgba(4,1,8,.06) 0%,rgba(4,1,8,.12) 55%,rgba(3,1,7,.30) 100%),
-    url("assets/bg.webp?v=hq13") center top / cover fixed no-repeat!important;
-}
-
-.world-stage{
-  position:relative!important;
-  isolation:isolate!important;
-}
-
-.world-stage .scene-bg{
-  position:absolute!important;
-  inset:0!important;
-  z-index:-1!important;
-  display:block!important;
-  overflow:hidden!important;
-  background:rgba(8,3,14,.10)!important;
-  filter:none!important;
-  transform:none!important;
-  -webkit-backdrop-filter:blur(8px) brightness(.82) saturate(1.04)!important;
-  backdrop-filter:blur(8px) brightness(.82) saturate(1.04)!important;
-}
-
-.world-stage .scene-bg-image{
-  display:none!important;
-}
-
-.world-stage .scene-bg::before{
-  content:""!important;
-  position:absolute!important;
-  inset:0!important;
-  pointer-events:none!important;
-  background:linear-gradient(
-    180deg,
-    rgba(5,2,10,.05) 0%,
-    rgba(5,2,10,.10) 50%,
-    rgba(3,1,7,.28) 100%
-  )!important;
-}
-
-@media(max-width:1120px){
   .hero{
-    min-height:510px!important;
+    min-height:0;
+    grid-template-columns:1fr;
+    gap:10px;
+    padding-top:8px;
   }
+  .hero-copy{
+    max-width:680px;
+    padding-inline:4px;
+  }
+  .tagline{margin-left:0;margin-bottom:24px}
   .hero-art-wrap{
-    min-height:510px!important;
-    padding-bottom:5rem!important;
-    justify-content:center!important;
+    min-height:450px;
+    padding-bottom:3rem;
+    justify-content:center;
   }
-  .hero-art{
-    justify-content:center!important;
-  }
+  .hero-art{justify-content:center}
   .hero-art img{
-    width:min(560px,100%)!important;
-    max-width:560px!important;
-    max-height:430px!important;
-    margin-bottom:-5rem!important;
-    object-position:center bottom!important;
+    width:min(520px,82vw,100%);
+    max-width:520px;
+    max-height:450px;
+    margin-bottom:-3rem;
+    object-position:center bottom;
   }
+  .content-grid{grid-template-columns:1fr}
+  .support-card{grid-template-columns:1.15fr .85fr}
+  .community-links{grid-template-columns:repeat(4,1fr)}
 }
 
-@media(max-width:760px){
-  .hero{
-    min-height:420px!important;
+@media(max-width:700px){
+  .world-stage{width:100%}
+  .site-shell{padding:12px 12px 30px}
+  .scene-bg{
+    background:rgba(8,3,14,.20);
+    -webkit-backdrop-filter:blur(5px) brightness(.82);
+    backdrop-filter:blur(5px) brightness(.82);
   }
+  .logo-art{width:min(290px,82vw)}
+  .hero h1{font-size:clamp(2.6rem,12vw,3.6rem)}
+  .hero-text{font-size:.96rem}
+  .hero-actions{
+    display:grid;
+    grid-template-columns:1fr;
+    width:100%;
+  }
+  .neon-btn{width:100%;min-height:50px}
+  .platforms{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:6px;
+  }
+  .platform{min-width:0;font-size:.7rem}
+  .platform i{width:46px;height:46px}
   .hero-art-wrap{
-    min-height:420px!important;
-    padding-bottom:5rem!important;
+    min-height:380px;
+    padding-bottom:2rem;
   }
   .hero-art img{
-    width:min(430px,100%)!important;
-    max-width:430px!important;
-    max-height:340px!important;
-    margin-bottom:-5rem!important;
+    width:min(410px,96vw,100%);
+    max-width:410px;
+    max-height:360px;
+    margin-bottom:-2rem;
   }
-  .world-stage .scene-bg{
-    -webkit-backdrop-filter:blur(5px) brightness(.84) saturate(1.03)!important;
-    backdrop-filter:blur(5px) brightness(.84) saturate(1.03)!important;
+  .goals-card{margin:14px 0;padding:18px 15px}
+  .goals-head{display:block}
+  .goals-status{margin-top:10px}
+  .goal-row{grid-template-columns:32px 1fr}
+  .goal-reward{grid-column:2}
+  .live-game{padding:13px}
+  .support-card{grid-template-columns:1fr}
+  .ramen-art-wrap{min-height:290px;order:-1}
+  .ramen-art img{width:min(300px,92%);max-width:300px;max-height:290px}
+  .support-copy{padding:20px 16px}
+  .support-tabs{grid-template-columns:1fr}
+  .form-row,.support-actions{grid-template-columns:1fr}
+  .community-links{grid-template-columns:1fr 1fr}
+  footer{grid-template-columns:1fr;text-align:center}
+  .footer-logo{margin:auto}
+  .footer-love{justify-self:center}
+}
+
+@media(max-width:420px){
+  .site-shell{padding-inline:10px}
+  .platforms{gap:4px}
+  .platform i{width:43px;height:43px}
+  .community-links{grid-template-columns:1fr}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    scroll-behavior:auto!important;
   }
 }
