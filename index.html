@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="site.css?v=6" />
   <link rel="stylesheet" href="goals.css?v=1" /><link rel="stylesheet" href="interactions.css?v=1" />
-  <link rel="stylesheet" href="render-clean.css?v=responsive36" />
+  <link rel="stylesheet" href="render-clean.css?v=livepix37" />
 </head>
 <body>
   <div class="intro" id="intro">
@@ -97,27 +97,19 @@
         <div class="support-copy">
           <span class="eyebrow">APOIE O MUNDO LOUCO</span>
           <div class="livepix-title">LivePix<span>♛</span></div>
-          <p>Apoie a live e envie sua mensagem. ♡</p>
+          <p>Apoie a live diretamente pela LivePix. ♡</p>
 
-          <div class="support-tabs">
-            <button class="active" type="button">Mensagem</button>
-            <button type="button" data-focus-amount>Pix rápido</button>
-            <a href="https://livepix.gg/justguh/assinatura" target="_blank" rel="noreferrer">Assinar</a>
+          <div class="support-direct">
+            <a class="support-direct-btn primary" href="https://livepix.gg/justguh" target="_blank" rel="noopener noreferrer">
+              <span>💜 Apoiar pelo LivePix</span>
+              <b>↗</b>
+            </a>
+            <a class="support-direct-btn secondary" href="https://livepix.gg/justguh/assinatura" target="_blank" rel="noopener noreferrer">
+              <span>Assinar mensalmente</span>
+              <b>↗</b>
+            </a>
+            <small>O pagamento é concluído diretamente no site oficial da LivePix.</small>
           </div>
-
-          <form class="support-form" id="livepix-form">
-            <div class="form-row">
-              <label>Seu nome<input name="name" maxlength="60" placeholder="Como você quer aparecer?" /></label>
-              <label>Valor (R$)<input id="support-amount" name="amount" inputmode="decimal" placeholder="10,00" /></label>
-            </div>
-            <label>Mensagem<textarea name="message" maxlength="32" placeholder="Manda um salve, uma mensagem ou o que quiser! ♡"></textarea></label>
-            <div class="support-actions">
-              <div class="quick-values"><button type="button" data-value="5">5</button><button type="button" data-value="10">10</button><button type="button" data-value="20">20</button><button type="button" data-value="50">50</button></div>
-              <button class="send-btn" type="submit">🔒 <span>Gerar Pix seguro</span></button>
-            </div>
-            <div class="message-count"><span id="message-count">0</span>/32</div>
-            <div class="livepix-api-status" id="livepix-api-status" aria-live="polite">Verificando conexão segura com a LivePix…</div>
-          </form>
         </div>
 
         <div class="ramen-art-wrap" aria-hidden="true">
@@ -159,7 +151,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@tsparticles/slim@4/tsparticles.slim.bundle.min.js"></script>
   <script src="site.config.js"></script>
   <script src="goals-api.js"></script>
-  <script src="site.js?v=responsive36"></script>
+  <script src="site.js?v=livepix37"></script>
   <script src="goals.js?v=responsive36"></script>
   <script src="interactions.js?v=responsive36"></script>
 </body>
