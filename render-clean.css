@@ -498,3 +498,77 @@ body{
     backdrop-filter:blur(1.6px) brightness(.86) saturate(1.02)!important;
   }
 }
+
+
+/* ===== Hero containment fix — hero20 ===== */
+/* Keep the full 900x780 artwork visible without allowing it to escape the hero section. */
+.hero{
+  min-height:540px!important;
+}
+
+.hero-art-wrap{
+  min-height:540px!important;
+  margin:0!important;
+  padding:0!important;
+  top:0!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:flex-end!important;
+  overflow:visible!important;
+}
+
+.hero-art{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:flex-end!important;
+  overflow:visible!important;
+}
+
+.hero-art img{
+  display:block!important;
+  width:min(620px,100%)!important;
+  max-width:620px!important;
+  height:auto!important;
+  max-height:540px!important;
+  margin:0!important;
+  padding:0!important;
+  object-fit:contain!important;
+  object-position:right bottom!important;
+  filter:none!important;
+  transform:none!important;
+}
+
+@media(max-width:1120px){
+  .hero{
+    min-height:0!important;
+  }
+  .hero-art-wrap{
+    min-height:430px!important;
+    justify-content:center!important;
+  }
+  .hero-art{
+    justify-content:center!important;
+  }
+  .hero-art img{
+    width:min(560px,100%)!important;
+    max-width:560px!important;
+    max-height:430px!important;
+    object-position:center bottom!important;
+  }
+}
+
+@media(max-width:760px){
+  .hero-art-wrap{
+    min-height:340px!important;
+  }
+  .hero-art img{
+    width:min(430px,100%)!important;
+    max-width:430px!important;
+    max-height:340px!important;
+  }
+}
