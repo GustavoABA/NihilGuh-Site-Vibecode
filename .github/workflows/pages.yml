@@ -24,96 +24,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Rebuild verified reference artwork
+      # Visual assets are committed as real WebP files.
+      # Do not rebuild from base64 chunks and do not re-encode them in CI.
+      - name: Verify direct visual assets
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
-          import base64
-
-          parts = []
-          for i in range(11):
-              p = Path(f"assets/reference-v3/{i}.txt")
-              if not p.exists():
-                  raise SystemExit(f"missing {p}")
-              parts.append(p.read_text(encoding="utf-8").strip())
-
-          encoded = "".join(parts)
-          if len(encoded) != 125016:
-              raise SystemExit(f"unexpected base64 length: {len(encoded)}")
-
-          data = base64.b64decode(encoded, validate=True)
-          if len(data) != 93760 or data[:4] != b"RIFF" or data[8:12] != b"WEBP":
-              raise SystemExit("invalid WEBP payload")
-
-          Path("assets/reference-design.webp").write_bytes(data)
-          print("reference-design.webp rebuilt:", len(data), "bytes")
-          PY
-
-      - name: Prepare visual assets without degrading HQ sources
-        shell: bash
-        run: |
-          python -m pip install --quiet pillow
-          python - <<'PY'
-          from pathlib import Path
-          import base64
-          from PIL import Image, ImageFilter, ImageFile
-
-          ImageFile.LOAD_TRUNCATED_IMAGES = True
-
-          def rebuild_fallback(folder, outfile):
-              out = Path(outfile)
-              # Once a proper HQ asset is committed, preserve it byte-for-byte.
-              if out.exists() and out.stat().st_size >= 50_000:
-                  print('preserve HQ', outfile, out.stat().st_size)
-                  return
-              parts = sorted(Path(folder).glob('*.txt'))
-              if not parts:
-                  return
-              encoded = ''.join(p.read_text(encoding='utf-8').strip() for p in parts)
-              while len(encoded) % 4:
-                  encoded += '='
-              data = base64.b64decode(encoded)
-              if data[:4] != b'RIFF' or data[8:12] != b'WEBP':
-                  print('invalid fallback', outfile)
-                  return
-              out.write_bytes(data)
-              print('fallback rebuilt', outfile, len(data))
-
-          # Background and logo have complete verified fallback chunks.
-          rebuild_fallback('assets/generated-parts/bg-wonderland', 'assets/bg-wonderland.webp')
-          rebuild_fallback('assets/generated-parts/logo-nihilguh', 'assets/logo-nihilguh.webp')
-          # Do NOT rebuild hero from the old interrupted chunks: that source is incomplete.
-
-          targets = {
-              'assets/bg-wonderland.webp': 2600,
-              'assets/logo-nihilguh.webp': 3000,
-              'assets/hero-resting.webp': 1800,
-              'assets/ramen-catboy.webp': 1800,
-          }
-
-          for path, target_w in targets.items():
-              p = Path(path)
-              if not p.exists():
-                  continue
-              # HQ outputs from the dedicated enhancer must not be re-encoded.
-              if p.stat().st_size >= 100_000:
-                  print('HQ ready', p, p.stat().st_size)
-                  continue
-              try:
-                  im = Image.open(p)
-                  im.load()
-              except Exception as exc:
-                  print('asset decode failed', p, exc)
-                  continue
-              if im.width < target_w:
-                  ratio = target_w / im.width
-                  im = im.resize((target_w, max(1, round(im.height * ratio))), Image.Resampling.LANCZOS)
-              if im.mode not in ('RGB','RGBA'):
-                  im = im.convert('RGBA' if 'A' in im.getbands() else 'RGB')
-              im = im.filter(ImageFilter.UnsharpMask(radius=.8, percent=105, threshold=2))
-              im.save(p, 'WEBP', quality=93, method=6, alpha_quality=100, exact=True)
-              print('fallback enhanced', p, im.size, p.stat().st_size)
+          required = [
+              Path("assets/bg.webp"),
+              Path("assets/logo.webp"),
+              Path("assets/hero.webp"),
+              Path("assets/ramen.webp"),
+          ]
+          for p in required:
+              data = p.read_bytes()
+              if len(data) < 50_000:
+                  raise SystemExit(f"{p} is unexpectedly small: {len(data)} bytes")
+              if data[:4] != b"RIFF" or data[8:12] != b"WEBP":
+                  raise SystemExit(f"{p} is not a valid WebP")
+              print(p, len(data), "bytes")
           PY
 
       - name: Setup Pages

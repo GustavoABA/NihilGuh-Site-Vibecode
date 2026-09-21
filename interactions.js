@@ -139,9 +139,10 @@
 
   async function refresh(forceRecords){
     if(!api.backendUrl){
-      root.innerHTML='<div class="game-offline">Configure o Apps Script para ativar o jogo da live.</div>';
+      root.hidden=true;
       return;
     }
+    root.hidden=false;
     try{
       state=await api.state();
       if(forceRecords || !records || Date.now()-recordsAt>120000){

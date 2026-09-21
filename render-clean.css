@@ -1,0 +1,204 @@
+
+/* NihilGuh render pipeline v10
+   Main artwork is loaded as four independent, real files. No sprite crops,
+   no base64 reconstruction, no blur/filter on logo/character artwork. */
+
+.scene-bg{
+  position:fixed!important;
+  inset:0!important;
+  z-index:-5!important;
+  overflow:hidden!important;
+  background:#09030f!important;
+  filter:none!important;
+  opacity:1!important;
+  transform:none!important;
+}
+.scene-bg-image{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  display:block!important;
+  object-fit:cover!important;
+  object-position:center top!important;
+  filter:none!important;
+  opacity:1!important;
+  transform:none!important;
+  image-rendering:auto!important;
+  backface-visibility:visible!important;
+}
+.scene-bg::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:1!important;
+  pointer-events:none!important;
+  background:
+    linear-gradient(180deg,rgba(4,1,8,.08) 0%,rgba(4,1,8,.18) 52%,rgba(3,1,7,.58) 100%),
+    radial-gradient(circle at 50% 26%,transparent 0 38%,rgba(3,1,7,.12) 72%,rgba(3,1,7,.32) 100%)!important;
+  filter:none!important;
+  opacity:1!important;
+}
+.scene-bg::after{display:none!important}
+
+/* Glass belongs to panels only. It must never wrap the artwork itself with a filter. */
+.glass{
+  background:rgba(10,4,18,.56)!important;
+  border:1px solid rgba(207,151,255,.18)!important;
+  -webkit-backdrop-filter:blur(10px)!important;
+  backdrop-filter:blur(10px)!important;
+}
+.hero.glassless,
+.hero-art-wrap,
+.hero-art,
+.logo-art,
+.ramen-art-wrap,
+.ramen-art,
+.footer-logo{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  filter:none!important;
+}
+
+/* Dedicated logo asset. Displayed far below source resolution for crisp retina rendering. */
+.logo-art{
+  display:block!important;
+  width:clamp(260px,25vw,360px)!important;
+  height:auto!important;
+  aspect-ratio:3/1!important;
+  overflow:visible!important;
+  background:none!important;
+  mask:none!important;
+  -webkit-mask:none!important;
+}
+.logo-art img,
+.footer-logo img{
+  width:100%!important;
+  height:auto!important;
+  max-width:100%!important;
+  display:block!important;
+  object-fit:contain!important;
+  filter:none!important;
+  opacity:1!important;
+  transform:none!important;
+  image-rendering:auto!important;
+}
+.footer-logo{
+  width:145px!important;
+  height:auto!important;
+  background:none!important;
+  opacity:1!important;
+}
+
+/* Hero is a standalone transparent image. Never stretch above its useful display size. */
+.hero-art-wrap{
+  min-height:480px!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:flex-end!important;
+  overflow:visible!important;
+}
+.hero-art{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:flex-end!important;
+  background:none!important;
+  border-radius:0!important;
+  mask:none!important;
+  -webkit-mask:none!important;
+  overflow:visible!important;
+}
+.hero-art img{
+  display:block!important;
+  width:min(620px,100%)!important;
+  max-width:620px!important;
+  height:auto!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  object-position:right bottom!important;
+  filter:none!important;
+  opacity:1!important;
+  transform:none!important;
+  image-rendering:auto!important;
+}
+.hero-bloom{
+  z-index:-1!important;
+  filter:blur(30px)!important;
+  pointer-events:none!important;
+}
+
+/* Ramen artwork is another independent transparent image. */
+.ramen-art-wrap{
+  position:relative!important;
+  min-height:360px!important;
+  overflow:visible!important;
+}
+.ramen-art{
+  position:absolute!important;
+  inset:0!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:center!important;
+  background:none!important;
+  mask:none!important;
+  -webkit-mask:none!important;
+  overflow:visible!important;
+}
+.ramen-art img{
+  display:block!important;
+  width:min(360px,96%)!important;
+  max-width:360px!important;
+  height:auto!important;
+  max-height:350px!important;
+  object-fit:contain!important;
+  object-position:center bottom!important;
+  filter:none!important;
+  opacity:1!important;
+  transform:none!important;
+  image-rendering:auto!important;
+}
+
+/* Decorative cat uses the dedicated background only for the intro;
+   it never replaces the main artwork files. */
+.intro-cat{
+  background-image:url("assets/bg.webp?v=10")!important;
+  background-repeat:no-repeat!important;
+  background-size:190% auto!important;
+  background-position:23% 2%!important;
+}
+
+/* Remove the old cropped reference-design decoration. */
+.community-card::after{
+  background-image:url("assets/hero.webp?v=10")!important;
+  background-repeat:no-repeat!important;
+  background-size:contain!important;
+  background-position:right bottom!important;
+  filter:none!important;
+  opacity:.10!important;
+}
+
+/* Keep assets sharp after entrance animation finishes. */
+.art-settled .logo-art img,
+.art-settled .hero-art img,
+.art-settled .ramen-art img{
+  transform:none!important;
+  filter:none!important;
+}
+
+@media(max-width:1120px){
+  .hero-art-wrap{min-height:430px!important}
+  .hero-art img{width:min(560px,100%)!important;max-width:560px!important}
+}
+@media(max-width:760px){
+  .scene-bg-image{object-position:52% top!important}
+  .logo-art{width:min(310px,86vw)!important}
+  .hero-art-wrap{min-height:340px!important;justify-content:center!important}
+  .hero-art{justify-content:center!important}
+  .hero-art img{width:min(430px,100%)!important;max-width:430px!important;object-position:center bottom!important}
+  .ramen-art-wrap{min-height:300px!important}
+  .ramen-art img{width:min(300px,92%)!important;max-width:300px!important;max-height:300px!important}
+}

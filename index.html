@@ -6,18 +6,17 @@
   <meta name="theme-color" content="#09030f" />
   <meta name="description" content="NihilGuh — lives, comunidade e apoio via LivePix." />
   <title>NihilGuh — Wonderland Broadcast</title>
-  <link rel="icon" type="image/webp" href="assets/ramen-catboy.webp" />
+  <link rel="icon" type="image/webp" href="assets/ramen.webp?v=10" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="site.css?v=6" />
-  <link rel="stylesheet" href="goals.css?v=1" />
-  <link rel="stylesheet" href="assets-v2.css?v=4" />
-  <link rel="stylesheet" href="interactions.css?v=1" />
+  <link rel="stylesheet" href="goals.css?v=1" /><link rel="stylesheet" href="interactions.css?v=1" />
+  <link rel="stylesheet" href="render-clean.css?v=10" />
 </head>
 <body>
   <div class="scene-bg" aria-hidden="true">
-    <img class="scene-bg-image" src="assets/bg-wonderland.webp?v=4" alt="" decoding="async" fetchpriority="high" />
+    <img class="scene-bg-image" src="assets/bg.webp?v=10" alt="" decoding="async" fetchpriority="high" />
   </div>
   <div class="fog-layer fog-one" aria-hidden="true"></div>
   <div class="fog-layer fog-two" aria-hidden="true"></div>
@@ -37,7 +36,7 @@
     <section class="hero glassless" id="top">
       <div class="hero-copy reveal">
         <a class="logo-art" href="#top" aria-label="NihilGuh">
-          <img src="assets/logo-nihilguh.webp?v=4" alt="NihilGuh" decoding="async" fetchpriority="high" />
+          <img src="assets/logo.webp?v=10" alt="NihilGuh" decoding="async" fetchpriority="high" width="1086" height="362" />
         </a>
         <p class="tagline">MAIS QUE LIVES, UM REFÚGIO</p>
         <h1>“Um lugar onde<br>o caos também<br>é casa.”</h1>
@@ -63,7 +62,7 @@
 
       <div class="hero-art-wrap reveal">
         <div class="hero-art" role="img" aria-label="NihilGuh em cenário Wonderland">
-          <img src="assets/hero-resting.webp?v=4" alt="" decoding="async" fetchpriority="high" />
+          <img src="assets/hero.webp?v=10" alt="NihilGuh debruçado" decoding="async" fetchpriority="high" width="900" height="780" />
         </div>
         <div class="hero-bloom"></div>
       </div>
@@ -84,7 +83,11 @@
       </div>
     </section>
 
-    <section class="goals-card glass reveal" id="live-goals" aria-live="polite">\n      <div class="goals-offline-note">Carregando missões da toca…</div>\n    </section>\n\n    <section class="live-game glass reveal" id="community-game" aria-live="polite"></section>
+    <section class="goals-card glass reveal" id="live-goals" aria-live="polite">
+      <div class="goals-offline-note">Carregando missões da toca…</div>
+    </section>
+
+    <section class="live-game glass reveal" id="community-game" aria-live="polite"></section>
 
     <section class="content-grid">
       <section class="support-card glass reveal" id="apoiar">
@@ -116,7 +119,7 @@
         <div class="ramen-art-wrap" aria-hidden="true">
           <div class="thanks-note">Obrigado<br>pelo apoio!<br>♡</div>
           <div class="ramen-art">
-            <img src="assets/ramen-catboy.webp?v=4" alt="" loading="lazy" decoding="async" />
+            <img src="assets/ramen.webp?v=10" alt="NihilGuh comendo ramen" loading="lazy" decoding="async" width="900" height="900" />
           </div>
         </div>
       </section>
@@ -137,7 +140,7 @@
 
     <footer class="glass reveal">
       <div class="footer-logo" aria-hidden="true">
-        <img src="assets/logo-nihilguh.webp?v=4" alt="" loading="lazy" decoding="async" />
+        <img src="assets/logo.webp?v=10" alt="" loading="lazy" decoding="async" width="1086" height="362" />
       </div>
       <span>Mais que lives, um refúgio.</span>
       <span class="footer-love">Feito com ♡ para todos os pequenos caos.</span>
@@ -149,7 +152,10 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tsparticles/engine@4/tsparticles.engine.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tsparticles/slim@4/tsparticles.slim.bundle.min.js"></script>
-  <script src="site.config.js"></script>\n  <script src="goals-api.js"></script>\n  <script src="site.js"></script>\n  <script src="goals.js"></script>
+  <script src="site.config.js"></script>
+  <script src="goals-api.js"></script>
+  <script src="site.js"></script>
+  <script src="goals.js"></script>
   <script src="interactions.js"></script>
 </body>
 </html>
