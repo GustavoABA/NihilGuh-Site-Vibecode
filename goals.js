@@ -85,8 +85,8 @@
     root.innerHTML = `
       <div class="goals-head">
         <div>
-          <span class="eyebrow">MISSÕES DA TOCA</span>
-          <h2>Quanto tempo a toca fica aberta?</h2>
+          <span class="eyebrow">MISSÕES DO MUNDO LOUCO</span>
+          <h2>Quanto tempo o Mundo Louco fica aberto?</h2>
         </div>
         <div class="goals-status ${live ? 'is-live' : ''}">
           <span class="goals-status-dot"></span>
