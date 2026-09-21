@@ -787,3 +787,163 @@ textarea:focus-visible{
 .watch-live{display:none!important}
 .is-live .watch-live{display:flex!important}
 .is-live .offline-primary{display:none!important}
+
+
+/* ---------- Screenshot visual fixes — visual34 ---------- */
+/* Hero title: honor the intended three manual line breaks. */
+.hero-copy{
+  max-width:620px;
+  min-width:0;
+}
+
+.hero h1{
+  width:max-content;
+  max-width:100%;
+  margin-top:18px;
+}
+
+/* Prevent grid children from forcing the page wider than the viewport. */
+.content-grid > *,
+.support-card > *,
+.community-card,
+footer > *{
+  min-width:0;
+}
+
+/* LivePix counter/status must stay below the controls, never on top of them. */
+.message-count{
+  position:static!important;
+  margin:6px 0 0!important;
+  min-height:16px;
+  text-align:right;
+  line-height:1.2;
+}
+
+.livepix-api-status{
+  position:static!important;
+  margin:6px 0 0!important;
+  min-height:18px;
+  line-height:1.35!important;
+  overflow-wrap:anywhere;
+}
+
+/* Community copy must remain inside its card. */
+.community-card{
+  overflow:hidden!important;
+}
+
+.wall-copy{
+  max-width:100%;
+  margin:22px auto 12px!important;
+  padding:0 8px;
+  font-size:clamp(1rem,1.35vw,1.25rem)!important;
+  line-height:1.25;
+  text-align:center;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  transform:rotate(-2deg)!important;
+}
+
+.cat-mark{
+  margin-top:8px;
+  font-size:.78rem!important;
+  line-height:1.2;
+}
+
+.cat-mark span{
+  margin-left:0!important;
+  font-size:.78rem!important;
+}
+
+/* Footer is allowed to wrap instead of being clipped. */
+footer{
+  grid-template-columns:auto minmax(0,1fr) minmax(180px,auto)!important;
+  overflow:hidden;
+}
+
+footer > span{
+  min-width:0;
+  line-height:1.35;
+}
+
+.footer-love{
+  justify-self:end!important;
+  max-width:320px;
+  text-align:right;
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+
+/* Notebook widths: stop squeezing LivePix and Community side-by-side. */
+@media(max-width:1380px){
+  .content-grid{
+    grid-template-columns:1fr!important;
+  }
+
+  .community-card{
+    width:100%;
+  }
+
+  .community-links{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  }
+}
+
+@media(max-width:1180px){
+  .hero{
+    grid-template-columns:minmax(380px,.95fr) minmax(360px,1.05fr);
+  }
+
+  .hero h1{
+    font-size:clamp(2.75rem,4.4vw,4rem);
+  }
+
+  footer{
+    grid-template-columns:auto minmax(0,1fr)!important;
+  }
+
+  .footer-love{
+    grid-column:1 / -1;
+    justify-self:start!important;
+    max-width:none;
+    text-align:left;
+  }
+}
+
+@media(max-width:1020px){
+  .hero h1{
+    width:auto;
+    max-width:12ch;
+  }
+
+  .community-links{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
+
+@media(max-width:700px){
+  .hero h1{
+    width:auto;
+    max-width:10ch;
+  }
+
+  .community-links{
+    grid-template-columns:1fr 1fr!important;
+  }
+
+  footer{
+    grid-template-columns:1fr!important;
+  }
+
+  .footer-love{
+    grid-column:auto;
+    justify-self:center!important;
+    text-align:center;
+  }
+}
+
+@media(max-width:420px){
+  .community-links{
+    grid-template-columns:1fr!important;
+  }
+}
