@@ -38,7 +38,7 @@
       '<b>'+esc(o.label)+'</b><small>'+esc(o.description)+'</small>'+
       '<span class="vote-count">'+fmt(o.votes)+' voto(s)</span></button>'
     ).join('');
-    return '<div class="vote-card"><span class="eyebrow">A TOCA DECIDE</span>'+
+    return '<div class="vote-card"><span class="eyebrow">O MUNDO LOUCO DECIDE</span>'+
       '<h3>Qual desafio entra na live?</h3><div class="vote-options">'+options+'</div>'+
       '<p style="font-size:.68rem;color:#8f7da1;margin:10px 0 0">1 voto por navegador nesta rodada · '+
       clock(Math.max(0,(new Date(game.vote.endsAt)-Date.now())/1000))+'</p></div>';
@@ -61,18 +61,18 @@
       const urgent=game.suddenDeath&&game.suddenDeath.status==='active'
         ? missionCard('☠ MORTE SÚBITA',game.suddenDeath,'urgent')
         : (game.lastChance&&game.lastChance.status==='active'?missionCard('⚠ ÚLTIMA CHANCE',game.lastChance,'urgent'):'');
-      const community=game.communityMission&&game.communityMission.status==='active'?missionCard('MISSÃO ESCOLHIDA PELA TOCA',game.communityMission,''):'';
+      const community=game.communityMission&&game.communityMission.status==='active'?missionCard('MISSÃO ESCOLHIDA PELO MUNDO LOUCO',game.communityMission,''):'';
       const random=game.randomEvent&&game.randomEvent.status==='active'?missionCard('EVENTO SURPRESA',game.randomEvent,''):'';
       const vote=voteHtml(game);
       const loot=(game.loot||[]).length
-        ? '<div class="loot-card"><span class="eyebrow">LOOT LIBERADO</span><h3>Recompensas da Toca</h3><div class="loot-list">'+
+        ? '<div class="loot-card"><span class="eyebrow">LOOT LIBERADO</span><h3>Recompensas do Mundo Louco</h3><div class="loot-list">'+
           game.loot.map(x=>x.url
             ? '<a class="loot-chip" href="'+esc(x.url)+'" target="_blank" rel="noreferrer">'+esc(x.label)+'</a>'
             : '<span class="loot-chip">'+esc(x.label)+'</span>').join('')+'</div></div>'
         : '';
 
       liveHtml='<div class="game-grid"><div>'+
-        '<div class="boss-card"><div class="boss-top"><div><span class="eyebrow">BOSS DA TOCA</span><div class="boss-name">'+esc(b.name||'CHESHIRE DO ABISMO')+'</div></div>'+
+        '<div class="boss-card"><div class="boss-top"><div><span class="eyebrow">BOSS DO MUNDO LOUCO</span><div class="boss-name">'+esc(b.name||'CHESHIRE DO ABISMO')+'</div></div>'+
         '<div class="boss-hp-text">'+fmt(b.hp)+' / '+fmt(b.maxHp)+' HP</div></div>'+
         '<div class="boss-stage '+(b.defeated?'dead':'')+'" id="boss-stage"><div class="boss-face">◖≋⌣≋◗</div>'+
         '<div class="boss-bar" style="--boss-pct:'+bossPct+'%"><i></i></div>'+
@@ -86,7 +86,7 @@
     }
 
     const rec=records&&records.records?records.records:(records||{});
-    const recHtml='<div class="records-card" style="margin-top:14px;position:relative;z-index:1"><span class="eyebrow">RECORDES DA TOCA</span><h3>Melhores sessões</h3>'+
+    const recHtml='<div class="records-card" style="margin-top:14px;position:relative;z-index:1"><span class="eyebrow">RECORDES DO MUNDO LOUCO</span><h3>Melhores sessões</h3>'+
       '<div class="records-grid">'+
       recordCell('Maior duração',rec.longest,'duration',n=>fmt(n)+' min')+
       recordCell('Mais metas',rec.mostGoals,'goals')+
