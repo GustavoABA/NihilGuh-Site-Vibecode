@@ -32,6 +32,7 @@ function doGet(e) {
     else if (action === 'vote') data = interactionVote_(String(p.visitorId || ''), String(p.optionId || ''));
     else if (action === 'livepixCheckout') data = livepixCheckout_(p);
     else if (action === 'livepixStatus') data = livepixStatus_();
+    else if (action === 'assetSource') data = assetSource_(String(p.name || ''));
     else if (action === 'streamEvent') {
       requireBridge_(p.bridgeKey);
       data = streamEvent_(p);
@@ -54,6 +55,27 @@ function doGet(e) {
   }
 }
 
+
+
+function assetSource_(name) {
+  const ids = {
+    bg:'1nIrks2Xj4umcOBzQtOcgQ_JrsyBT2BYA',
+    logo:'1vCb2fqXRJUcA-m_0eWVdmWgy1eC58q2o',
+    hero:'1knaOALhDyG6aHUMyoW15Df-P7k0KZcXu',
+    ramen:'1NmhohWJCbG8R2CdsVB_PZymlVi_JCZAO'
+  };
+  const id = ids[String(name || '').toLowerCase()];
+  if (!id) throw new Error('unknown_asset');
+  const blob = DriveApp.getFileById(id).getBlob();
+  const bytes = blob.getBytes();
+  if (!bytes || !bytes.length) throw new Error('asset_empty');
+  return {
+    name:String(name).toLowerCase(),
+    mimeType:blob.getContentType() || 'image/png',
+    size:bytes.length,
+    base64:Utilities.base64Encode(bytes)
+  };
+}
 
 function doPost(e) {
   try {
