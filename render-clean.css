@@ -224,3 +224,35 @@
   cursor:wait;
   filter:saturate(.72);
 }
+
+
+/* Mundo Louco layout pass ml15 */
+.scene-bg{overflow:hidden!important}
+.scene-bg-image{
+  filter:blur(3px) brightness(.82) saturate(1.03)!important;
+  transform:scale(1.022)!important;
+  transform-origin:center top!important;
+}
+.scene-bg::before{
+  background:
+    linear-gradient(180deg,rgba(4,1,8,.05) 0%,rgba(4,1,8,.16) 52%,rgba(3,1,7,.52) 100%),
+    radial-gradient(circle at 50% 26%,transparent 0 36%,rgba(3,1,7,.10) 68%,rgba(3,1,7,.28) 100%)!important;
+}
+.hero{position:relative!important;overflow:visible!important;z-index:4!important}
+.hero-art-wrap{
+  position:relative!important;
+  z-index:9!important;
+  top:2.65rem!important;
+  margin-bottom:-5rem!important;
+  overflow:visible!important;
+}
+.hero-art,.hero-art img{position:relative!important;z-index:9!important}
+.goals-card{position:relative!important;z-index:3!important;overflow:visible!important}
+.live-game{position:relative!important;z-index:2!important}
+@media(max-width:760px){
+  .scene-bg-image{
+    filter:blur(2px) brightness(.80) saturate(1.02)!important;
+    transform:scale(1.015)!important;
+  }
+  .hero-art-wrap{top:1rem!important;margin-bottom:-1.5rem!important}
+}
