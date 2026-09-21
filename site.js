@@ -5,6 +5,12 @@
   const liveStrip = document.getElementById('live-strip');
   const watchLive = document.getElementById('watch-live');
   const toast = document.getElementById('toast');
+  let introTimeline = null;
+  let introSeen = false;
+
+  try {
+    introSeen = sessionStorage.getItem('nihilguh_intro_seen') === '1';
+  } catch {}
 
   function settleArtwork(){
     body.classList.add('art-settled');
@@ -15,12 +21,23 @@
   }
 
   function removeIntro(){
+    try { sessionStorage.setItem('nihilguh_intro_seen','1'); } catch {}
     if(!intro){ settleArtwork(); return; }
     intro.classList.add('done');
-    setTimeout(()=>{ intro.remove(); settleArtwork(); }, reduced ? 10 : 420);
+    setTimeout(()=>{ intro.remove(); settleArtwork(); }, reduced ? 10 : 220);
   }
 
   function entrance(){
+    if(introSeen){
+      intro?.remove();
+      document.querySelectorAll('.reveal').forEach(el=>{
+        el.style.opacity='1';
+        el.style.transform='none';
+      });
+      settleArtwork();
+      return;
+    }
+
     if(reduced || !window.gsap){
       removeIntro();
       document.querySelectorAll('.reveal').forEach(el=>{
@@ -30,14 +47,14 @@
       return;
     }
 
-    const tl=gsap.timeline({defaults:{ease:'power3.out'}});
+    introTimeline=gsap.timeline({defaults:{ease:'power3.out'}});
     gsap.set('.intro-cat',{opacity:0,scale:.76});
     gsap.set('.intro-title',{opacity:0,y:18});
     gsap.set('.intro-smoke',{opacity:0,y:140,scale:.75});
     gsap.set('.intro-flash',{opacity:0});
     gsap.set('.reveal',{opacity:0,y:22});
 
-    tl.to('.intro-cat',{opacity:1,scale:1,duration:.95})
+    introTimeline.to('.intro-cat',{opacity:1,scale:1,duration:.95})
       .to('.intro-title',{opacity:.92,y:0,duration:.42},'-=.28')
       .to('.intro-smoke',{opacity:.55,y:-24,scale:1.2,stagger:.08,duration:1.0},'-=.12')
       .to('.intro-flash',{opacity:.62,duration:.10},'-=.14')
@@ -48,6 +65,16 @@
         onComplete:()=>{ gsap.set('.reveal',{clearProps:'transform'}); settleArtwork(); }
       },'-=.18');
   }
+
+  intro?.querySelector('.intro-skip')?.addEventListener('click',()=>{
+    introTimeline?.kill();
+    document.querySelectorAll('.reveal').forEach(el=>{
+      el.style.opacity='1';
+      el.style.transform='none';
+    });
+    removeIntro();
+  });
+
   entrance();
 
   async function particles(){
@@ -76,6 +103,7 @@
 
   function setLive(isLive){
     body.classList.toggle('is-live',isLive);
+    body.classList.toggle('is-offline',!isLive);
     if(liveStrip) liveStrip.hidden=!isLive;
     if(watchLive) watchLive.setAttribute('aria-hidden',isLive?'false':'true');
     if(isLive && liveStrip && window.gsap && !reduced){
