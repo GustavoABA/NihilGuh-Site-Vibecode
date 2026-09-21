@@ -236,7 +236,6 @@
       else if(raw.includes('livepix_checkout_failed')) friendly='A LivePix recusou a criação do Pix. Verifique no painel LivePix se a aplicação tem messages:write ou payments:write.';
       else if(raw.includes('livepix_api_401') || raw.includes('livepix_oauth_401')) friendly='As credenciais LivePix estão inválidas ou expiraram. Salve novamente o Client ID/Secret no painel admin.';
       else if(raw.includes('livepix_api_403') || raw.includes('livepix_oauth_403')) friendly='A aplicação LivePix não tem permissão para criar Pix. Ative messages:write ou payments:write na aplicação.';
-      if(apiStatus) apiStatus.textContent='⚠ '+friendly;
       showToast(friendly);
       if(sendButton) sendButton.disabled=false;
       if(sendButtonLabel) sendButtonLabel.textContent='Gerar Pix seguro';
