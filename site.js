@@ -136,7 +136,7 @@
     const name=String(data.get('name')||'').trim();
     const value=String(data.get('amount')||'').trim();
     const msg=String(data.get('message')||'').trim();
-    const summary=[name&&\`Nome: \${name}\`,value&&\`Valor: R$ \${value}\`,msg&&\`Mensagem: \${msg}\`].filter(Boolean).join('\n');
+    const summary=[name&&`Nome: ${name}`,value&&`Valor: R$ ${value}`,msg&&`Mensagem: ${msg}`].filter(Boolean).join('\n');
     if(summary&&navigator.clipboard?.writeText){
       try{await navigator.clipboard.writeText(summary);}catch{}
     }
