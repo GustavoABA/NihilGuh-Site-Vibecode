@@ -47,6 +47,16 @@
   function render(){
     const live=Boolean(state && state.session && state.session.status==='ONLINE');
     const game=state && state.game;
+    const rec=records&&records.records?records.records:(records||{});
+    const hasRecords=Boolean(rec.longest||rec.mostGoals||rec.mostVisitors||rec.mostGrowth||rec.mostLivePix);
+
+    if(!live && !hasRecords){
+      root.hidden=true;
+      root.innerHTML='';
+      return;
+    }
+
+    root.hidden=false;
     document.body.classList.toggle('mode-chaos',Boolean(game&&game.chaos&&game.chaos.active));
     document.body.classList.toggle('mode-critical',Boolean(game&&((game.lastChance&&game.lastChance.status==='active')||(game.suddenDeath&&game.suddenDeath.status==='active'))));
 
@@ -82,18 +92,17 @@
           esc(b.defeated?'BOSS DERROTADO':'A comunidade está jogando')+'</strong><p>Nem toda ação adiciona tempo: algumas causam dano, ativam eventos, votações, combos ou liberam recompensas.</p></div>')+
         loot+'</div></div>';
     } else {
-      liveHtml='<div class="game-offline">O minigame coletivo desperta automaticamente quando uma sessão de live estiver ativa.</div>';
+      liveHtml='';
     }
 
-    const rec=records&&records.records?records.records:(records||{});
-    const recHtml='<div class="records-card" style="margin-top:14px;position:relative;z-index:1"><span class="eyebrow">RECORDES DO MUNDO LOUCO</span><h3>Melhores sessões</h3>'+
+    const recHtml=hasRecords ? '<div class="records-card" style="margin-top:14px;position:relative;z-index:1"><span class="eyebrow">RECORDES DO MUNDO LOUCO</span><h3>Melhores sessões</h3>'+
       '<div class="records-grid">'+
       recordCell('Maior duração',rec.longest,'duration',n=>fmt(n)+' min')+
       recordCell('Mais metas',rec.mostGoals,'goals')+
       recordCell('Mais visitantes',rec.mostVisitors,'visitors')+
       recordCell('Mais crescimento',rec.mostGrowth,'growth')+
       recordCell('Maior LivePix',rec.mostLivePix,'livepix',money)+
-      '</div></div>';
+      '</div></div>' : '';
 
     root.innerHTML=liveHtml+recHtml;
 
