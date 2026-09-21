@@ -67,7 +67,11 @@
     lastState = state;
     const live = Boolean(state?.session && state.session.status === 'ONLINE');
     const goals = Array.isArray(state?.goals) ? state.goals : [];
+    const sessions = Array.isArray(history?.sessions) ? history.sessions.slice(0,5) : [];
     const completed = goals.filter(g => g.concluida);
+
+    root.classList.toggle('is-live',live);
+    root.classList.toggle('is-offline',!live);
     const nowCompleted = new Set(completed.map(g => g.goal_id));
 
     if (lastCompleted.size) {
@@ -75,7 +79,7 @@
     }
     lastCompleted = nowCompleted;
 
-    const historyHtml = (history?.sessions || []).slice(0,5).map(day => `
+    const historyHtml = sessions.map(day => `
       <div class="history-day">
         <strong>${esc(day.data)}</strong>
         <small>${esc(day.metas_batidas)}/${esc(day.metas_total)} metas</small>
@@ -110,12 +114,14 @@
             </div>`).join('')}
         </div>
       ` : `
-        <div class="goals-offline-note">As metas são abertas automaticamente quando o detector atual da Twitch identifica a live online.</div>
+        <div class="goals-offline-note">As missões aparecem aqui automaticamente quando a live começar.</div>
       `}
-      <div class="goals-history">
-        <span class="eyebrow">ÚLTIMOS 5 DIAS</span>
-        <div class="goals-history-grid">${historyHtml || '<div class="history-day"><strong>Sem histórico ainda</strong><small>A primeira live vai aparecer aqui.</small></div>'}</div>
-      </div>`;
+      ${sessions.length ? `
+        <div class="goals-history">
+          <span class="eyebrow">ÚLTIMAS SESSÕES</span>
+          <div class="goals-history-grid">${historyHtml}</div>
+        </div>
+      ` : ''}`;
 
     clearInterval(timerInterval);
     if (live) timerInterval = setInterval(paintClock, 1000);
