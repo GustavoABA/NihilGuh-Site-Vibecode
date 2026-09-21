@@ -153,8 +153,8 @@
       const status=await window.NihilGuhAPI.call('livepixStatus');
       if(apiStatus){
         apiStatus.textContent=status.configured
-          ? '🔒 Checkout seguro conectado à API oficial LivePix.'
-          : '⚠ LivePix conectado ao site, mas as credenciais OAuth ainda precisam ser salvas no Apps Script.';
+          ? '🔒 LivePix conectado. O site gera um checkout seguro para cada apoio.'
+          : '⚠ Falta conectar o Client ID/Secret da LivePix no painel admin.';
         apiStatus.classList.toggle('ready',Boolean(status.configured));
       }
     }catch{
@@ -168,7 +168,7 @@
     const data=new FormData(form);
     const username=String(data.get('name')||'').trim()||'Anônimo';
     const value=parseBrl(data.get('amount'));
-    const msg=String(data.get('message')||'').trim()||'Apoio para a Toca ♡';
+    const msg=String(data.get('message')||'').trim()||'Apoio para o Mundo Louco ♡';
 
     if(!Number.isFinite(value)||value<1){
       amount?.focus();
@@ -202,9 +202,10 @@
     }catch(err){
       const raw=String(err?.message||err);
       let friendly='Não foi possível criar o Pix. Tente novamente.';
-      if(raw.includes('livepix_credentials_missing')) friendly='As credenciais OAuth da LivePix ainda não foram configuradas no Apps Script.';
+      if(raw.includes('livepix_credentials_missing')) friendly='Conecte o Client ID e Client Secret da LivePix no painel admin.';
       else if(raw.includes('livepix_wait_a_few_seconds')) friendly='Aguarde alguns segundos antes de gerar outro Pix.';
-      else if(raw.includes('livepix_oauth_')) friendly='A LivePix recusou as credenciais OAuth. Confira Client ID e Client Secret.';
+      else if(raw.includes('livepix_oauth_')) friendly='A LivePix recusou as credenciais OAuth. Confira Client ID/Secret e os escopos da aplicação.';
+      else if(raw.includes('livepix_checkout_failed')) friendly='A LivePix recusou a criação do checkout. Confira as credenciais no painel admin.';
       if(apiStatus) apiStatus.textContent='⚠ '+friendly;
       showToast(friendly);
       if(sendButton) sendButton.disabled=false;
