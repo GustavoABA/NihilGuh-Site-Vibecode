@@ -165,7 +165,7 @@
 /* Decorative cat uses the dedicated background only for the intro;
    it never replaces the main artwork files. */
 .intro-cat{
-  background-image:url("assets/bg.webp?v=10")!important;
+  background-image:url("assets/bg.webp?v=hq13")!important;
   background-repeat:no-repeat!important;
   background-size:190% auto!important;
   background-position:23% 2%!important;
@@ -173,7 +173,7 @@
 
 /* Remove the old cropped reference-design decoration. */
 .community-card::after{
-  background-image:url("assets/hero.webp?v=10")!important;
+  background-image:url("assets/hero.webp?v=hq13")!important;
   background-repeat:no-repeat!important;
   background-size:contain!important;
   background-position:right bottom!important;
