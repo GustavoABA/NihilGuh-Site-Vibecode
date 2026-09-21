@@ -202,3 +202,25 @@
   .ramen-art-wrap{min-height:300px!important}
   .ramen-art img{width:min(300px,92%)!important;max-width:300px!important;max-height:300px!important}
 }
+
+
+/* LivePix API checkout */
+.support-tabs button{
+  border:0;
+  font:inherit;
+  color:inherit;
+  cursor:pointer;
+}
+.livepix-api-status{
+  margin-top:10px;
+  min-height:18px;
+  font-size:.68rem;
+  line-height:1.35;
+  color:#b8a7c8;
+}
+.livepix-api-status.ready{color:#bdf8d1}
+.send-btn:disabled{
+  opacity:.62;
+  cursor:wait;
+  filter:saturate(.72);
+}

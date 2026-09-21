@@ -98,8 +98,8 @@
 
           <div class="support-tabs">
             <button class="active" type="button">◉ Enviar Mensagem</button>
-            <a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">◉ Pix Rápido</a>
-            <a href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">◉ Assinaturas</a>
+            <button type="button" data-focus-amount>◉ Pix Rápido</button>
+            <a href="https://livepix.gg/justguh/assinatura" target="_blank" rel="noreferrer">◉ Assinaturas</a>
           </div>
 
           <form class="support-form" id="livepix-form">
@@ -110,9 +110,10 @@
             <label>Mensagem<textarea name="message" maxlength="300" placeholder="Manda um salve, uma mensagem ou o que quiser! ♡"></textarea></label>
             <div class="support-actions">
               <div class="quick-values"><button type="button" data-value="5">5</button><button type="button" data-value="10">10</button><button type="button" data-value="20">20</button><button type="button" data-value="50">50</button></div>
-              <button class="send-btn" type="submit">➤ <span>Enviar via LivePix</span></button>
+              <button class="send-btn" type="submit">🔒 <span>Gerar Pix seguro</span></button>
             </div>
             <div class="message-count"><span id="message-count">0</span>/300</div>
+            <div class="livepix-api-status" id="livepix-api-status" aria-live="polite">Checkout criado pela API oficial LivePix.</div>
           </form>
         </div>
 

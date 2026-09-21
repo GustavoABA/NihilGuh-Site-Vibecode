@@ -111,12 +111,26 @@
   const amount=document.getElementById('support-amount');
   const message=form?.querySelector('textarea[name="message"]');
   const count=document.getElementById('message-count');
+  const apiStatus=document.getElementById('livepix-api-status');
+  const sendButton=form?.querySelector('.send-btn');
+  const sendButtonLabel=sendButton?.querySelector('span');
+
+  function parseBrl(value){
+    const normalized=String(value||'').trim().replace(/\./g,'').replace(',','.');
+    const n=Number(normalized);
+    return Number.isFinite(n)?n:NaN;
+  }
 
   document.querySelectorAll('[data-value]').forEach(button=>button.addEventListener('click',()=>{
     if(!amount)return;
     amount.value=Number(button.dataset.value).toFixed(2).replace('.',',');
     amount.focus();
   }));
+
+  document.querySelector('[data-focus-amount]')?.addEventListener('click',()=>{
+    amount?.focus();
+    amount?.scrollIntoView({behavior:reduced?'auto':'smooth',block:'center'});
+  });
 
   message?.addEventListener('input',()=>{
     if(count) count.textContent=String(message.value.length);
@@ -127,22 +141,81 @@
     toast.textContent=text;
     toast.classList.add('show');
     clearTimeout(showToast.timer);
-    showToast.timer=setTimeout(()=>toast.classList.remove('show'),2800);
+    showToast.timer=setTimeout(()=>toast.classList.remove('show'),3200);
   }
+
+  async function refreshLivePixStatus(){
+    if(!window.NihilGuhAPI?.backendUrl){
+      if(apiStatus) apiStatus.textContent='Checkout seguro indisponível: backend não conectado.';
+      return;
+    }
+    try{
+      const status=await window.NihilGuhAPI.call('livepixStatus');
+      if(apiStatus){
+        apiStatus.textContent=status.configured
+          ? '🔒 Checkout seguro conectado à API oficial LivePix.'
+          : '⚠ LivePix conectado ao site, mas as credenciais OAuth ainda precisam ser salvas no Apps Script.';
+        apiStatus.classList.toggle('ready',Boolean(status.configured));
+      }
+    }catch{
+      if(apiStatus) apiStatus.textContent='Não foi possível verificar a conexão LivePix agora.';
+    }
+  }
+  refreshLivePixStatus();
 
   form?.addEventListener('submit',async e=>{
     e.preventDefault();
     const data=new FormData(form);
-    const name=String(data.get('name')||'').trim();
-    const value=String(data.get('amount')||'').trim();
-    const msg=String(data.get('message')||'').trim();
-    const summary=[name&&`Nome: ${name}`,value&&`Valor: R$ ${value}`,msg&&`Mensagem: ${msg}`].filter(Boolean).join('\n');
-    if(summary&&navigator.clipboard?.writeText){
-      try{await navigator.clipboard.writeText(summary);}catch{}
+    const username=String(data.get('name')||'').trim()||'Anônimo';
+    const value=parseBrl(data.get('amount'));
+    const msg=String(data.get('message')||'').trim()||'Apoio para a Toca ♡';
+
+    if(!Number.isFinite(value)||value<1){
+      amount?.focus();
+      showToast('O valor mínimo do LivePix é R$ 1,00.');
+      return;
     }
-    showToast(summary?'Dados copiados. Abrindo o LivePix…':'Abrindo o LivePix…');
-    setTimeout(()=>window.open('https://livepix.gg/justguh','_blank','noopener,noreferrer'),160);
+
+    if(!window.NihilGuhAPI?.backendUrl){
+      showToast('O checkout seguro ainda não está conectado.');
+      return;
+    }
+
+    const amountCents=Math.round(value*100);
+    if(sendButton) sendButton.disabled=true;
+    if(sendButtonLabel) sendButtonLabel.textContent='Gerando checkout…';
+    if(apiStatus) apiStatus.textContent='Conectando com a LivePix…';
+
+    try{
+      const result=await window.NihilGuhAPI.call('livepixCheckout',{
+        visitorId:window.NihilGuhAPI.visitorId(),
+        username,
+        message:msg,
+        amountCents:String(amountCents)
+      });
+
+      if(!result?.checkoutUrl) throw new Error('checkout_url_missing');
+      sessionStorage.setItem('nihilguh_livepix_reference',String(result.reference||''));
+      showToast('Pix criado. Abrindo checkout seguro da LivePix…');
+      if(apiStatus) apiStatus.textContent='🔒 Checkout criado com segurança. Redirecionando…';
+      setTimeout(()=>{ location.href=result.checkoutUrl; },250);
+    }catch(err){
+      const raw=String(err?.message||err);
+      let friendly='Não foi possível criar o Pix. Tente novamente.';
+      if(raw.includes('livepix_credentials_missing')) friendly='As credenciais OAuth da LivePix ainda não foram configuradas no Apps Script.';
+      else if(raw.includes('livepix_wait_a_few_seconds')) friendly='Aguarde alguns segundos antes de gerar outro Pix.';
+      else if(raw.includes('livepix_oauth_')) friendly='A LivePix recusou as credenciais OAuth. Confira Client ID e Client Secret.';
+      if(apiStatus) apiStatus.textContent='⚠ '+friendly;
+      showToast(friendly);
+      if(sendButton) sendButton.disabled=false;
+      if(sendButtonLabel) sendButtonLabel.textContent='Gerar Pix seguro';
+    }
   });
+
+  if(new URLSearchParams(location.search).get('livepix')==='return'){
+    showToast('Você voltou do checkout LivePix. Obrigado pelo apoio! ♡');
+    history.replaceState(null,'',location.pathname+location.hash);
+  }
 
   if('IntersectionObserver' in window && window.gsap && !reduced){
     const observer=new IntersectionObserver(entries=>{

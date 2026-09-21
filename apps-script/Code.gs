@@ -30,6 +30,8 @@ function doGet(e) {
     else if (action === 'records') data = { records:interactionRecords_() };
     else if (action === 'visit') data = registerVisit_(String(p.visitorId || ''));
     else if (action === 'vote') data = interactionVote_(String(p.visitorId || ''), String(p.optionId || ''));
+    else if (action === 'livepixCheckout') data = livepixCheckout_(p);
+    else if (action === 'livepixStatus') data = livepixStatus_();
     else if (action === 'streamEvent') {
       requireBridge_(p.bridgeKey);
       data = streamEvent_(p);
@@ -49,6 +51,130 @@ function doGet(e) {
   } catch (err) {
     return output_((e && e.parameter && e.parameter.callback) || '', { ok:false, error:String(err.message || err) });
   }
+}
+
+
+function doPost(e) {
+  try {
+    const p = (e && e.parameter) || {};
+    const action = String(p.action || '');
+    let data;
+
+    if (action === 'setLivePixCredentials') {
+      requireAdmin_(p.adminKey);
+      const clientId = String(p.clientId || '').trim();
+      const clientSecret = String(p.clientSecret || '').trim();
+      if (!clientId || !clientSecret) throw new Error('livepix_credentials_required');
+      const props = PropertiesService.getScriptProperties();
+      props.setProperties({
+        LIVEPIX_CLIENT_ID: clientId,
+        LIVEPIX_CLIENT_SECRET: clientSecret
+      }, false);
+      props.deleteProperty('LIVEPIX_ACCESS_TOKEN');
+      props.deleteProperty('LIVEPIX_ACCESS_TOKEN_EXP');
+      data = { configured:true };
+    } else {
+      throw new Error('unknown_post_action');
+    }
+    return output_('', { ok:true, ...data });
+  } catch (err) {
+    return output_('', { ok:false, error:String(err.message || err) });
+  }
+}
+
+function livepixStatus_() {
+  const props = PropertiesService.getScriptProperties();
+  return {
+    configured:Boolean(props.getProperty('LIVEPIX_CLIENT_ID') && props.getProperty('LIVEPIX_CLIENT_SECRET'))
+  };
+}
+
+function livepixAccessToken_() {
+  const props = PropertiesService.getScriptProperties();
+  const clientId = String(props.getProperty('LIVEPIX_CLIENT_ID') || '').trim();
+  const clientSecret = String(props.getProperty('LIVEPIX_CLIENT_SECRET') || '').trim();
+  if (!clientId || !clientSecret) throw new Error('livepix_credentials_missing');
+
+  const cached = String(props.getProperty('LIVEPIX_ACCESS_TOKEN') || '');
+  const exp = Number(props.getProperty('LIVEPIX_ACCESS_TOKEN_EXP') || 0);
+  if (cached && exp > Date.now() + 60000) return cached;
+
+  const response = UrlFetchApp.fetch('https://oauth.livepix.gg/oauth2/token', {
+    method:'post',
+    contentType:'application/x-www-form-urlencoded',
+    payload:{
+      grant_type:'client_credentials',
+      client_id:clientId,
+      client_secret:clientSecret,
+      scope:'messages:write messages:read payments:read'
+    },
+    muteHttpExceptions:true,
+    followRedirects:true
+  });
+
+  const status = response.getResponseCode();
+  let body;
+  try { body = JSON.parse(response.getContentText() || '{}'); }
+  catch (_) { body = {}; }
+
+  if (status < 200 || status >= 300 || !body.access_token) {
+    throw new Error('livepix_oauth_' + status + ':' + truncate_(body.message || response.getContentText(), 180));
+  }
+
+  props.setProperty('LIVEPIX_ACCESS_TOKEN', String(body.access_token));
+  props.setProperty('LIVEPIX_ACCESS_TOKEN_EXP', String(Date.now() + Math.max(300, Number(body.expires_in || 3600)) * 1000));
+  return String(body.access_token);
+}
+
+function livepixCheckout_(p) {
+  const visitorId = truncate_(String(p.visitorId || ''), 120);
+  if (!visitorId) throw new Error('visitor_required');
+
+  const cache = CacheService.getScriptCache();
+  const rateKey = 'lp_checkout_' + Utilities.base64EncodeWebSafe(visitorId).slice(0, 80);
+  if (cache.get(rateKey)) throw new Error('livepix_wait_a_few_seconds');
+  cache.put(rateKey, '1', 5);
+
+  const amount = Math.floor(Number(p.amountCents || 0));
+  if (!Number.isFinite(amount) || amount < 100) throw new Error('livepix_minimum_R$1');
+  if (amount > 500000) throw new Error('livepix_maximum_R$5000');
+
+  const username = truncate_(String(p.username || 'Anônimo').trim() || 'Anônimo', 50);
+  const message = truncate_(String(p.message || '').trim() || 'Apoio para a Toca ♡', 300);
+  const token = livepixAccessToken_();
+
+  const payload = {
+    username,
+    message,
+    amount,
+    currency:'BRL',
+    redirectUrl:'https://gustavoaba.github.io/NihilGuh-Site-Vibecode/?livepix=return#apoiar'
+  };
+
+  const response = UrlFetchApp.fetch('https://api.livepix.gg/v2/messages', {
+    method:'post',
+    contentType:'application/json',
+    payload:JSON.stringify(payload),
+    headers:{ Authorization:'Bearer ' + token },
+    muteHttpExceptions:true,
+    followRedirects:true
+  });
+
+  const status = response.getResponseCode();
+  let body;
+  try { body = JSON.parse(response.getContentText() || '{}'); }
+  catch (_) { body = {}; }
+
+  if (status !== 201 || !body.data || !body.data.redirectUrl) {
+    throw new Error('livepix_checkout_' + status + ':' + truncate_(body.message || response.getContentText(), 180));
+  }
+
+  event_('livepix_checkout_created', body.data.reference || '', username, 'R$ ' + (amount/100).toFixed(2), 0);
+  return {
+    checkoutUrl:String(body.data.redirectUrl),
+    reference:String(body.data.reference || ''),
+    amountCents:amount
+  };
 }
 
 function output_(callback, data) {
