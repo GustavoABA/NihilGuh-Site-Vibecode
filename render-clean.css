@@ -436,3 +436,65 @@ html,body{
     object-position:center center!important;
   }
 }
+
+
+/* ===== Seamless outer background + center-only blur — center19 ===== */
+/*
+  Keep the Wonderland artwork continuous across the whole viewport.
+  The side areas use the normal artwork. Only .world-stage blurs the
+  backdrop behind the central site, so there are no black gutters or
+  mismatched background crops.
+*/
+html{
+  background:#050208!important;
+}
+
+body{
+  background:
+    linear-gradient(180deg,rgba(4,1,8,.06) 0%,rgba(4,1,8,.12) 55%,rgba(3,1,7,.30) 100%),
+    url("assets/bg.webp?v=hq13") center top / cover fixed no-repeat!important;
+}
+
+/* Do not render a second differently-cropped background inside the center. */
+.world-stage .scene-bg{
+  position:absolute!important;
+  inset:0!important;
+  z-index:-5!important;
+  overflow:hidden!important;
+  background:rgba(7,2,13,.06)!important;
+  filter:none!important;
+  transform:none!important;
+  -webkit-backdrop-filter:blur(2.2px) brightness(.87) saturate(1.03)!important;
+  backdrop-filter:blur(2.2px) brightness(.87) saturate(1.03)!important;
+}
+
+.world-stage .scene-bg-image{
+  display:none!important;
+}
+
+/* Preserve the soft center treatment without creating a hard edge. */
+.world-stage .scene-bg::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:1!important;
+  pointer-events:none!important;
+  background:
+    linear-gradient(180deg,rgba(4,1,8,.04) 0%,rgba(4,1,8,.10) 52%,rgba(3,1,7,.34) 100%),
+    radial-gradient(circle at 50% 30%,transparent 0 42%,rgba(4,1,8,.05) 72%,rgba(3,1,7,.14) 100%)!important;
+}
+
+/* Hero stays the real standalone file, intact. */
+.hero-art img{
+  object-fit:contain!important;
+  filter:none!important;
+  mask:none!important;
+  -webkit-mask:none!important;
+}
+
+@media(max-width:760px){
+  .world-stage .scene-bg{
+    -webkit-backdrop-filter:blur(1.6px) brightness(.86) saturate(1.02)!important;
+    backdrop-filter:blur(1.6px) brightness(.86) saturate(1.02)!important;
+  }
+}
