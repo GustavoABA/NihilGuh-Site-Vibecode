@@ -572,3 +572,135 @@ body{
     max-height:340px!important;
   }
 }
+
+
+/* ===== Supported hero + blurred content center — rest21 ===== */
+/* 
+   The character visually sits 5rem lower, while the wrapper reserves the
+   same 5rem so the artwork never overlaps the sections below.
+*/
+.hero{
+  min-height:620px!important;
+  overflow:visible!important;
+}
+
+.hero-art-wrap{
+  min-height:620px!important;
+  padding:0 0 5rem!important;
+  margin:0!important;
+  top:0!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:flex-end!important;
+  overflow:visible!important;
+}
+
+.hero-art{
+  width:100%!important;
+  height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:flex-end!important;
+  overflow:visible!important;
+}
+
+.hero-art img{
+  display:block!important;
+  width:min(620px,100%)!important;
+  max-width:620px!important;
+  height:auto!important;
+  max-height:540px!important;
+  margin:0 0 -5rem!important;
+  padding:0!important;
+  object-fit:contain!important;
+  object-position:right bottom!important;
+  mask:none!important;
+  -webkit-mask:none!important;
+  filter:none!important;
+  transform:none!important;
+}
+
+/* Full-page artwork stays sharp; only the actual content column is blurred. */
+body{
+  background:
+    linear-gradient(180deg,rgba(4,1,8,.06) 0%,rgba(4,1,8,.12) 55%,rgba(3,1,7,.30) 100%),
+    url("assets/bg.webp?v=hq13") center top / cover fixed no-repeat!important;
+}
+
+.world-stage{
+  position:relative!important;
+  isolation:isolate!important;
+}
+
+.world-stage .scene-bg{
+  position:absolute!important;
+  inset:0!important;
+  z-index:-1!important;
+  display:block!important;
+  overflow:hidden!important;
+  background:rgba(8,3,14,.10)!important;
+  filter:none!important;
+  transform:none!important;
+  -webkit-backdrop-filter:blur(8px) brightness(.82) saturate(1.04)!important;
+  backdrop-filter:blur(8px) brightness(.82) saturate(1.04)!important;
+}
+
+.world-stage .scene-bg-image{
+  display:none!important;
+}
+
+.world-stage .scene-bg::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  pointer-events:none!important;
+  background:linear-gradient(
+    180deg,
+    rgba(5,2,10,.05) 0%,
+    rgba(5,2,10,.10) 50%,
+    rgba(3,1,7,.28) 100%
+  )!important;
+}
+
+@media(max-width:1120px){
+  .hero{
+    min-height:510px!important;
+  }
+  .hero-art-wrap{
+    min-height:510px!important;
+    padding-bottom:5rem!important;
+    justify-content:center!important;
+  }
+  .hero-art{
+    justify-content:center!important;
+  }
+  .hero-art img{
+    width:min(560px,100%)!important;
+    max-width:560px!important;
+    max-height:430px!important;
+    margin-bottom:-5rem!important;
+    object-position:center bottom!important;
+  }
+}
+
+@media(max-width:760px){
+  .hero{
+    min-height:420px!important;
+  }
+  .hero-art-wrap{
+    min-height:420px!important;
+    padding-bottom:5rem!important;
+  }
+  .hero-art img{
+    width:min(430px,100%)!important;
+    max-width:430px!important;
+    max-height:340px!important;
+    margin-bottom:-5rem!important;
+  }
+  .world-stage .scene-bg{
+    -webkit-backdrop-filter:blur(5px) brightness(.84) saturate(1.03)!important;
+    backdrop-filter:blur(5px) brightness(.84) saturate(1.03)!important;
+  }
+}
