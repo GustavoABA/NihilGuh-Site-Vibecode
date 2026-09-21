@@ -90,16 +90,16 @@
       <div class="goals-head">
         <div>
           <span class="eyebrow">MISSÕES DO MUNDO LOUCO</span>
-          <h2>Quanto tempo o Mundo Louco fica aberto?</h2>
+          <h2>${live ? 'Missões da live' : 'Missões da próxima live'}</h2>
         </div>
         <div class="goals-status ${live ? 'is-live' : ''}">
           <span class="goals-status-dot"></span>
-          <span>${live ? 'live em andamento' : 'aguardando a próxima live'}</span>
+          <span>${live ? 'ao vivo agora' : 'offline'}</span>
         </div>
       </div>
       ${live ? `
         <div class="goals-timer" data-goals-clock>${clock(remainingSeconds(state))}</div>
-        <div class="goals-subline">${formatMinutes(state.session.tempo_base_min)} base + ${formatMinutes(state.session.tempo_ganho_min)} conquistados</div>
+        <div class="goals-subline">${formatMinutes(state.session.tempo_ganho_min)} adicionados pela comunidade</div>
         <div class="goals-list">
           ${goals.map(g => `
             <div class="goal-row ${g.concluida ? 'done' : ''}">
@@ -114,7 +114,7 @@
             </div>`).join('')}
         </div>
       ` : `
-        <div class="goals-offline-note">As missões aparecem aqui automaticamente quando a live começar.</div>
+        <div class="goals-offline-note">As missões aparecem automaticamente quando a live começar.</div>
       `}
       ${sessions.length ? `
         <div class="goals-history">
