@@ -574,7 +574,6 @@ textarea:focus-visible{
 .support-tabs > *,
 .quick-values button,
 .send-btn,
-.vote-option,
 .intro-skip{
   display:flex!important;
   align-items:center!important;
@@ -782,3 +781,9 @@ textarea:focus-visible{
     min-height:44px!important;
   }
 }
+
+
+/* Live CTA visibility must win over generic flex centering. */
+.watch-live{display:none!important}
+.is-live .watch-live{display:flex!important}
+.is-live .offline-primary{display:none!important}
