@@ -229,8 +229,8 @@
 /* Mundo Louco layout pass ml15 */
 .scene-bg{overflow:hidden!important}
 .scene-bg-image{
-  filter:blur(1.4px) brightness(.86) saturate(1.03)!important;
-  transform:scale(1.022)!important;
+  filter:blur(.55px) brightness(.89) saturate(1.02)!important;
+  transform:scale(1.008)!important;
   transform-origin:center top!important;
 }
 .scene-bg::before{
@@ -251,8 +251,8 @@
 .live-game{position:relative!important;z-index:2!important}
 @media(max-width:760px){
   .scene-bg-image{
-    filter:blur(1px) brightness(.84) saturate(1.02)!important;
-    transform:scale(1.015)!important;
+    filter:blur(.35px) brightness(.88) saturate(1.01)!important;
+    transform:scale(1.006)!important;
   }
   .hero-art-wrap{top:1rem!important;margin-bottom:-1.5rem!important}
 }

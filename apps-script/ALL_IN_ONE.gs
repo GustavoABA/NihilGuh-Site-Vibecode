@@ -191,27 +191,52 @@ function livepixCheckout_(p) {
   if (!Number.isFinite(amount) || amount < 100) throw new Error('livepix_minimum_R$1');
   if (amount > 500000) throw new Error('livepix_maximum_R$5000');
 
-  // LivePix /v2/messages expects the recipient's LivePix username here.
-  // The public page is livepix.gg/justguh, therefore the recipient is "justguh".
-  const recipientUsername = 'justguh';
+  // LivePix authenticates the receiving account through OAuth.
+  // In /v2/messages, "username" is the author/display name of the supporter.
   const supporterName = truncate_(String(p.username || 'Anônimo').trim() || 'Anônimo', 32);
   const rawMessage = String(p.message || '').trim() || 'Apoio para o Mundo Louco ♡';
   const message = truncate_(rawMessage, 32);
   const redirectUrl = 'https://gustavoaba.github.io/NihilGuh-Site-Vibecode/?livepix=return#apoiar';
 
-  const created = livepixCreate_('/v2/messages', {
-    username:recipientUsername,
-    message,
-    amount,
-    currency:'BRL',
-    redirectUrl
-  }, 'messages:write');
+  let created;
+  let mode = 'message';
+  let messageError = '';
+
+  try {
+    created = livepixCreate_('/v2/messages', {
+      username:supporterName,
+      message,
+      amount,
+      currency:'BRL',
+      redirectUrl
+    }, 'messages:write');
+  } catch (err) {
+    messageError = String(err && err.message ? err.message : err);
+
+    // If the application does not have Messages enabled, still allow a
+    // secure Pix using the official Payments endpoint.
+    if (/livepix_api_(400|403|422)|livepix_oauth_(400|403)/.test(messageError)) {
+      try {
+        created = livepixCreate_('/v2/payments', {
+          amount,
+          currency:'BRL',
+          redirectUrl
+        }, 'payments:write');
+        mode = 'payment';
+      } catch (paymentErr) {
+        const paymentError = String(paymentErr && paymentErr.message ? paymentErr.message : paymentErr);
+        throw new Error('livepix_checkout_failed:' + truncate_(messageError + ' | fallback=' + paymentError, 360));
+      }
+    } else {
+      throw err;
+    }
+  }
 
   event_(
     'livepix_checkout_created',
     created.reference || '',
     supporterName,
-    'R$ ' + (amount/100).toFixed(2) + ' | ' + message,
+    'R$ ' + (amount/100).toFixed(2) + (mode === 'message' ? ' | ' + message : ' | Pix seguro'),
     0
   );
 
@@ -219,7 +244,7 @@ function livepixCheckout_(p) {
     checkoutUrl:String(created.redirectUrl),
     reference:String(created.reference || ''),
     amountCents:amount,
-    mode:'message'
+    mode:mode
   };
 }
 
