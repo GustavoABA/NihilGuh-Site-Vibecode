@@ -1216,3 +1216,68 @@ body{
     grid-template-columns:minmax(0,1fr)!important;
   }
 }
+
+
+/* ---------- LivePix direct-link mode — livepix37 ---------- */
+.support-direct{
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+  gap:10px;
+  margin-top:16px;
+}
+
+.support-direct-btn{
+  min-height:48px;
+  border-radius:10px;
+  border:1px solid rgba(210,164,255,.20);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:0 18px;
+  text-align:center;
+  font-size:.82rem;
+  font-weight:800;
+  line-height:1.1;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+
+.support-direct-btn.primary{
+  background:linear-gradient(180deg,#9f42f3,#7530d0);
+  border-color:#c582ff;
+  color:#fff;
+  box-shadow:0 0 24px rgba(159,66,243,.26);
+}
+
+.support-direct-btn.secondary{
+  background:rgba(13,6,22,.62);
+  color:#eadff3;
+}
+
+.support-direct-btn:hover{
+  transform:translateY(-2px);
+  border-color:#c98aff;
+}
+
+.support-direct-btn b{
+  line-height:1;
+  font-size:1rem;
+}
+
+.support-direct small{
+  grid-column:1 / -1;
+  color:#9f8eae;
+  font-size:.72rem;
+  line-height:1.45;
+}
+
+@media(max-width:700px){
+  .support-direct{
+    grid-template-columns:1fr;
+  }
+
+  .support-direct small{
+    grid-column:auto;
+    text-align:center;
+  }
+}
