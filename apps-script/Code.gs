@@ -188,43 +188,27 @@ function livepixCheckout_(p) {
   if (!Number.isFinite(amount) || amount < 100) throw new Error('livepix_minimum_R$1');
   if (amount > 500000) throw new Error('livepix_maximum_R$5000');
 
-  const username = truncate_(String(p.username || 'Anônimo').trim() || 'Anônimo', 30);
-  const message = truncate_(String(p.message || '').trim() || 'Apoio para o Mundo Louco ♡', 120);
+  // LivePix /v2/messages expects the recipient's LivePix username here.
+  // The public page is livepix.gg/justguh, therefore the recipient is "justguh".
+  const recipientUsername = 'justguh';
+  const supporterName = truncate_(String(p.username || 'Anônimo').trim() || 'Anônimo', 32);
+  const rawMessage = String(p.message || '').trim() || 'Apoio para o Mundo Louco ♡';
+  const message = truncate_(rawMessage, 32);
   const redirectUrl = 'https://gustavoaba.github.io/NihilGuh-Site-Vibecode/?livepix=return#apoiar';
 
-  let created;
-  let mode = 'message';
-
-  try {
-    created = livepixCreate_('/v2/messages', {
-      username,
-      message,
-      amount,
-      currency:'BRL',
-      redirectUrl
-    }, 'messages:write');
-  } catch (messageErr) {
-    mode = 'payment';
-    try {
-      created = livepixCreate_('/v2/payments', {
-        amount,
-        currency:'BRL',
-        redirectUrl
-      }, 'payments:write');
-    } catch (paymentErr) {
-      throw new Error(
-        'livepix_checkout_failed|' +
-        String(messageErr.message || messageErr) + '|' +
-        String(paymentErr.message || paymentErr)
-      );
-    }
-  }
+  const created = livepixCreate_('/v2/messages', {
+    username:recipientUsername,
+    message,
+    amount,
+    currency:'BRL',
+    redirectUrl
+  }, 'messages:write');
 
   event_(
     'livepix_checkout_created',
     created.reference || '',
-    username,
-    mode + ' | R$ ' + (amount/100).toFixed(2) + ' | ' + message,
+    supporterName,
+    'R$ ' + (amount/100).toFixed(2) + ' | ' + message,
     0
   );
 
@@ -232,7 +216,7 @@ function livepixCheckout_(p) {
     checkoutUrl:String(created.redirectUrl),
     reference:String(created.reference || ''),
     amountCents:amount,
-    mode
+    mode:'message'
   };
 }
 
