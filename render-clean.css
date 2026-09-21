@@ -223,6 +223,7 @@ textarea:focus-visible{
 .hero-art-wrap{
   position:relative;
   z-index:4;
+  order:0;
   min-height:620px;
   align-self:stretch;
   display:flex;
