@@ -1,14 +1,34 @@
 NIHILGUH — DEPLOY DO APPS SCRIPT
 
+IMPORTANTE
+O GitHub Pages publica o frontend automaticamente, mas mudanças em Apps Script NÃO são publicadas pelo GitHub.
+Sempre que apps-script/ALL_IN_ONE.gs mudar, publique uma nova versão do Web App.
+
 1. Abra https://script.new
 2. Apague o conteúdo de Code.gs.
 3. Cole todo o conteúdo de apps-script/ALL_IN_ONE.gs.
-4. Execute a função setup() uma vez e autorize.
-5. Clique em Implantar > Nova implantação > Aplicativo da Web.
-6. Executar como: Eu.
-7. Quem tem acesso: Qualquer pessoa.
-8. Clique em Implantar.
-9. Copie a URL final que termina em /exec.
-10. Abra o site uma vez com ?backend=URL_DO_EXEC para salvar a conexão.
+4. Execute setup() uma vez se este for um projeto novo e autorize.
+5. Implantar > Nova implantação (ou Gerenciar implantações > Editar, para atualizar a implantação existente).
+6. Tipo: Aplicativo da Web.
+7. Executar como: Eu.
+8. Quem tem acesso: Qualquer pessoa.
+9. Implante a nova versão.
+10. Se a URL /exec mudou, abra o site uma vez com ?backend=URL_DO_EXEC.
 
-A URL /exec é emitida pelo Google somente após a implantação do projeto na sua conta.
+ROTAS DO FRONTEND
+/             perfil e hub
+/live/        sala da transmissão
+/play/        minigames
+/overlay/     overlay OBS 600x400
+/overlay.html compatibilidade com a URL antiga
+/admin.html   painel privado
+
+BACKEND ATUAL
+- detecta Twitch online/offline
+- inicia live com 240 min
+- limita bônus acumulado a 240 min (8h totais)
+- registra visitantes, metas, StreamElements e LivePix
+- cria uma rodada de minigame por vez
+- primeiro acerto válido vence via LockService
+- fecha a rodada para todos e inicia a próxima automaticamente
+- comandos administrativos usam POST
