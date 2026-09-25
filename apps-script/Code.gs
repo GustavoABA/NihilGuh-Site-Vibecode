@@ -25,10 +25,12 @@ function doGet(e) {
     const action = p.action || 'state';
     let data;
 
-    if (action === 'state') { interactionTick_(); data = publicState_(); }
+    if (action === 'state') { interactionTick_(); roundTick_(); data = publicState_(); }
     else if (action === 'history') data = history_(Number(p.days || 5));
     else if (action === 'records') data = { records:interactionRecords_() };
     else if (action === 'visit') data = registerVisit_(String(p.visitorId || ''));
+    else if (action === 'roundJoin') data = roundJoin_(String(p.visitorId || ''), String(p.roundId || ''));
+    else if (action === 'roundSubmit') data = roundSubmit_(String(p.visitorId || ''), String(p.roundId || ''), String(p.answer || ''), String(p.displayName || ''));
     else if (action === 'vote') data = interactionVote_(String(p.visitorId || ''), String(p.optionId || ''));
     else if (action === 'livepixCheckout') data = livepixCheckout_(p);
     else if (action === 'livepixStatus') data = livepixStatus_();
@@ -339,6 +341,7 @@ function startSession_(origin) {
   cfg.goals.forEach(g => goals.appendRow([id,date_(d),g.id,g.meta,g.tipo,g.alvo,0,false,g.reward,'']));
   event_('session_start',id,origin || 'manual',cfg.baseMinutes);
   interactionSessionStart_(id,d);
+  roundSessionStart_(id,d);
   updatePanel_();
   return activeSession_();
 }
@@ -350,6 +353,7 @@ function closeSession_(row, origin) {
   live.getRange(row,4,1,7).setValues([[stamp_(), 'ENCERRADA', live.getRange(row,6).getValue(), stats.gained, stats.total, stats.completed, stats.goalCount]]);
   event_('session_end',id,origin || 'manual',stats.total);
   interactionSessionEnd_(id);
+  roundSessionEnd_(id);
   updatePanel_();
   return { ended:true, sessionId:id };
 }
@@ -604,7 +608,7 @@ function publicState_() {
     session_id:id,data:String(row[1]),inicio:String(row[2]),fim:String(row[3]||''),status:String(row[4]),
     tempo_base_min:Number(row[5]||0),tempo_ganho_min:Number(row[6]||0),tempo_total_min:Number(row[7]||0),
     metas_batidas:Number(row[8]||0),metas_total:Number(row[9]||0)
-  }, goals, game:interactionPublicState_(id) };
+  }, goals, game:interactionPublicState_(id), round:roundPublicState_(id) };
 }
 
 function history_(days) {
