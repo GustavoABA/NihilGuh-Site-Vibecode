@@ -18,8 +18,9 @@ a{color:inherit}button,input{font:inherit}
 .nav a,.pill-btn{border:1px solid var(--line);background:rgba(255,255,255,.035);padding:10px 14px;border-radius:999px;text-decoration:none;color:var(--muted);font-size:.88rem;font-weight:800;transition:.18s ease}
 .nav a:hover,.pill-btn:hover{color:#fff;border-color:rgba(180,108,255,.5);transform:translateY(-1px)}
 .layout{display:grid;grid-template-columns:340px minmax(0,1fr);gap:20px;align-items:start}
+.side-stack{display:grid;gap:16px;position:sticky;top:18px}
 .profile-card,.card{border:1px solid var(--line);background:linear-gradient(180deg,rgba(25,13,38,.94),rgba(12,7,20,.94));box-shadow:var(--shadow);border-radius:var(--radius);overflow:hidden}
-.profile-card{position:sticky;top:18px}
+.profile-card{position:relative}
 .profile-cover{height:152px;background:linear-gradient(180deg,rgba(9,5,15,.1),rgba(9,5,15,.8)),url("assets/bg.webp") center 36%/cover no-repeat}
 .profile-body{padding:0 22px 24px;margin-top:-48px}
 .avatar{width:96px;height:96px;border-radius:26px;object-fit:cover;background:#0f0816;border:4px solid #12091c;box-shadow:0 14px 34px rgba(0,0,0,.42)}
@@ -66,6 +67,18 @@ a{color:inherit}button,input{font:inherit}
 .list-row:first-child{border-top:0}.list-row small{color:var(--muted)}.list-row.done strong{color:var(--green)}
 .support-card{background:linear-gradient(135deg,rgba(180,108,255,.13),rgba(239,157,255,.04)),var(--panel)}
 .support-card p{color:var(--muted);line-height:1.5}
+.community-card-home{background:
+linear-gradient(135deg,rgba(124,60,255,.12),rgba(180,108,255,.04)),
+var(--panel)}
+.community-card-home .btn.primary{box-shadow:0 12px 28px rgba(124,60,255,.22)}
+body.is-offline .layout{grid-template-columns:minmax(0,720px);justify-content:center}
+body.is-offline .side-stack{position:relative;top:auto}
+body.is-offline .community-card-home{order:-1;border-color:rgba(180,108,255,.34);box-shadow:0 24px 80px rgba(0,0,0,.36),0 0 0 1px rgba(180,108,255,.09),0 0 48px rgba(124,60,255,.10)}
+body.is-offline .community-card-home h2{font-size:1.55rem}
+body.is-offline .community-card-home .actions .btn.primary{min-width:150px}
+body.is-offline .profile-card{order:0}
+body.is-offline .support-card{order:1}
+[hidden]{display:none!important}
 .footer{color:#7f718d;text-align:center;font-size:.8rem;padding:28px 0 0}
 
 /* live room */
@@ -105,7 +118,7 @@ body[data-page="overlay"]{background:transparent;overflow:hidden}
 /* mobile */
 @media(max-width:820px){
   .shell{width:min(100% - 22px,720px);padding-top:14px}.topbar{align-items:flex-start}.brand img{width:116px}
-  .layout,.live-layout{grid-template-columns:1fr}.profile-card{position:relative;top:auto}.profile-cover{height:125px}
+  .layout,.live-layout{grid-template-columns:1fr}.side-stack{position:relative;top:auto}.profile-card{position:relative;top:auto}.profile-cover{height:125px}
   .profile-body{display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:start}.avatar{grid-row:1/4;width:82px;height:82px;border-radius:22px}
   .profile-title,.handle,.bio{grid-column:2}.bio{font-size:.92rem}.socials{grid-column:1/-1;margin-top:10px}
   .live-side{position:static}.live-summary{grid-template-columns:1fr 1fr}.metric:first-child{grid-column:1/-1}
