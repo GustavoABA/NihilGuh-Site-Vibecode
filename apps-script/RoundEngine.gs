@@ -184,7 +184,9 @@ function roundBuildChallenge_(sessionId,index,type) {
     const target=Math.floor(Math.random()*size);
     base.title='Caça ao Coelho';
     base.instruction='Encontre o Coelho Branco antes que alguém o capture.';
-    base.challenge={cells:size,targetIndex:target,decoys:act>=2};
+    const cells=[];
+    for(let i=0;i<size;i++)cells.push(i===target?'🐇':(act>=2&&Math.random()<0.18?'🐰':'·'));
+    base.challenge={cells:cells,decoys:act>=2};
     base.secretAnswer='cell:'+target;
   }
 
@@ -202,7 +204,9 @@ function roundBuildChallenge_(sessionId,index,type) {
     const theme=themes[Math.floor(Math.random()*themes.length)];
     base.title='Ache o Diferente';
     base.instruction='Só um símbolo não pertence ao padrão. Seja o primeiro a tocar nele.';
-    base.challenge={cols:cols,rows:rows,normal:theme.normal,odd:theme.odd,targetIndex:target};
+    const cells=[];
+    for(let i=0;i<cols*rows;i++)cells.push(i===target?theme.odd:theme.normal);
+    base.challenge={cols:cols,rows:rows,cells:cells};
     base.secretAnswer='cell:'+target;
   }
 
@@ -273,7 +277,6 @@ function roundBuildChallenge_(sessionId,index,type) {
     base.challenge={
       cards:selected,
       targetSymbol:targetSymbol,
-      targetIndex:targetIndex,
       revealUntil:new Date(now+revealMs).toISOString()
     };
     base.secretAnswer='cell:'+targetIndex;
