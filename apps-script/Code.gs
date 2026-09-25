@@ -34,6 +34,7 @@ function doGet(e) {
     else if (action === 'vote') data = interactionVote_(String(p.visitorId || ''), String(p.optionId || ''));
     else if (action === 'livepixCheckout') data = livepixCheckout_(p);
     else if (action === 'livepixStatus') data = livepixStatus_();
+    else if (action === 'adminPostStatus') data = adminPostStatus_(String(p.requestId || ''));
     else if (action === 'assetSource') data = assetSource_(String(p.name || ''));
     else if (action === 'streamEvent') {
       requireBridge_(p.bridgeKey);
@@ -80,9 +81,10 @@ function assetSource_(name) {
 }
 
 function doPost(e) {
+  const p = (e && e.parameter) || {};
+  const action = String(p.action || '');
+  const requestId = truncate_(String(p.requestId || ''), 120);
   try {
-    const p = (e && e.parameter) || {};
-    const action = String(p.action || '');
     let data;
 
     if (action === 'setLivePixCredentials') {
@@ -98,13 +100,51 @@ function doPost(e) {
       props.deleteProperty('LIVEPIX_ACCESS_TOKEN');
       props.deleteProperty('LIVEPIX_ACCESS_TOKEN_EXP');
       data = { configured:true };
+    } else if (action === 'adminAction') {
+      requireAdmin_(p.adminKey);
+      if (!requestId) throw new Error('request_id_required');
+      data = adminPostAction_(String(p.adminAction || ''), p);
+      adminPostStore_(requestId, { ok:true, data:data });
     } else {
       throw new Error('unknown_post_action');
     }
-    return output_('', { ok:true, ...data });
+
+    return output_('', { ok:true, ...(data || {}) });
   } catch (err) {
+    if (action === 'adminAction' && requestId) {
+      adminPostStore_(requestId, { ok:false, error:String(err.message || err) });
+    }
     return output_('', { ok:false, error:String(err.message || err) });
   }
+}
+
+function adminPostStore_(requestId, payload) {
+  CacheService.getScriptCache().put('admin_post_' + requestId, JSON.stringify(payload), 90);
+}
+
+function adminPostStatus_(requestId) {
+  requestId = truncate_(String(requestId || ''), 120);
+  if (!requestId) throw new Error('request_id_required');
+  const cache = CacheService.getScriptCache();
+  const key = 'admin_post_' + requestId;
+  const raw = cache.get(key);
+  if (!raw) return { pending:true };
+  cache.remove(key);
+  const result = JSON.parse(raw);
+  if (!result.ok) return { pending:false, success:false, error:String(result.error || 'admin_action_failed') };
+  return { pending:false, success:true, data:result.data || {} };
+}
+
+function adminPostAction_(action, p) {
+  if (action === 'sync') return (pollTwitchStatus(), interactionTick_(), roundTick_(), publicState_());
+  if (action === 'forceStart') return forceStart_();
+  if (action === 'forceEnd') return forceEnd_();
+  if (action === 'completeGoal') return completeGoal_(String(p.goalId || ''), 'admin');
+  if (action === 'addMinutes') return addMinutes_(Number(p.minutes || 0));
+  if (['triggerChaos','triggerVote','triggerRandom','triggerLastChance','bossDamage','resetGame'].includes(action)) return interactionAdmin_(action,p);
+  if (action === 'bridgeInfo') return { bridgeKey:PropertiesService.getScriptProperties().getProperty('BRIDGE_KEY') || '' };
+  if (action === 'livepixTest') return { connected:Boolean(livepixAccessToken_('messages:write')) };
+  throw new Error('unknown_admin_action');
 }
 
 function livepixStatus_() {
