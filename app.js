@@ -50,6 +50,8 @@
   }
 
   function setStatus(live) {
+    document.body.classList.toggle('is-live',live);
+    document.body.classList.toggle('is-offline',!live);
     document.querySelectorAll('[data-live-dot]').forEach(el => el.classList.toggle('online',live));
     document.querySelectorAll('[data-live-badge]').forEach(el => {
       el.classList.toggle('online',live);
@@ -75,19 +77,29 @@
   function renderHome(s) {
     const live = isLive(s);
     setStatus(live);
-    ensureTwitch('home-player', live);
-    if ($('home-live-title')) $('home-live-title').textContent = live ? 'NihilGuh está ao vivo' : 'Próxima transmissão';
-    if ($('home-timer')) $('home-timer').textContent = live ? clock(remainingSeconds(s)) : '04:00:00';
-    if ($('home-earned')) $('home-earned').textContent = live ? '+' + mins(s.session.tempo_ganho_min) : 'até +4h';
-    if ($('home-total')) $('home-total').textContent = live ? mins(s.session.tempo_total_min) : '4h → 8h';
-    const r = s?.round;
-    if ($('home-round-title')) $('home-round-title').textContent = live ? roundLabel(r) : 'Desafios aparecem durante a live';
-    if ($('home-round-copy')) $('home-round-copy').textContent = !live ? 'Entre quando a Twitch estiver online e dispute contra a comunidade.' :
-      r?.status === 'active' ? r.instruction :
-      r?.winner ? r.winner.name + ' garantiu +' + r.winner.awardedMinutes + ' min para a transmissão.' : 'Preparando a próxima rodada.';
-    if ($('home-round-people')) $('home-round-people').textContent = r ? (r.participants || 0) + ' participando' : '—';
-    if ($('home-round-reward')) $('home-round-reward').textContent = r?.status === 'active' ? '+' + r.rewardMinutes : '—';
+
     document.querySelectorAll('[data-live-only]').forEach(el => el.toggleAttribute('hidden',!live));
+
+    if (!live) {
+      embedded.delete('home-player');
+      const player = $('home-player');
+      if (player) player.innerHTML = '';
+      return;
+    }
+
+    ensureTwitch('home-player', true);
+    if ($('home-timer')) $('home-timer').textContent = clock(remainingSeconds(s));
+    if ($('home-earned')) $('home-earned').textContent = '+' + mins(s.session.tempo_ganho_min);
+    if ($('home-total')) $('home-total').textContent = mins(s.session.tempo_total_min);
+
+    const r = s?.round;
+    if ($('home-round-title')) $('home-round-title').textContent = roundLabel(r);
+    if ($('home-round-copy')) $('home-round-copy').textContent =
+      r?.status === 'active' ? r.instruction :
+      r?.winner ? r.winner.name + ' garantiu +' + r.winner.awardedMinutes + ' min para a transmissão.' :
+      'Preparando a próxima rodada.';
+    if ($('home-round-people')) $('home-round-people').textContent = r ? (r.participants || 0) + ' participando' : 'Preparando jogadores…';
+    if ($('home-round-reward')) $('home-round-reward').textContent = r?.status === 'active' ? '+' + r.rewardMinutes : '—';
   }
 
   function renderLive(s) {
