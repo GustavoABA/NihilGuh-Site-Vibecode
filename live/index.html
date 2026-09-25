@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#09050f"><title>NihilGuh — Sala da Live</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../app.css?v=1">
+</head>
+<body data-page="live">
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="../"><img src="../assets/logo.webp" alt="NihilGuh"></a>
+      <nav class="nav"><a href="../">Perfil</a><a href="../play/" class="keep-mobile">🎮 Jogar</a><a href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer">Twitch ↗</a></nav>
+    </header>
+
+    <div class="live-layout">
+      <section class="stack">
+        <article class="card hero-card">
+          <div class="hero-head">
+            <div><span class="eyebrow">SALA DA LIVE</span><h2>Wonderland Broadcast</h2></div>
+            <span class="status-badge" data-live-badge>OFFLINE</span>
+          </div>
+          <div class="player-wrap" id="live-player"></div>
+        </article>
+
+        <article class="card">
+          <span class="eyebrow">MISSÕES DESTA SESSÃO</span>
+          <h2>A comunidade também joga fora dos minigames</h2>
+          <div class="list" id="live-goals-list"><div class="subtle">Carregando metas…</div></div>
+        </article>
+      </section>
+
+      <aside class="live-side">
+        <article class="card">
+          <span class="eyebrow">RELÓGIO DA LIVE</span>
+          <div class="big-clock" id="live-clock">04:00:00</div>
+          <p class="subtle" id="live-state-copy">As brincadeiras começam automaticamente quando a Twitch ficar online.</p>
+          <div class="list">
+            <div class="list-row"><span>Tempo ganho</span><strong id="live-bonus">+0 min</strong></div>
+            <div class="list-row"><span>Tempo da sessão</span><strong id="live-total">4h base</strong></div>
+          </div>
+        </article>
+
+        <article class="card round-card">
+          <span class="eyebrow">RODADA ATUAL</span>
+          <h2 class="round-title" id="live-round-title">Sem rodada ativa</h2>
+          <p class="round-copy" id="live-round-copy">Abra a página de jogo quando a live começar.</p>
+          <div class="round-meta"><span id="live-round-meta">—</span></div>
+          <div class="actions"><a class="btn primary" href="../play/">Entrar no desafio</a></div>
+        </article>
+      </aside>
+    </div>
+  </main>
+  <script src="../site.config.js"></script><script src="../goals-api.js"></script><script src="../app.js?v=1"></script>
+</body>
+</html>
