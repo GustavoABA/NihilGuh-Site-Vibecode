@@ -105,6 +105,37 @@ body.is-offline .support-card{order:1}
 .reaction-btn.ready{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;box-shadow:0 0 50px rgba(180,108,255,.4);cursor:pointer;transform:scale(1.03)}
 .winner{padding:30px;text-align:center}.winner .crown{font-size:3rem}.winner h1{margin:8px 0}.winner strong{color:var(--green);font-size:1.25rem}
 .offline-card{text-align:center;padding:36px}
+.game-card{min-height:480px}
+.game-progress{height:5px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;margin:22px 0 8px}
+.game-progress i{display:block;height:100%;background:linear-gradient(90deg,var(--purple2),var(--pink));border-radius:inherit}
+.hunt-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;max-width:560px;margin:24px auto}
+.hunt-cell,.odd-cell,.memory-card{border:1px solid var(--line);background:#0c0712;color:#fff;border-radius:13px;min-height:58px;font-size:1.7rem;cursor:pointer;transition:.12s}
+.hunt-cell:hover,.odd-cell:hover,.memory-card:not(:disabled):hover{transform:translateY(-2px);border-color:rgba(180,108,255,.5)}
+.hunt-cell.rabbit{background:rgba(180,108,255,.12)}
+.odd-grid{display:grid;grid-template-columns:repeat(var(--game-cols),1fr);gap:5px;max-width:620px;margin:24px auto}
+.odd-cell{min-height:0;aspect-ratio:1;padding:0;font-size:clamp(1rem,4vw,1.8rem)}
+.flash-stage{margin:24px auto;padding:30px 16px;border:1px solid rgba(180,108,255,.24);border-radius:20px;background:rgba(180,108,255,.07)}
+.flash-stage.is-hidden{border-style:dashed}
+.flash-word{font-size:clamp(2rem,8vw,4.5rem);font-weight:950;letter-spacing:.08em;word-break:break-word}
+.flash-stage small,.game-help{display:block;color:var(--muted);margin-top:10px}
+.memory-target{margin:20px 0 12px;color:var(--muted)}.memory-target strong{color:#fff;font-size:1.5rem}
+.memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:560px;margin:0 auto 18px}
+.memory-card{aspect-ratio:1;font-size:2rem}.memory-card.is-hidden{background:linear-gradient(135deg,#1b0d2a,#0e0715);border-color:rgba(180,108,255,.22)}
+.memory-card:disabled{opacity:1}
+.queen-warning{margin:18px auto 10px;color:var(--pink);font-weight:900}
+.queen-doors{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:600px;margin:22px auto}
+.queen-door{min-height:230px;border:1px solid rgba(180,108,255,.25);border-radius:22px;background:linear-gradient(180deg,#1a0c29,#0c0712);color:#fff;cursor:pointer;transition:.16s}
+.queen-door:hover{transform:translateY(-4px);border-color:rgba(239,157,255,.6);box-shadow:0 18px 45px rgba(124,60,255,.18)}
+.queen-door span{display:block;font-size:4rem}.queen-door strong{display:block;font-size:1.25rem;margin:8px}.queen-door small{color:var(--muted)}
+.winner.penalty strong{color:var(--danger)}
+.maze-board{display:grid;grid-template-columns:repeat(var(--maze-cols),1fr);gap:2px;max-width:560px;margin:22px auto;background:#050308;padding:8px;border:1px solid var(--line);border-radius:16px}
+.maze-cell{aspect-ratio:1;display:grid;place-items:center;font-size:clamp(.8rem,3vw,1.35rem);border-radius:4px}
+.maze-cell.wall{background:#040207}.maze-cell.open{background:#20102d}.maze-cell.player{background:rgba(180,108,255,.6);box-shadow:0 0 18px rgba(180,108,255,.35)}
+.maze-controls{display:grid;justify-items:center;gap:5px;margin:12px auto}.maze-controls>button,.maze-controls div button{width:56px;height:46px;border:1px solid var(--line);background:#170c21;color:#fff;border-radius:12px;font-size:1.3rem;cursor:pointer}.maze-controls div{display:flex;gap:5px}
+.puzzle-board{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:540px;margin:24px auto}
+.puzzle-tile{aspect-ratio:1;border-radius:16px;border:1px solid rgba(180,108,255,.25);background:linear-gradient(135deg,#2a1240,#13091d);color:#fff;font-size:clamp(1.25rem,5vw,2.2rem);font-weight:950;cursor:pointer;box-shadow:inset 0 0 24px rgba(180,108,255,.05)}
+.puzzle-tile.blank{background:rgba(255,255,255,.025);border-style:dashed;cursor:default}
+
 
 /* overlay */
 body[data-page="overlay"]{background:transparent;overflow:hidden}
@@ -123,7 +154,7 @@ body[data-page="overlay"]{background:transparent;overflow:hidden}
   .profile-title,.handle,.bio{grid-column:2}.bio{font-size:.92rem}.socials{grid-column:1/-1;margin-top:10px}
   .live-side{position:static}.live-summary{grid-template-columns:1fr 1fr}.metric:first-child{grid-column:1/-1}
   .grid-2{grid-template-columns:1fr}.round-grid{grid-template-columns:1fr}.reward{justify-self:start}
-  .challenge{padding:20px 16px}.challenge-form{flex-direction:column}.challenge-form .btn{width:100%}
+  .challenge{padding:20px 16px}.challenge-form{flex-direction:column}.challenge-form .btn{width:100%}.hunt-grid{grid-template-columns:repeat(5,1fr);gap:6px}.queen-doors{grid-template-columns:1fr}.queen-door{min-height:150px}.memory-grid{gap:6px}.maze-board{padding:5px}
   .play-head{align-items:flex-start;flex-direction:column}.player-name{width:100%}.player-name input{flex:1;min-width:0}
 }
 @media(max-width:560px){
