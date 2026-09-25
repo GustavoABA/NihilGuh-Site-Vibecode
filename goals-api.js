@@ -44,6 +44,8 @@
     records(){ return API.call('records'); },
     visit(){ return API.call('visit', { visitorId: API.visitorId() }); },
     vote(optionId){ return API.call('vote', { visitorId: API.visitorId(), optionId }); },
+    roundJoin(roundId){ return API.call('roundJoin', { visitorId: API.visitorId(), roundId }); },
+    roundSubmit(roundId, answer = '', displayName = ''){ return API.call('roundSubmit', { visitorId: API.visitorId(), roundId, answer, displayName }); },
     admin(action, adminKey, params = {}){ return API.call(action, { ...params, adminKey }); }
   };
 
