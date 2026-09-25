@@ -1,30 +1,50 @@
-# NihilGuh — Wonderland Broadcast
+# NihilGuh — Mundo Louco
 
-Landing page leve para centralizar canais, comunidade e apoio via LivePix.
+Hub de live e interação da comunidade publicado em GitHub Pages, com estado autoritativo em Google Apps Script.
 
-## Site
+## Experiência pública
 
-- Twitch, YouTube, TikTok, Kick e Trovo
-- Discord e Coret.cloud
-- detector de live da Twitch
-- entrada animada inspirada nos alertas Wonderland/Cheshire
-- assets locais otimizados
-- favicon com emote de ramen
-- GitHub Pages via `.github/workflows/pages.yml`
+- / — perfil do criador, canais, Twitch, apoio e resumo da rodada.
+- /live/ — sala da live com player Twitch, relógio, metas e rodada atual.
+- /play/ — minigame mobile-first; todos disputam a mesma rodada.
+- /overlay/ — overlay 600×400 para OBS.
+- /overlay.html — URL legada mantida compatível.
+- /admin.html — painel privado de controle.
 
-## LivePix
+## Regra central da live
 
-O iframe foi removido porque o LivePix bloqueia incorporação externa com `X-Frame-Options: sameorigin` e `frame-ancestors 'none'`.
+Cada sessão começa com **240 minutos (4h)**. Metas, LivePix, eventos e minigames podem conceder até **240 minutos extras**, portanto o teto é **480 minutos (8h)**.
 
-A página agora tem uma interface própria com:
+A Twitch é usada como sinal de sessão através da DecAPI já adotada pelo projeto. Quando a transmissão passa de offline para online, o backend cria uma nova sessão e uma nova sequência de rodadas.
 
-- mensagem + Pix
-- Pix rápido
-- planos de assinatura
-- recorrência mensal, trimestral, semestral e anual
+## Minigames
 
-As chamadas passam por `worker/worker.js`, mantendo o `client_secret` fora do GitHub Pages.
+O arquivo apps-script/RoundEngine.gs mantém uma rodada autoritativa por sessão. A resposta correta não é enviada ao navegador. O primeiro acerto válido é processado dentro de LockService, fecha a rodada para todos, concede o bônus de tempo permitido e agenda a próxima rodada.
 
-> Para ativar os pagamentos, publique o Worker e preencha `api.base` em `site.config.js`.
+Tipos iniciais:
+- Sequência do Coelho;
+- Conta da Rainha;
+- Palavra Embaralhada;
+- Código do Cheshire;
+- Sorriso Relâmpago (reflexo).
 
-A API oficial do LivePix usa OAuth2 e retorna uma `redirectUrl` de checkout para pagamentos, mensagens e assinaturas.
+O identificador do visitante é local ao navegador e serve para a dinâmica casual; não é autenticação forte.
+
+## Backend
+
+Fontes:
+- apps-script/Code.gs
+- apps-script/Interactions.gs
+- apps-script/RoundEngine.gs
+
+Para publicar sem gerenciar vários arquivos, use apps-script/ALL_IN_ONE.gs.
+
+O Google Sheets continua como histórico e registro de sessões/metas/eventos. O estado volátil dos jogos fica em ScriptProperties, evitando depender de varreduras do Sheets para cada detalhe da rodada.
+
+## Segurança do painel
+
+Comandos administrativos do frontend usam POST. A ADMIN_KEY não é enviada na query string. O navegador envia um requestId aleatório e consulta apenas o resultado temporário dessa operação.
+
+## GitHub Pages
+
+.github/workflows/pages.yml publica automaticamente o conteúdo do branch main.
