@@ -69,9 +69,15 @@
 
   function roundLabel(r) {
     if (!r) return 'Aguardando desafio';
-    if (r.status === 'won' && r.winner) return r.winner.name + ' venceu';
+    if (r.deckComplete) return 'Wonderland concluído';
+    if (r.status === 'won' && r.winner) return r.type === 'queen' ? 'A Rainha decidiu' : r.winner.name + ' venceu';
     if (r.status === 'expired') return 'Rodada encerrada';
     return r.title || 'Desafio atual';
+  }
+
+  function signedMinutes(value) {
+    const n = Number(value || 0);
+    return (n > 0 ? '+' : '') + n + ' min';
   }
 
   function renderHome(s) {
@@ -95,8 +101,9 @@
     const r = s?.round;
     if ($('home-round-title')) $('home-round-title').textContent = roundLabel(r);
     if ($('home-round-copy')) $('home-round-copy').textContent =
+      r?.deckComplete ? 'As 23 rodadas desta live foram concluídas.' :
       r?.status === 'active' ? r.instruction :
-      r?.winner ? r.winner.name + ' garantiu +' + r.winner.awardedMinutes + ' min para a transmissão.' :
+      r?.winner ? r.winner.name + ' alterou o relógio em ' + signedMinutes(r.winner.awardedMinutes) + '.' :
       'Preparando a próxima rodada.';
     if ($('home-round-people')) $('home-round-people').textContent = r ? (r.participants || 0) + ' participando' : 'Preparando jogadores…';
     if ($('home-round-reward')) $('home-round-reward').textContent = r?.status === 'active' ? '+' + r.rewardMinutes : '—';
@@ -113,8 +120,11 @@
 
     const r = s?.round;
     if ($('live-round-title')) $('live-round-title').textContent = live ? roundLabel(r) : 'Sem rodada ativa';
-    if ($('live-round-copy')) $('live-round-copy').textContent = live && r?.status === 'active' ? r.instruction :
-      live && r?.winner ? r.winner.name + ' venceu a rodada. A próxima começa em instantes.' : 'Abra a página de jogo quando a live começar.';
+    if ($('live-round-copy')) $('live-round-copy').textContent =
+      live && r?.deckComplete ? 'As 23 rodadas desta live foram concluídas.' :
+      live && r?.status === 'active' ? r.instruction :
+      live && r?.winner ? r.winner.name + ' fechou a rodada em ' + signedMinutes(r.winner.awardedMinutes) + '. A próxima começa em instantes.' :
+      'Abra a página de jogo quando a live começar.';
     if ($('live-round-meta')) $('live-round-meta').textContent = r ? (r.participants || 0) + ' jogadores · prêmio +' + (r.rewardMinutes || 0) + ' min' : '—';
 
     const goals = $('live-goals-list');
@@ -254,7 +264,8 @@
     if ($('overlay-round')) $('overlay-round').textContent = live ? roundLabel(r) : 'Aguardando a próxima live';
     if ($('overlay-desc')) $('overlay-desc').textContent = !live ? 'O cronômetro começa em 4 horas quando a Twitch entrar online.' :
       r?.status === 'active' ? r.instruction :
-      r?.winner ? r.winner.name + ' adicionou +' + r.winner.awardedMinutes + ' min.' : 'Preparando próxima rodada.';
+      r?.deckComplete ? 'As 23 rodadas desta live foram concluídas.' :
+      r?.winner ? r.winner.name + ' alterou o relógio em ' + signedMinutes(r.winner.awardedMinutes) + '.' : 'Preparando próxima rodada.';
     if ($('overlay-meta')) $('overlay-meta').textContent = r ? (r.participants || 0) + ' jogadores' : 'Mundo Louco';
     if ($('overlay-bonus')) $('overlay-bonus').textContent = live ? '+' + mins(s.session.tempo_ganho_min) + ' pela comunidade' : 'até 8h';
     $('overlay-round')?.classList.toggle('overlay-winner',Boolean(r?.winner && r.status==='won'));
