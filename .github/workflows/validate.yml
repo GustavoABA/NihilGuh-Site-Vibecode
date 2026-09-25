@@ -16,6 +16,7 @@ jobs:
       - name: Check browser JavaScript syntax
         run: |
           node --check app.js
+          node --check games.js
           node --check goals-api.js
           node --check site.config.js
       - name: Check Apps Script JavaScript syntax
