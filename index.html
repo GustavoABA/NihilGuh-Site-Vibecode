@@ -1,158 +1,106 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#09030f" />
-  <meta name="description" content="NihilGuh — lives, comunidade e apoio via LivePix." />
-  <title>NihilGuh — Wonderland Broadcast</title>
-  <link rel="icon" type="image/webp" href="assets/ramen.webp?v=hq13" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="site.css?v=6" />
-  <link rel="stylesheet" href="goals.css?v=1" /><link rel="stylesheet" href="interactions.css?v=1" />
-  <link rel="stylesheet" href="render-clean.css?v=livepix37" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#09050f">
+  <meta name="description" content="NihilGuh — live, minigames, comunidade e caos no Mundo Louco.">
+  <title>NihilGuh — Mundo Louco</title>
+  <link rel="icon" type="image/webp" href="assets/ramen.webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css?v=1">
 </head>
-<body>
-  <div class="intro" id="intro">
-    <div class="intro-vignette"></div>
-    <div class="intro-cat"></div>
-    <div class="intro-title">WELCOME TO THE RABBIT HOLE</div>
-    <div class="intro-smoke i1"></div>
-    <div class="intro-smoke i2"></div>
-    <div class="intro-smoke i3"></div>
-    <div class="intro-flash"></div>
-    <button class="intro-skip" type="button">Pular intro</button>
-  </div>
+<body data-page="home">
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="./"><img src="assets/logo.webp" alt="NihilGuh"></a>
+      <nav class="nav" aria-label="Navegação">
+        <a href="live/" class="keep-mobile">Live</a>
+        <a href="play/" class="keep-mobile">Jogar</a>
+        <a href="#apoio">Apoiar</a>
+        <a href="#comunidade">Comunidade</a>
+      </nav>
+    </header>
 
-  <div class="world-stage">
-    <div class="scene-bg" aria-hidden="true">
-      <img class="scene-bg-image" src="assets/bg.webp?v=center16" alt="" decoding="async" fetchpriority="high" />
-    </div>
-    <div class="fog-layer fog-one" aria-hidden="true"></div>
-    <div class="fog-layer fog-two" aria-hidden="true"></div>
-    <div id="tsparticles" aria-hidden="true"></div>
-
-    <main class="site-shell">
-    <section class="hero glassless" id="top">
-      <div class="hero-copy reveal">
-        <a class="logo-art" href="#top" aria-label="NihilGuh">
-          <img src="assets/logo.webp?v=hq13" alt="NihilGuh" decoding="async" fetchpriority="high" width="1086" height="362" />
-        </a>
-        <p class="tagline">MAIS QUE LIVES, UM REFÚGIO</p>
-        <h1>“Um lugar onde<br>o caos também<br>é casa.”</h1>
-        <p class="hero-text">Lives, jogos e caos. Bem-vindo ao Mundo Louco.</p>
-
-        <div class="hero-actions">
-          <a class="neon-btn watch-live" id="watch-live" href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer">
-            <img src="https://cdn.simpleicons.org/twitch/ffffff" alt="" />
-            <span>ASSISTIR AGORA</span>
-            <b>→</b>
-          </a>
-          <a class="neon-btn offline-primary" href="#comunidade"><span>ENTRAR NA COMUNIDADE</span><b>→</b></a>
-          <a class="neon-btn secondary" href="#apoiar"><span>♥</span><span>APOIAR O MUNDO LOUCO</span></a>
-        </div>
-
-        <div class="platforms" aria-label="Canais de live">
-          <a class="platform twitch" href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer"><i><img src="https://cdn.simpleicons.org/twitch/a970ff" alt="" /></i><span>Twitch</span></a>
-          <a class="platform youtube" href="https://www.youtube.com/@nihilguh" target="_blank" rel="noreferrer"><i><img src="https://cdn.simpleicons.org/youtube/ff2f3d" alt="" /></i><span>YouTube</span></a>
-          <a class="platform tiktok" href="https://www.tiktok.com/@nihilguh" target="_blank" rel="noreferrer"><i><img src="https://cdn.simpleicons.org/tiktok/ffffff" alt="" /></i><span>TikTok</span></a>
-          <a class="platform kick" href="https://kick.com/nihilguh" target="_blank" rel="noreferrer"><i class="letter">K</i><span>Kick</span></a>
-          <a class="platform trovo" href="https://trovo.live/s/nihilguh" target="_blank" rel="noreferrer"><i class="letter">t</i><span>Trovo</span></a>
-        </div>
-      </div>
-
-      <div class="hero-art-wrap reveal">
-        <div class="hero-art" role="img" aria-label="NihilGuh em cenário Wonderland">
-          <img src="assets/hero.webp?v=hq13" alt="NihilGuh debruçado" decoding="async" fetchpriority="high" width="900" height="780" />
-        </div>
-        <div class="hero-bloom"></div>
-      </div>
-    </section>
-
-    <section class="live-strip glass reveal" id="live-strip" hidden>
-      <div class="live-head">
-        <span class="eyebrow">CANAIS DE LIVE</span>
-        <span class="live-hint">ONLINE AGORA</span>
-      </div>
-      <div class="live-content">
-        <div class="live-profile">
-          <img src="assets/emote-punch.webp" alt="NihilGuh" />
-          <div><strong>NihilGuh <span class="green-dot"></span></strong><small>Estou live agora!</small></div>
-          <span class="live-badge">AO VIVO</span>
-        </div>
-        <a class="live-go" href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer">Ver na Twitch <span>→</span></a>
-      </div>
-    </section>
-
-    <section class="goals-card glass reveal" id="live-goals" aria-live="polite" hidden>
-      <div class="goals-offline-note">Carregando missões do Mundo Louco…</div>
-    </section>
-
-    <section class="live-game glass reveal" id="community-game" aria-live="polite" hidden></section>
-
-    <section class="content-grid">
-      <section class="support-card glass reveal" id="apoiar">
-        <div class="support-copy">
-          <span class="eyebrow">APOIE O MUNDO LOUCO</span>
-          <div class="livepix-title">LivePix<span>♛</span></div>
-          <p>Apoie a live diretamente pela LivePix. ♡</p>
-
-          <div class="support-direct">
-            <a class="support-direct-btn primary" href="https://livepix.gg/justguh" target="_blank" rel="noopener noreferrer">
-              <span>💜 Apoiar pelo LivePix</span>
-              <b>↗</b>
-            </a>
-            <a class="support-direct-btn secondary" href="https://livepix.gg/justguh/assinatura" target="_blank" rel="noopener noreferrer">
-              <span>Assinar mensalmente</span>
-              <b>↗</b>
-            </a>
-            <small>O pagamento é concluído diretamente no site oficial da LivePix.</small>
+    <div class="layout">
+      <aside class="profile-card">
+        <div class="profile-cover"></div>
+        <div class="profile-body">
+          <img class="avatar" src="assets/emote-punch.webp" alt="Avatar NihilGuh">
+          <div class="profile-title"><h1>NihilGuh</h1><span class="live-dot" data-live-dot></span></div>
+          <div class="handle">@nihilguh</div>
+          <p class="bio">Lives, jogos e caos. Um pequeno buraco de coelho na internet onde a própria comunidade consegue estender a transmissão.</p>
+          <div class="socials">
+            <a href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer">Twitch</a>
+            <a href="https://www.youtube.com/@nihilguh" target="_blank" rel="noreferrer">YouTube</a>
+            <a href="https://www.tiktok.com/@nihilguh" target="_blank" rel="noreferrer">TikTok</a>
+            <a href="https://kick.com/nihilguh" target="_blank" rel="noreferrer">Kick</a>
+            <a href="https://trovo.live/s/nihilguh" target="_blank" rel="noreferrer">Trovo</a>
+            <a href="https://discord.gg/7F9YbfvUXD" target="_blank" rel="noreferrer">Discord</a>
+            <a href="https://coret.cloud" target="_blank" rel="noreferrer">Coret.cloud</a>
+            <a href="https://instagram.com/NihilGuh" target="_blank" rel="noreferrer">Instagram</a>
           </div>
         </div>
+      </aside>
 
-        <div class="ramen-art-wrap" aria-hidden="true">
-          <div class="thanks-note">Obrigado<br>pelo apoio!<br>♡</div>
-          <div class="ramen-art">
-            <img src="assets/ramen.webp?v=hq13" alt="NihilGuh comendo ramen" loading="lazy" decoding="async" width="900" height="900" />
+      <section class="stack">
+        <article class="card hero-card">
+          <div class="hero-head">
+            <div><span class="eyebrow">TRANSMISSÃO</span><h2 id="home-live-title">Próxima transmissão</h2></div>
+            <span class="status-badge" data-live-badge>OFFLINE</span>
           </div>
+          <div class="player-wrap" id="home-player"></div>
+          <div class="live-summary">
+            <div class="metric"><span>Tempo restante</span><strong class="timer" id="home-timer">04:00:00</strong></div>
+            <div class="metric"><span>Comunidade</span><strong id="home-earned">até +4h</strong></div>
+            <div class="metric"><span>Tempo total</span><strong id="home-total">4h → 8h</strong></div>
+          </div>
+        </article>
+
+        <article class="card round-card">
+          <div class="round-grid">
+            <div>
+              <span class="eyebrow">DESAFIO DA LIVE</span>
+              <h2 class="round-title" id="home-round-title">Desafios aparecem durante a live</h2>
+              <p class="round-copy" id="home-round-copy">Entre quando a Twitch estiver online e dispute contra a comunidade.</p>
+              <div class="round-meta"><span id="home-round-people">—</span><span>primeiro acerto vence</span></div>
+              <div class="actions">
+                <a class="btn primary" href="play/">🎮 Participar</a>
+                <a class="btn secondary" href="live/">Abrir sala da live</a>
+              </div>
+            </div>
+            <div class="reward"><span>prêmio</span><b id="home-round-reward">—</b><span>minutos</span></div>
+          </div>
+        </article>
+
+        <div class="grid-2">
+          <article class="card support-card" id="apoio">
+            <span class="eyebrow">APOIE O MUNDO LOUCO</span>
+            <h2>Ajude a manter o caos vivo ♡</h2>
+            <p>Apoios continuam pela LivePix. Durante a live, eventos e desafios também podem aumentar o cronômetro.</p>
+            <div class="actions">
+              <a class="btn primary" href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">Apoiar pelo LivePix ↗</a>
+              <a class="btn secondary" href="https://livepix.gg/justguh/assinatura" target="_blank" rel="noreferrer">Assinar</a>
+            </div>
+          </article>
+          <article class="card" id="comunidade">
+            <span class="eyebrow">COMUNIDADE</span>
+            <h2>Entre no Mundo Louco</h2>
+            <p class="subtle">Discord para acompanhar avisos e conversar; Coret.cloud para a comunidade fora da transmissão.</p>
+            <div class="actions">
+              <a class="btn primary" href="https://discord.gg/7F9YbfvUXD" target="_blank" rel="noreferrer">Discord</a>
+              <a class="btn secondary" href="https://coret.cloud" target="_blank" rel="noreferrer">Coret.cloud</a>
+            </div>
+          </article>
         </div>
       </section>
-
-      <aside class="community-card glass reveal" id="comunidade">
-        <span class="eyebrow">COMUNIDADE</span>
-        <h2>Mundo Louco</h2>
-        <div class="community-links">
-          <a href="https://coret.cloud" target="_blank" rel="noreferrer" class="community-item featured"><i>♕</i><strong>Coret</strong><small>coret.cloud</small></a>
-          <a href="https://discord.gg/7F9YbfvUXD" target="_blank" rel="noreferrer" class="community-item"><i><img src="https://cdn.simpleicons.org/discord/ffffff" alt="" /></i><strong>Discord</strong><small>Comunidade</small></a>
-          <a href="https://x.com/NihilGuh" target="_blank" rel="noreferrer" class="community-item"><i>𝕏</i><strong>Twitter / X</strong><small>@NihilGuh</small></a>
-          <a href="https://instagram.com/NihilGuh" target="_blank" rel="noreferrer" class="community-item"><i><img src="https://cdn.simpleicons.org/instagram/ff5f82" alt="" /></i><strong>Instagram</strong><small>@NihilGuh</small></a>
-        </div>
-        <div class="wall-copy">“Aqui o tempo passa diferente.”</div>
-        <div class="cat-mark"><span>NihilGuh</span></div>
-      </aside>
-    </section>
-
-    <footer class="glass reveal">
-      <div class="footer-logo" aria-hidden="true">
-        <img src="assets/logo.webp?v=hq13" alt="" loading="lazy" decoding="async" width="1086" height="362" />
-      </div>
-      <span>Mais que lives, um refúgio.</span>
-      <span class="footer-love">Feito com ♡ para todos os pequenos caos.</span>
-    </footer>
-    </main>
-  </div>
-
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tsparticles/engine@4/tsparticles.engine.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tsparticles/slim@4/tsparticles.slim.bundle.min.js"></script>
+    </div>
+    <footer class="footer">NihilGuh · Wonderland Broadcast · a comunidade controla o relógio.</footer>
+  </main>
   <script src="site.config.js"></script>
   <script src="goals-api.js"></script>
-  <script src="site.js?v=livepix37"></script>
-  <script src="goals.js?v=responsive36"></script>
-  <script src="interactions.js?v=responsive36"></script>
+  <script src="app.js?v=1"></script>
 </body>
 </html>
