@@ -46,7 +46,55 @@
     vote(optionId){ return API.call('vote', { visitorId: API.visitorId(), optionId }); },
     roundJoin(roundId){ return API.call('roundJoin', { visitorId: API.visitorId(), roundId }); },
     roundSubmit(roundId, answer = '', displayName = ''){ return API.call('roundSubmit', { visitorId: API.visitorId(), roundId, answer, displayName }); },
-    admin(action, adminKey, params = {}){ return API.call(action, { ...params, adminKey }); }
+    admin(action, adminKey, params = {}){ return API.call(action, { ...params, adminKey }); },
+
+    adminPost(action, adminKey, params = {}) {
+      return new Promise((resolve, reject) => {
+        const base = API.backendUrl;
+        if (!base) return reject(new Error('backend_not_configured'));
+        const requestId = (crypto.randomUUID ? crypto.randomUUID() : 'r-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+        const iframeName = '__nihilguh_admin_post_' + requestId.replace(/[^a-z0-9]/gi,'');
+        const iframe = document.createElement('iframe');
+        iframe.name = iframeName;
+        iframe.hidden = true;
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = base;
+        form.target = iframeName;
+        form.style.display = 'none';
+        const fields = { action:'adminAction', adminAction:action, adminKey, requestId, ...params };
+        Object.entries(fields).forEach(([name,value]) => {
+          const input = document.createElement('input');
+          input.name = name;
+          input.value = value == null ? '' : String(value);
+          form.appendChild(input);
+        });
+        document.body.appendChild(iframe);
+        document.body.appendChild(form);
+        form.submit();
+        form.remove();
+
+        const started = Date.now();
+        const timer = setInterval(async () => {
+          try {
+            const status = await API.call('adminPostStatus', { requestId });
+            if (status?.pending) {
+              if (Date.now() - started > 12000) throw new Error('admin_post_timeout');
+              return;
+            }
+            clearInterval(timer);
+            iframe.remove();
+            if (!status?.success) reject(new Error(status?.error || 'admin_action_failed'));
+            else resolve(status.data || {});
+          } catch (err) {
+            if (Date.now() - started <= 12000 && String(err.message||'').includes('timeout')) return;
+            clearInterval(timer);
+            iframe.remove();
+            reject(err);
+          }
+        }, 450);
+      });
+    }
   };
 
   window.NihilGuhAPI = API;
