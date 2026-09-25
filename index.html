@@ -10,97 +10,96 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="app.css?v=1">
+  <link rel="stylesheet" href="app.css?v=2">
 </head>
 <body data-page="home">
   <main class="shell">
     <header class="topbar">
       <a class="brand" href="./"><img src="assets/logo.webp" alt="NihilGuh"></a>
       <nav class="nav" aria-label="Navegação">
-        <a href="live/" class="keep-mobile">Live</a>
-        <a href="play/" class="keep-mobile">Jogar</a>
+        <a href="live/" class="keep-mobile" data-live-only hidden>Live</a>
+        <a href="play/" class="keep-mobile" data-live-only hidden>Jogar</a>
         <a href="#apoio">Apoiar</a>
         <a href="#comunidade">Comunidade</a>
       </nav>
     </header>
 
     <div class="layout">
-      <aside class="profile-card">
-        <div class="profile-cover"></div>
-        <div class="profile-body">
-          <img class="avatar" src="assets/emote-punch.webp" alt="Avatar NihilGuh">
-          <div class="profile-title"><h1>NihilGuh</h1><span class="live-dot" data-live-dot></span></div>
-          <div class="handle">@nihilguh</div>
-          <p class="bio">Lives, jogos e caos. Um pequeno buraco de coelho na internet onde a própria comunidade consegue estender a transmissão.</p>
-          <div class="socials">
-            <a href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer">Twitch</a>
-            <a href="https://www.youtube.com/@nihilguh" target="_blank" rel="noreferrer">YouTube</a>
-            <a href="https://www.tiktok.com/@nihilguh" target="_blank" rel="noreferrer">TikTok</a>
-            <a href="https://kick.com/nihilguh" target="_blank" rel="noreferrer">Kick</a>
-            <a href="https://trovo.live/s/nihilguh" target="_blank" rel="noreferrer">Trovo</a>
-            <a href="https://discord.gg/7F9YbfvUXD" target="_blank" rel="noreferrer">Discord</a>
-            <a href="https://coret.cloud" target="_blank" rel="noreferrer">Coret.cloud</a>
-            <a href="https://instagram.com/NihilGuh" target="_blank" rel="noreferrer">Instagram</a>
+      <aside class="side-stack">
+        <section class="profile-card">
+          <div class="profile-cover"></div>
+          <div class="profile-body">
+            <img class="avatar" src="assets/emote-punch.webp" alt="Avatar NihilGuh">
+            <div class="profile-title"><h1>NihilGuh</h1><span class="live-dot" data-live-dot></span></div>
+            <div class="handle">@nihilguh</div>
+            <p class="bio">Lives, jogos e caos. Um pequeno buraco de coelho na internet onde a própria comunidade consegue estender a transmissão.</p>
+            <div class="socials">
+              <a href="https://www.twitch.tv/nihilguh" target="_blank" rel="noreferrer">Twitch</a>
+              <a href="https://www.youtube.com/@nihilguh" target="_blank" rel="noreferrer">YouTube</a>
+              <a href="https://www.tiktok.com/@nihilguh" target="_blank" rel="noreferrer">TikTok</a>
+              <a href="https://kick.com/nihilguh" target="_blank" rel="noreferrer">Kick</a>
+              <a href="https://trovo.live/s/nihilguh" target="_blank" rel="noreferrer">Trovo</a>
+              <a href="https://instagram.com/NihilGuh" target="_blank" rel="noreferrer">Instagram</a>
+            </div>
           </div>
-        </div>
+        </section>
+
+        <article class="card community-card-home" id="comunidade">
+          <span class="eyebrow">COMUNIDADE</span>
+          <h2>Entre no Mundo Louco</h2>
+          <p class="subtle">Discord para acompanhar avisos e conversar; Coret.cloud para a comunidade fora da transmissão.</p>
+          <div class="actions">
+            <a class="btn primary" href="https://discord.gg/7F9YbfvUXD" target="_blank" rel="noreferrer">Discord</a>
+            <a class="btn secondary" href="https://coret.cloud" target="_blank" rel="noreferrer">Coret.cloud</a>
+          </div>
+        </article>
+
+        <article class="card support-card" id="apoio">
+          <span class="eyebrow">APOIE O MUNDO LOUCO</span>
+          <h2>Ajude a manter o caos vivo ♡</h2>
+          <p>Apoios continuam pela LivePix. Durante a live, eventos e desafios também podem aumentar o cronômetro.</p>
+          <div class="actions">
+            <a class="btn primary" href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">Apoiar pelo LivePix ↗</a>
+            <a class="btn secondary" href="https://livepix.gg/justguh/assinatura" target="_blank" rel="noreferrer">Assinar</a>
+          </div>
+        </article>
       </aside>
 
-      <section class="stack">
-        <article class="card hero-card">
+      <section class="stack live-home-content">
+        <article class="card hero-card" id="home-transmission" data-live-only hidden>
           <div class="hero-head">
-            <div><span class="eyebrow">TRANSMISSÃO</span><h2 id="home-live-title">Próxima transmissão</h2></div>
-            <span class="status-badge" data-live-badge>OFFLINE</span>
+            <div><span class="eyebrow">TRANSMISSÃO</span></div>
+            <span class="status-badge" data-live-badge>● AO VIVO</span>
           </div>
           <div class="player-wrap" id="home-player"></div>
           <div class="live-summary">
             <div class="metric"><span>Tempo restante</span><strong class="timer" id="home-timer">04:00:00</strong></div>
-            <div class="metric"><span>Comunidade</span><strong id="home-earned">até +4h</strong></div>
-            <div class="metric"><span>Tempo total</span><strong id="home-total">4h → 8h</strong></div>
+            <div class="metric"><span>Comunidade</span><strong id="home-earned">+0 min</strong></div>
+            <div class="metric"><span>Tempo total</span><strong id="home-total">4h</strong></div>
           </div>
         </article>
 
-        <article class="card round-card">
+        <article class="card round-card" id="home-challenge" data-live-only hidden>
           <div class="round-grid">
             <div>
               <span class="eyebrow">DESAFIO DA LIVE</span>
-              <h2 class="round-title" id="home-round-title">Desafios aparecem durante a live</h2>
-              <p class="round-copy" id="home-round-copy">Entre quando a Twitch estiver online e dispute contra a comunidade.</p>
+              <h2 class="round-title" id="home-round-title">Carregando jogo atual…</h2>
+              <p class="round-copy" id="home-round-copy">Sincronizando com a rodada da live.</p>
               <div class="round-meta"><span id="home-round-people">—</span><span>primeiro acerto vence</span></div>
               <div class="actions">
-                <a class="btn primary" href="play/">🎮 Participar</a>
+                <a class="btn primary" href="play/">🎮 Jogar agora</a>
                 <a class="btn secondary" href="live/">Abrir sala da live</a>
               </div>
             </div>
             <div class="reward"><span>prêmio</span><b id="home-round-reward">—</b><span>minutos</span></div>
           </div>
         </article>
-
-        <div class="grid-2">
-          <article class="card support-card" id="apoio">
-            <span class="eyebrow">APOIE O MUNDO LOUCO</span>
-            <h2>Ajude a manter o caos vivo ♡</h2>
-            <p>Apoios continuam pela LivePix. Durante a live, eventos e desafios também podem aumentar o cronômetro.</p>
-            <div class="actions">
-              <a class="btn primary" href="https://livepix.gg/justguh" target="_blank" rel="noreferrer">Apoiar pelo LivePix ↗</a>
-              <a class="btn secondary" href="https://livepix.gg/justguh/assinatura" target="_blank" rel="noreferrer">Assinar</a>
-            </div>
-          </article>
-          <article class="card" id="comunidade">
-            <span class="eyebrow">COMUNIDADE</span>
-            <h2>Entre no Mundo Louco</h2>
-            <p class="subtle">Discord para acompanhar avisos e conversar; Coret.cloud para a comunidade fora da transmissão.</p>
-            <div class="actions">
-              <a class="btn primary" href="https://discord.gg/7F9YbfvUXD" target="_blank" rel="noreferrer">Discord</a>
-              <a class="btn secondary" href="https://coret.cloud" target="_blank" rel="noreferrer">Coret.cloud</a>
-            </div>
-          </article>
-        </div>
       </section>
     </div>
     <footer class="footer">NihilGuh · Wonderland Broadcast · a comunidade controla o relógio.</footer>
   </main>
   <script src="site.config.js"></script>
   <script src="goals-api.js"></script>
-  <script src="app.js?v=1"></script>
+  <script src="app.js?v=2"></script>
 </body>
 </html>
