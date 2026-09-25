@@ -1,0 +1,32 @@
+name: Validate site
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check browser JavaScript syntax
+        run: |
+          node --check app.js
+          node --check goals-api.js
+          node --check site.config.js
+      - name: Check Apps Script JavaScript syntax
+        run: |
+          cat apps-script/Code.gs apps-script/Interactions.gs apps-script/RoundEngine.gs > /tmp/backend.js
+          node --check /tmp/backend.js
+      - name: Check required routes
+        run: |
+          test -f index.html
+          test -f live/index.html
+          test -f play/index.html
+          test -f overlay/index.html
+          test -f overlay.html
+          test -f apps-script/ALL_IN_ONE.gs
