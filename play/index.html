@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#09050f"><title>NihilGuh — Jogar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../app.css?v=1">
+</head>
+<body data-page="play">
+  <main class="play-shell">
+    <header class="play-head">
+      <a class="brand" href="../"><img src="../assets/logo.webp" alt="NihilGuh"></a>
+      <div class="player-name"><span class="live-dot" data-live-dot></span><input id="player-name-input" maxlength="24" placeholder="Seu nome no jogo" aria-label="Seu nome no jogo"></div>
+    </header>
+    <div id="play-root"><section class="card offline-card"><h1>Entrando no Mundo Louco…</h1><p class="subtle">Sincronizando a rodada com a live.</p></section></div>
+    <div class="actions" style="justify-content:center"><a class="btn secondary" href="../live/">← Voltar para a live</a></div>
+  </main>
+  <script src="../site.config.js"></script><script src="../goals-api.js"></script><script src="../app.js?v=1"></script>
+</body>
+</html>
