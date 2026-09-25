@@ -1,6 +1,6 @@
 (() => {
   const KEY = 'nihilguh_backend_url';
-  const DEFAULT_BACKEND = 'https://script.google.com/macros/s/AKfycbwZk4rY5yDWyGrZRAaQHfHzKnQeLc091VQSs5fehtmfpkxnHxQ32wfUUzF5jzFQMumo/exec';
+  const DEFAULT_BACKEND = 'https://script.google.com/macros/s/AKfycbyVuXFPOw6al_I6RliuMcW35ucGgfQHyY4TEI6qStHmACgl8eAh96XJYcWvZJ7QgpWW/exec';
   const params = new URLSearchParams(location.search);
   const supplied = params.get('backend');
 
@@ -25,6 +25,6 @@
     backendUrl: localStorage.getItem(KEY) || DEFAULT_BACKEND,
     historyDays: 5,
     pollMs: 30000,
-    deploymentId: 'AKfycbwZk4rY5yDWyGrZRAaQHfHzKnQeLc091VQSs5fehtmfpkxnHxQ32wfUUzF5jzFQMumo'
+    deploymentId: 'AKfycbyVuXFPOw6al_I6RliuMcW35ucGgfQHyY4TEI6qStHmACgl8eAh96XJYcWvZJ7QgpWW'
   };
 })();
