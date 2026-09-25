@@ -33,7 +33,7 @@ const INTERACTION_CFG = {
 const INTERACTION_TIME_EVENTS = [
   'manual_time','livepix_time','boss_bonus','last_chance_bonus',
   'vote_mission_bonus','combo_bonus','sudden_death_bonus',
-  'random_bonus','chaos_livepix_bonus'
+  'random_bonus','chaos_livepix_bonus','round_bonus'
 ];
 
 const INTERACTION_RECENT_TYPES = [
@@ -43,7 +43,8 @@ const INTERACTION_RECENT_TYPES = [
   'community_mission_start','community_mission_success','community_mission_failed',
   'random_event_start','random_event_success','random_event_failed',
   'sudden_death_start','sudden_death_success','sudden_death_failed',
-  'loot_unlock','stream_growth','stream_support','stream_raid','livepix_donation'
+  'loot_unlock','stream_growth','stream_support','stream_raid','livepix_donation',
+  'round_start','round_won','round_expired'
 ];
 
 function interactionSessionStart_(sessionId, startedAt) {
