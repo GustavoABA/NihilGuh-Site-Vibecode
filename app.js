@@ -138,6 +138,7 @@
     if (!root) return;
     const live = isLive(s);
     setStatus(live);
+
     if (!live) {
       lastPlaySignature = 'offline';
       root.innerHTML = '<section class="card offline-card"><div class="challenge-icon">☾</div><h1>Live offline</h1><p class="subtle">Os minigames são liberados automaticamente quando NihilGuh entra ao vivo na Twitch.</p><div class="actions" style="justify-content:center"><a class="btn primary" href="../">Voltar ao perfil</a></div></section>';
@@ -146,7 +147,14 @@
 
     const r = s.round;
     if (!r) {
+      lastPlaySignature = 'preparing';
       root.innerHTML = '<section class="card offline-card"><h1>Preparando o Mundo Louco…</h1><p class="subtle">O backend está criando a primeira rodada.</p></section>';
+      return;
+    }
+
+    if (r.deckComplete) {
+      lastPlaySignature = 'deck-complete';
+      root.innerHTML = '<section class="card winner"><div class="crown">♛</div><span class="eyebrow">WONDERLAND CONCLUÍDO</span><h1>As 23 rodadas acabaram</h1><strong>A comunidade zerou o baralho desta live.</strong><p class="subtle">O relógio continua valendo normalmente até o encerramento da transmissão.</p></section>';
       return;
     }
 
@@ -154,23 +162,25 @@
     if (signature !== lastPlaySignature) {
       lastPlaySignature = signature;
       if (r.status === 'active') {
-        const reaction = r.type === 'reaction';
-        root.innerHTML = '<section class="card challenge" data-round-id="' + esc(r.roundId) + '">' +
-          '<span class="eyebrow">RODADA #' + esc(r.index) + '</span><div class="challenge-icon">' + (reaction?'⚡':'♠') + '</div>' +
-          '<h1>' + esc(r.title) + '</h1><p>' + esc(r.instruction) + '</p>' +
-          '<div class="challenge-prompt">' + esc(challengePrompt(r)) + '</div>' +
-          (reaction
-            ? '<div class="reaction-zone"><button class="reaction-btn" id="reaction-btn" type="button" disabled>ESPERE…</button></div>'
-            : '<form class="challenge-form" id="answer-form"><input class="answer-input" id="answer-input" autocomplete="off" placeholder="Sua resposta" maxlength="80" required><button class="btn primary" type="submit">Responder</button></form>') +
-          '<div class="feedback" id="play-feedback"></div>' +
-          '<div class="play-stats"><span id="play-players">0 participando</span><span>+' + esc(r.rewardMinutes) + ' min</span><span id="play-round-clock">--:--</span></div></section>';
+        const ui = window.NihilGuhGameUI;
+        root.innerHTML = ui ? ui.render(r) : '<section class="card offline-card"><h1>'+esc(r.title)+'</h1><p class="subtle">'+esc(r.instruction)+'</p></section>';
+        if (ui) ui.mount(r, submitRound);
         joinRound(r);
       } else if (r.status === 'won' && r.winner) {
-        root.innerHTML = '<section class="card winner"><div class="crown">♛</div><span class="eyebrow">RODADA CONCLUÍDA</span><h1>' + esc(r.winner.name) + ' chegou primeiro</h1><strong>+' + esc(r.winner.awardedMinutes) + ' minutos na live</strong><p class="subtle">Próxima brincadeira em <span id="play-next-clock">' + clock(roundSeconds(r)) + '</span>.</p></section>';
+        const amount = Number(r.winner.awardedMinutes || 0);
+        const signed = amount > 0 ? '+' + amount : String(amount);
+        const queen = r.type === 'queen';
+        root.innerHTML = '<section class="card winner '+(amount<0?'penalty':'')+'">'+
+          '<div class="crown">'+(amount<0?'💀':'♛')+'</div>'+
+          '<span class="eyebrow">'+(queen?'A RAINHA DECIDIU':'RODADA CONCLUÍDA')+'</span>'+
+          '<h1>'+esc(r.winner.name)+(queen?' escolheu a Porta '+esc(r.winner.selectedDoor||''):' chegou primeiro')+'</h1>'+
+          '<strong>'+esc(signed)+' minutos na live</strong>'+
+          '<p class="subtle">Próxima brincadeira em <span id="play-next-clock">'+clock(roundSeconds(r))+'</span>.</p></section>';
       } else {
-        root.innerHTML = '<section class="card winner"><div class="crown">⌛</div><h1>Ninguém venceu esta rodada</h1><p class="subtle">Próxima brincadeira em <span id="play-next-clock">' + clock(roundSeconds(r)) + '</span>.</p></section>';
+        root.innerHTML = '<section class="card winner"><div class="crown">⌛</div><h1>Ninguém venceu esta rodada</h1><p class="subtle">Próxima brincadeira em <span id="play-next-clock">'+clock(roundSeconds(r))+'</span>.</p></section>';
       }
     }
+
     paintPlayDynamic(r);
   }
 
@@ -189,13 +199,7 @@
     if ($('play-players')) $('play-players').textContent = (r.participants || 0) + ' participando';
     if ($('play-round-clock')) $('play-round-clock').textContent = clock(roundSeconds(r));
     if ($('play-next-clock')) $('play-next-clock').textContent = clock(roundSeconds(r));
-    const reaction = $('reaction-btn');
-    if (reaction && r.type === 'reaction' && r.status === 'active') {
-      const ready = Date.now() >= new Date(r.challenge.unlockAt).getTime();
-      reaction.disabled = !ready;
-      reaction.classList.toggle('ready',ready);
-      reaction.textContent = ready ? 'CLIQUE AGORA!' : 'ESPERE…';
-    }
+    window.NihilGuhGameUI?.tick(r);
   }
 
   function playerName() {
@@ -203,17 +207,25 @@
   }
 
   async function submitRound(round, answer) {
+    if (!round || round.status !== 'active') return;
     const feedback = $('play-feedback');
     if (feedback) { feedback.className='feedback'; feedback.textContent='Validando no servidor…'; }
     try {
       const res = await api.roundSubmit(round.roundId, answer, playerName());
       if (res?.won) {
-        if (feedback) { feedback.className='feedback good'; feedback.textContent='VOCÊ CHEGOU PRIMEIRO! +' + res.awardedMinutes + ' min'; }
+        const amount = Number(res.awardedMinutes || 0);
+        const signed = amount > 0 ? '+' + amount : String(amount);
+        if (feedback) {
+          feedback.className = 'feedback ' + (amount < 0 ? 'bad' : 'good');
+          feedback.textContent = round.type === 'queen'
+            ? (amount < 0 ? 'A RAINHA ROUBOU ' + Math.abs(amount) + ' MINUTOS!' : 'PORTA CERTA! +' + amount + ' MINUTOS!')
+            : 'VOCÊ CHEGOU PRIMEIRO! ' + signed + ' min';
+        }
       } else {
         const map = {
           wrong:'Resposta incorreta. Tente novamente.',
           too_soon:'Cedo demais! Espere o sinal.',
-          round_closed:'Alguém já venceu esta rodada.',
+          round_closed:'Alguém já concluiu esta rodada.',
           stale_round:'Essa rodada já terminou.',
           attempt_limit:'Limite de tentativas desta rodada atingido.'
         };
@@ -232,20 +244,6 @@
       name.addEventListener('change',() => localStorage.setItem('nihilguh_player_name',name.value.trim().slice(0,24)));
       name.addEventListener('blur',() => localStorage.setItem('nihilguh_player_name',name.value.trim().slice(0,24)));
     }
-    document.addEventListener('submit',e => {
-      if (e.target.id !== 'answer-form') return;
-      e.preventDefault();
-      if (!state?.round || state.round.status !== 'active') return;
-      const input = $('answer-input');
-      const value = input?.value || '';
-      if (input) input.value='';
-      submitRound(state.round,value);
-    });
-    document.addEventListener('click',e => {
-      if (e.target.id !== 'reaction-btn') return;
-      if (!state?.round || state.round.status !== 'active') return;
-      submitRound(state.round,'CLICK');
-    });
   }
 
   function renderOverlay(s) {
