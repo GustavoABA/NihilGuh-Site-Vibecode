@@ -49,6 +49,50 @@
     embedded.add(targetId);
   }
 
+
+  function parseUptimeSeconds(text) {
+    const raw = String(text || '').trim().toLowerCase();
+    if (!raw || raw.includes('offline') || raw.includes('error')) return null;
+    let total = 0;
+    const units = [
+      ['day',86400],['hour',3600],['minute',60],['second',1]
+    ];
+    for (const [unit,mult] of units) {
+      const m = raw.match(new RegExp('(\\d+)\\s*' + unit + 's?'));
+      if (m) total += Number(m[1]) * mult;
+    }
+    if (total > 0) return total;
+    const colon = raw.match(/^(?:(\\d+):)?(\\d{1,2}):(\\d{2})$/);
+    if (colon) return Number(colon[1] || 0)*3600 + Number(colon[2])*60 + Number(colon[3]);
+    return null;
+  }
+
+  async function twitchFallbackState() {
+    try {
+      const res = await fetch('https://decapi.me/twitch/uptime/nihilguh?offline_msg=offline&_=' + Date.now(), { cache:'no-store' });
+      if (!res.ok) return null;
+      const raw = await res.text();
+      const uptime = parseUptimeSeconds(raw);
+      if (uptime == null) return null;
+      return {
+        fallback:true,
+        twitchState:'online',
+        session:{
+          session_id:'decapi_fallback',
+          inicio:new Date(Date.now() - uptime*1000).toISOString(),
+          status:'ONLINE',
+          tempo_base_min:240,
+          tempo_ganho_min:0,
+          tempo_total_min:240
+        },
+        goals:[],
+        round:null
+      };
+    } catch (_) {
+      return null;
+    }
+  }
+
   function setStatus(live) {
     document.body.classList.toggle('is-live',live);
     document.body.classList.toggle('is-offline',!live);
@@ -258,16 +302,17 @@
 
   function renderOverlay(s) {
     const live = isLive(s);
-    if ($('overlay-status')) $('overlay-status').textContent = live ? '● AO VIVO' : 'OFFLINE';
+    if ($('overlay-status')) $('overlay-status').textContent = live ? (s?.fallback ? '● AO VIVO · FALLBACK' : '● AO VIVO') : 'OFFLINE';
     if ($('overlay-clock')) $('overlay-clock').textContent = live ? clock(remainingSeconds(s)) : '04:00:00';
     const r = s?.round;
     if ($('overlay-round')) $('overlay-round').textContent = live ? roundLabel(r) : 'Aguardando a próxima live';
     if ($('overlay-desc')) $('overlay-desc').textContent = !live ? 'O cronômetro começa em 4 horas quando a Twitch entrar online.' :
+      s?.fallback ? 'Cronômetro sincronizado diretamente com o uptime da Twitch. Bônus e minigames voltam quando o backend responder.' :
       r?.status === 'active' ? r.instruction :
       r?.deckComplete ? 'As 23 rodadas desta live foram concluídas.' :
       r?.winner ? r.winner.name + ' alterou o relógio em ' + signedMinutes(r.winner.awardedMinutes) + '.' : 'Preparando próxima rodada.';
     if ($('overlay-meta')) $('overlay-meta').textContent = r ? (r.participants || 0) + ' jogadores' : 'Mundo Louco';
-    if ($('overlay-bonus')) $('overlay-bonus').textContent = live ? '+' + mins(s.session.tempo_ganho_min) + ' pela comunidade' : 'até 8h';
+    if ($('overlay-bonus')) $('overlay-bonus').textContent = live ? (s?.fallback ? 'backend desconectado' : '+' + mins(s.session.tempo_ganho_min) + ' pela comunidade') : 'até 8h';
     $('overlay-round')?.classList.toggle('overlay-winner',Boolean(r?.winner && r.status==='won'));
   }
 
@@ -286,14 +331,36 @@
       render(state);
     } catch (err) {
       console.warn('NihilGuh backend indisponível:',err);
+      const fallback = await twitchFallbackState();
+      if (fallback) {
+        state = fallback;
+        if (page === 'overlay') renderOverlay(state);
+        else if (page === 'home') {
+          setStatus(true);
+          document.querySelectorAll('[data-live-only]').forEach(el => el.toggleAttribute('hidden',false));
+          ensureTwitch('home-player', true);
+          if ($('home-timer')) $('home-timer').textContent = clock(remainingSeconds(state));
+          if ($('home-earned')) $('home-earned').textContent = 'backend offline';
+          if ($('home-total')) $('home-total').textContent = '4h base';
+          if ($('home-challenge')) $('home-challenge').hidden = true;
+        } else if (page === 'live') {
+          renderLive(state);
+          if ($('live-round-title')) $('live-round-title').textContent = 'Backend temporariamente indisponível';
+          if ($('live-round-copy')) $('live-round-copy').textContent = 'O relógio continua pela Twitch; minigames e bônus aguardam reconexão.';
+        } else if (page === 'play') {
+          setStatus(true);
+          if ($('play-root')) $('play-root').innerHTML = '<section class="card offline-card"><h1>Live detectada</h1><p class="subtle">O cronômetro está funcionando pela Twitch, mas os minigames precisam do Apps Script público para sincronizar todos os jogadores.</p></section>';
+        }
+        return;
+      }
       setStatus(false);
       document.querySelectorAll('[data-live-badge]').forEach(el => {
         el.classList.remove('online');
         el.textContent = 'ERRO BACKEND';
       });
       if ($('overlay-status')) $('overlay-status').textContent = 'ERRO BACKEND';
-      if ($('overlay-desc')) $('overlay-desc').textContent = 'O site não conseguiu ler o Apps Script. Atualize a fonte do navegador e confira se o Web App está público para qualquer pessoa.';
-      if ($('play-root') && page === 'play') $('play-root').innerHTML = '<section class="card offline-card"><h1>Backend indisponível</h1><p class="subtle">Não foi possível ler o estado da live. Atualize a página e confira a implantação do Apps Script.</p></section>';
+      if ($('overlay-desc')) $('overlay-desc').textContent = 'Não foi possível ler o Apps Script nem o status da Twitch.';
+      if ($('play-root') && page === 'play') $('play-root').innerHTML = '<section class="card offline-card"><h1>Backend indisponível</h1><p class="subtle">Não foi possível ler o estado da live.</p></section>';
     }
   }
 
