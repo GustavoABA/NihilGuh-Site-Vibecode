@@ -40,6 +40,7 @@
     },
 
     state(){ return API.call('state'); },
+    detectorStatus(){ return API.call('detectorStatus'); },
     history(days = cfg.historyDays || 5){ return API.call('history', { days }); },
     records(){ return API.call('records'); },
     visit(){ return API.call('visit', { visitorId: API.visitorId() }); },
