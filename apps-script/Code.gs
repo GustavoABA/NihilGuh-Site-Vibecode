@@ -25,7 +25,7 @@ function doGet(e) {
     const action = p.action || 'state';
     let data;
 
-    if (action === 'state') { interactionTick_(); roundTick_(); data = publicState_(); }
+    if (action === 'state') { ensureTwitchStatusFresh_(); interactionTick_(); roundTick_(); data = publicState_(); }
     else if (action === 'history') data = history_(Number(p.days || 5));
     else if (action === 'records') data = { records:interactionRecords_() };
     else if (action === 'visit') data = registerVisit_(String(p.visitorId || ''));
@@ -35,6 +35,7 @@ function doGet(e) {
     else if (action === 'livepixCheckout') data = livepixCheckout_(p);
     else if (action === 'livepixStatus') data = livepixStatus_();
     else if (action === 'adminPostStatus') data = adminPostStatus_(String(p.requestId || ''));
+    else if (action === 'detectorStatus') data = detectorStatus_();
     else if (action === 'assetSource') data = assetSource_(String(p.name || ''));
     else if (action === 'streamEvent') {
       requireBridge_(p.bridgeKey);
@@ -325,6 +326,31 @@ function config_() {
   };
 }
 
+function ensureTwitchStatusFresh_() {
+  const props = PropertiesService.getScriptProperties();
+  const last = Number(props.getProperty('TWITCH_LAST_CHECK_MS') || 0);
+  const now = Date.now();
+  if (now - last < 30000) return;
+  // Reserve the slot first so many visitors don't all probe DecAPI together.
+  props.setProperty('TWITCH_LAST_CHECK_MS', String(now));
+  pollTwitchStatus();
+}
+
+function detectorStatus_() {
+  const props = PropertiesService.getScriptProperties();
+  const active = activeSession_();
+  const cfg = config_();
+  return {
+    channel:cfg.channel,
+    decapi:cfg.decapi,
+    twitchState:props.getProperty('TWITCH_STATE') || 'unknown',
+    lastCheckAt:props.getProperty('TWITCH_LAST_CHECK_AT') || '',
+    lastRaw:props.getProperty('TWITCH_LAST_RAW') || '',
+    lastError:props.getProperty('TWITCH_LAST_ERROR') || '',
+    activeSessionId:active ? String(active.values[0]) : ''
+  };
+}
+
 function pollTwitchStatus() {
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(25000)) return;
@@ -336,12 +362,19 @@ function pollTwitchStatus() {
       if (res.getResponseCode() < 200 || res.getResponseCode() >= 300) throw new Error('decapi_http_' + res.getResponseCode());
       text = String(res.getContentText() || '').trim().toLowerCase();
     } catch (err) {
+      const props = PropertiesService.getScriptProperties();
+      props.setProperty('TWITCH_LAST_CHECK_AT', stamp_());
+      props.setProperty('TWITCH_LAST_ERROR', String(err.message || err));
       event_('detector_error','decapi',String(err.message || err),'');
       return;
     }
 
     const online = Boolean(text && !text.includes('offline') && !text.includes('error'));
     const props = PropertiesService.getScriptProperties();
+    props.setProperty('TWITCH_LAST_CHECK_MS', String(Date.now()));
+    props.setProperty('TWITCH_LAST_CHECK_AT', stamp_());
+    props.setProperty('TWITCH_LAST_RAW', truncate_(text, 240));
+    props.deleteProperty('TWITCH_LAST_ERROR');
     const active = activeSession_();
 
     if (online) {
