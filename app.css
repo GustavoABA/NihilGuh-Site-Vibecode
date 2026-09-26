@@ -138,12 +138,40 @@ body.is-offline .support-card{order:1}
 
 
 /* overlay */
-body[data-page="overlay"]{background:transparent;overflow:hidden}
-.overlay-shell{width:600px;height:400px;padding:18px;display:grid;grid-template-rows:auto 1fr auto;gap:10px;background:linear-gradient(180deg,rgba(9,5,15,.88),rgba(9,5,15,.70));border:1px solid rgba(255,255,255,.10);border-radius:28px;overflow:hidden}
-.overlay-top{display:flex;justify-content:space-between;align-items:center}.overlay-title{font-size:.72rem;font-weight:950;letter-spacing:.15em;color:var(--purple)}
-.overlay-clock{font-size:64px;font-weight:950;letter-spacing:-.05em;font-variant-numeric:tabular-nums;line-height:1}
-.overlay-main{display:grid;align-content:center}.overlay-round{font-size:25px;font-weight:900;margin:8px 0 4px}.overlay-desc{font-size:14px;color:#cabdd5;max-width:500px}
-.overlay-bottom{display:flex;justify-content:space-between;color:#b3a4bf;font-size:13px;font-weight:800}
+html.overlay-page,
+html.overlay-page body,
+body[data-page="overlay"]{
+  background:transparent!important;
+  background-color:transparent!important;
+  color-scheme:normal;
+}
+body[data-page="overlay"]{
+  overflow:hidden;
+  min-height:0;
+}
+body[data-page="overlay"] .overlay-shell{
+  width:600px;
+  height:400px;
+  padding:18px;
+  display:grid;
+  grid-template-rows:auto 1fr auto;
+  gap:10px;
+  background:transparent!important;
+  background-color:transparent!important;
+  border:0!important;
+  border-radius:0;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  overflow:hidden;
+}
+.overlay-top{display:flex;justify-content:space-between;align-items:center}
+.overlay-title{font-size:.72rem;font-weight:950;letter-spacing:.15em;color:var(--purple);text-shadow:0 2px 8px #000,0 0 14px rgba(0,0,0,.9)}
+.overlay-clock{font-size:64px;font-weight:950;letter-spacing:-.05em;font-variant-numeric:tabular-nums;line-height:1;text-shadow:0 3px 10px #000,0 0 18px rgba(0,0,0,.95)}
+.overlay-main{display:grid;align-content:center}
+.overlay-round{font-size:25px;font-weight:900;margin:8px 0 4px;text-shadow:0 2px 8px #000,0 0 14px rgba(0,0,0,.95)}
+.overlay-desc{font-size:14px;color:#f0e8f7;max-width:500px;text-shadow:0 2px 8px #000,0 0 12px rgba(0,0,0,.95)}
+.overlay-bottom{display:flex;justify-content:space-between;color:#ded2e8;font-size:13px;font-weight:800;text-shadow:0 2px 8px #000,0 0 12px rgba(0,0,0,.95)}
+#overlay-status{font-weight:950;text-shadow:0 2px 8px #000,0 0 12px rgba(0,0,0,.95)}
 .overlay-winner{color:var(--green)}
 
 /* mobile */
