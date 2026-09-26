@@ -286,6 +286,14 @@
       render(state);
     } catch (err) {
       console.warn('NihilGuh backend indisponível:',err);
+      setStatus(false);
+      document.querySelectorAll('[data-live-badge]').forEach(el => {
+        el.classList.remove('online');
+        el.textContent = 'ERRO BACKEND';
+      });
+      if ($('overlay-status')) $('overlay-status').textContent = 'ERRO BACKEND';
+      if ($('overlay-desc')) $('overlay-desc').textContent = 'O site não conseguiu ler o Apps Script. Atualize a fonte do navegador e confira se o Web App está público para qualquer pessoa.';
+      if ($('play-root') && page === 'play') $('play-root').innerHTML = '<section class="card offline-card"><h1>Backend indisponível</h1><p class="subtle">Não foi possível ler o estado da live. Atualize a página e confira a implantação do Apps Script.</p></section>';
     }
   }
 
