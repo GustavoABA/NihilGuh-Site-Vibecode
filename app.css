@@ -61,7 +61,7 @@ body[data-page="home"]::after{
 .bio{color:#e3d8eb;line-height:1.62;margin:0 0 20px}
 .socials{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .social-btn{
-  position:relative;display:flex;align-items:center;justify-content:flex-start;gap:9px;
+  position:relative;isolation:isolate;display:flex;align-items:center;justify-content:flex-start;gap:9px;
   min-height:48px;padding:0 13px;border:1px solid rgba(255,255,255,.10);
   border-radius:14px;text-decoration:none;font-weight:850;font-size:.86rem;color:#fff;
   overflow:hidden;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,filter .18s ease
