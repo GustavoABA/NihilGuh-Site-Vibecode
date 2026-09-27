@@ -10,8 +10,7 @@ function setup() {
   triggers.forEach(t => ScriptApp.deleteTrigger(t));
   ScriptApp.newTrigger('pollTwitchStatus').timeBased().everyMinutes(1).create();
   pollTwitchStatus();
-  Logger.log('ADMIN_KEY=' + props.getProperty('ADMIN_KEY'));
-  Logger.log('BRIDGE_KEY=' + props.getProperty('BRIDGE_KEY'));
+  Logger.log('NihilGuh backend configurado. Chaves privadas não são exibidas em logs.');
   return {
     ok:true,
     adminKey:props.getProperty('ADMIN_KEY'),
@@ -25,7 +24,7 @@ function doGet(e) {
     const action = p.action || 'state';
     let data;
 
-    if (action === 'state') { ensureTwitchStatusFresh_(); interactionTick_(); roundTick_(); data = publicState_(); }
+    if (action === 'state') { ensureTwitchStatusFresh_(); roundTick_(); data = publicState_(); }
     else if (action === 'stateLite') { roundTick_(); data = publicStateLite_(); }
     else if (action === 'history') data = history_(Number(p.days || 5));
     else if (action === 'records') data = { records:interactionRecords_() };
@@ -42,16 +41,7 @@ function doGet(e) {
       requireBridge_(p.bridgeKey);
       data = streamEvent_(p);
     } else {
-      requireAdmin_(p.adminKey);
-      if (action === 'sync') data = (pollTwitchStatus(), interactionTick_(), publicState_());
-      else if (action === 'forceStart') data = forceStart_();
-      else if (action === 'forceEnd') data = forceEnd_();
-      else if (action === 'completeGoal') data = completeGoal_(String(p.goalId || ''), 'admin');
-      else if (action === 'addMinutes') data = addMinutes_(Number(p.minutes || 0));
-      else if (['triggerChaos','triggerVote','triggerRandom','triggerLastChance','bossDamage','resetGame'].includes(action)) data = interactionAdmin_(action,p);
-      else if (action === 'bridgeInfo') data = { bridgeKey:PropertiesService.getScriptProperties().getProperty('BRIDGE_KEY') || '' };
-      else if (action === 'livepixTest') data = { connected:Boolean(livepixAccessToken_('messages:write')) };
-      else throw new Error('unknown_action');
+      throw new Error('unknown_action');
     }
 
     return output_(p.callback, { ok:true, ...data });
@@ -138,12 +128,12 @@ function adminPostStatus_(requestId) {
 }
 
 function adminPostAction_(action, p) {
-  if (action === 'sync') return (pollTwitchStatus(), interactionTick_(), roundTick_(), publicState_());
+  if (action === 'sync') return (pollTwitchStatus(), roundTick_(), publicState_());
   if (action === 'forceStart') return forceStart_();
   if (action === 'forceEnd') return forceEnd_();
   if (action === 'completeGoal') return completeGoal_(String(p.goalId || ''), 'admin');
   if (action === 'addMinutes') return addMinutes_(Number(p.minutes || 0));
-  if (['triggerChaos','triggerVote','triggerRandom','triggerLastChance','bossDamage','resetGame'].includes(action)) return interactionAdmin_(action,p);
+  if (['triggerChaos','triggerVote','triggerRandom','triggerLastChance','bossDamage','resetGame'].includes(action)) throw new Error('legacy_interactions_disabled');
   if (action === 'bridgeInfo') return { bridgeKey:PropertiesService.getScriptProperties().getProperty('BRIDGE_KEY') || '' };
   if (action === 'livepixTest') return { connected:Boolean(livepixAccessToken_('messages:write')) };
   throw new Error('unknown_admin_action');
@@ -398,9 +388,25 @@ function pollTwitchStatus() {
 }
 
 function activeSession_() {
-  const s = sh_(TABS.LIVES), vals = s.getDataRange().getValues();
-  for (let r=vals.length-1; r>=1; r--) {
-    if (String(vals[r][4]).toUpperCase() === 'ONLINE') return { row:r+1, values:vals[r] };
+  const props=PropertiesService.getScriptProperties();
+  const cachedRow=Number(props.getProperty('ACTIVE_SESSION_ROW') || 0);
+  const cachedId=String(props.getProperty('ACTIVE_SESSION_ID') || '');
+  const s=sh_(TABS.LIVES);
+
+  if(cachedRow>1 && cachedId){
+    const row=s.getRange(cachedRow,1,1,11).getValues()[0];
+    if(String(row[0])===cachedId && String(row[4]).toUpperCase()==='ONLINE') return {row:cachedRow,values:row};
+    props.deleteProperty('ACTIVE_SESSION_ROW');
+    props.deleteProperty('ACTIVE_SESSION_ID');
+  }
+
+  const vals=s.getDataRange().getValues();
+  for(let r=vals.length-1;r>=1;r--){
+    if(String(vals[r][4]).toUpperCase()==='ONLINE'){
+      props.setProperty('ACTIVE_SESSION_ROW',String(r+1));
+      props.setProperty('ACTIVE_SESSION_ID',String(vals[r][0]));
+      return {row:r+1,values:vals[r]};
+    }
   }
   return null;
 }
@@ -411,6 +417,10 @@ function startSession_(origin) {
   const cfg = config_(), d=now_(), id='live_' + Utilities.formatDate(d,TZ,'yyyyMMdd_HHmmss');
   const live = sh_(TABS.LIVES);
   live.appendRow([id,date_(d),stamp_(d),'','ONLINE',cfg.baseMinutes,0,cfg.baseMinutes,0,cfg.goals.length,origin || 'manual']);
+  const liveRow=live.getLastRow();
+  const props=PropertiesService.getScriptProperties();
+  props.setProperty('ACTIVE_SESSION_ROW',String(liveRow));
+  props.setProperty('ACTIVE_SESSION_ID',id);
   const goals = sh_(TABS.METAS);
   cfg.goals.forEach(g => goals.appendRow([id,date_(d),g.id,g.meta,g.tipo,g.alvo,0,false,g.reward,'']));
   event_('session_start',id,origin || 'manual',cfg.baseMinutes);
@@ -428,35 +438,87 @@ function closeSession_(row, origin) {
   event_('session_end',id,origin || 'manual',stats.total);
   interactionSessionEnd_(id);
   roundSessionEnd_(id);
+  const props=PropertiesService.getScriptProperties();
+  props.deleteProperty('ACTIVE_SESSION_ROW');
+  props.deleteProperty('ACTIVE_SESSION_ID');
+  CacheService.getScriptCache().remove('goals_' + id);
   updatePanel_();
   return { ended:true, sessionId:id };
 }
 
+function sessionRowById_(sessionId) {
+  const active=activeSession_();
+  if(active && String(active.values[0])===String(sessionId)) return active;
+  const s=sh_(TABS.LIVES), vals=s.getDataRange().getValues();
+  for(let r=vals.length-1;r>=1;r--) if(String(vals[r][0])===String(sessionId)) return {row:r+1,values:vals[r]};
+  return null;
+}
+
 function stats_(sessionId) {
-  const liveVals=sh_(TABS.LIVES).getDataRange().getValues();
-  let base=240;
-  for(let r=1;r<liveVals.length;r++) if(String(liveVals[r][0])===sessionId){base=Number(liveVals[r][5]||240);break;}
-  const gVals=sh_(TABS.METAS).getDataRange().getValues();
-  let gained=0,completed=0,goalCount=0;
-  for(let r=1;r<gVals.length;r++) if(String(gVals[r][0])===sessionId){
+  const found=sessionRowById_(sessionId);
+  if(!found) return {base:240,gained:0,total:240,completed:0,goalCount:0};
+  const row=found.values;
+  return {
+    base:Number(row[5]||240),
+    gained:Math.max(0,Number(row[6]||0)),
+    total:Number(row[7]||row[5]||240),
+    completed:Number(row[8]||0),
+    goalCount:Number(row[9]||0)
+  };
+}
+
+function invalidateGoalsCache_(sessionId) {
+  CacheService.getScriptCache().remove('goals_' + String(sessionId || ''));
+}
+
+function goalCounts_(sessionId) {
+  const vals=sh_(TABS.METAS).getDataRange().getValues();
+  let completed=0,goalCount=0;
+  for(let r=1;r<vals.length;r++) if(String(vals[r][0])===String(sessionId)){
     goalCount++;
-    if(gVals[r][7]===true){completed++;gained+=Number(gVals[r][8]||0);}
+    if(vals[r][7]===true) completed++;
   }
-  const eVals=sh_(TABS.EVENTOS).getDataRange().getValues();
-  for(let r=1;r<eVals.length;r++) {
-    if(String(eVals[r][1])!==sessionId) continue;
-    const eventType=String(eVals[r][2]);
-    if(INTERACTION_TIME_EVENTS.includes(eventType)) gained+=Number(eVals[r][5]||0);
-  }
-  const maxBonus=Number(config_().maxBonusMinutes || 240);
-  gained=Math.min(Math.max(0,gained),maxBonus);
-  return {base,gained,total:base+gained,completed,goalCount};
+  return {completed,goalCount};
 }
 
 function syncLiveRow_(active) {
-  if (!active) return;
-  const id=String(active.values[0]), stats=stats_(id);
-  sh_(TABS.LIVES).getRange(active.row,7,1,4).setValues([[stats.gained,stats.total,stats.completed,stats.goalCount]]);
+  if(!active) return;
+  const id=String(active.values[0]), counts=goalCounts_(id);
+  sh_(TABS.LIVES).getRange(active.row,9,1,2).setValues([[counts.completed,counts.goalCount]]);
+  active.values[8]=counts.completed;
+  active.values[9]=counts.goalCount;
+  invalidateGoalsCache_(id);
+}
+
+function bonusApplyNoLock_(active, requestedDelta, type, origin, detail) {
+  if(!active) throw new Error('no_active_session');
+  const requested=Number(requestedDelta || 0);
+  if(!Number.isFinite(requested) || requested===0) return 0;
+  const cfg=config_();
+  const maxBonus=Math.max(0,Number(cfg.maxBonusMinutes || 240));
+  const base=Math.max(0,Number(active.values[5] || cfg.baseMinutes || 240));
+  const current=Math.min(maxBonus,Math.max(0,Number(active.values[6] || 0)));
+  const next=Math.min(maxBonus,Math.max(0,current + requested));
+  const applied=next-current;
+  if(applied===0) return 0;
+
+  sh_(TABS.LIVES).getRange(active.row,7,1,2).setValues([[next,base+next]]);
+  active.values[6]=next;
+  active.values[7]=base+next;
+  event_(type || 'time_change',String(active.values[0]),origin || 'system',detail || '',applied);
+  return applied;
+}
+
+function applyBonusDelta_(sessionId, requestedDelta, type, origin, detail) {
+  const lock=LockService.getScriptLock();
+  if(!lock.tryLock(10000)) throw new Error('busy');
+  try{
+    const active=activeSession_();
+    if(!active || String(active.values[0])!==String(sessionId)) throw new Error('no_active_session');
+    return bonusApplyNoLock_(active,requestedDelta,type,origin,detail);
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function registerVisit_(visitorId) {
@@ -646,24 +708,36 @@ function updateLivePix_(sessionId) {
 }
 
 function completeGoal_(goalId, origin) {
-  const active=activeSession_(); if(!active) throw new Error('no_active_session');
-  const id=String(active.values[0]), s=sh_(TABS.METAS), vals=s.getDataRange().getValues();
-  for(let r=1;r<vals.length;r++) if(String(vals[r][0])===id && String(vals[r][2])===goalId){
-    if(vals[r][7]!==true){
-      s.getRange(r+1,7).setValue(Number(vals[r][5]||1));
-      s.getRange(r+1,8).setValue(true); s.getRange(r+1,10).setValue(stamp_());
-      event_('goal_complete',id,origin || 'admin',goalId,Number(vals[r][8]||0));
+  const lock=LockService.getScriptLock();
+  if(!lock.tryLock(10000)) throw new Error('busy');
+  try{
+    const active=activeSession_(); if(!active) throw new Error('no_active_session');
+    const id=String(active.values[0]), s=sh_(TABS.METAS), vals=s.getDataRange().getValues();
+    for(let r=1;r<vals.length;r++) if(String(vals[r][0])===id && String(vals[r][2])===goalId){
+      if(vals[r][7]!==true){
+        const reward=Number(vals[r][8]||0);
+        s.getRange(r+1,7).setValue(Number(vals[r][5]||1));
+        s.getRange(r+1,8).setValue(true);
+        s.getRange(r+1,10).setValue(stamp_());
+        event_('goal_complete',id,origin || 'admin',goalId,0);
+        if(reward>0) bonusApplyNoLock_(active,reward,'goal_time',origin || 'admin',goalId);
+      }
+      syncLiveRow_(active);
+      updatePanel_();
+      return publicState_();
     }
-    syncLiveRow_(activeSession_()); updatePanel_(); return publicState_();
+    throw new Error('goal_not_found');
+  } finally {
+    lock.releaseLock();
   }
-  throw new Error('goal_not_found');
 }
 
 function addMinutes_(minutes) {
   if(!Number.isFinite(minutes) || minutes<=0 || minutes>240) throw new Error('invalid_minutes');
   const active=activeSession_(); if(!active) throw new Error('no_active_session');
-  const id=String(active.values[0]); event_('manual_time',id,'admin','minutos adicionados',minutes);
-  syncLiveRow_(activeSession_()); updatePanel_(); return publicState_();
+  applyBonusDelta_(String(active.values[0]),minutes,'manual_time','admin','minutos adicionados');
+  updatePanel_();
+  return publicState_();
 }
 
 function forceStart_(){ startSession_('admin'); PropertiesService.getScriptProperties().setProperty('OFFLINE_COUNT','0'); return publicState_(); }
@@ -682,22 +756,33 @@ function publicStateLite_() {
 
   const row=active.values;
   const id=String(row[0]);
-  const vals=sh_(TABS.METAS).getDataRange().getValues();
-  const goals=[];
-  for(let r=1;r<vals.length;r++) {
-    if(String(vals[r][0])!==id) continue;
-    goals.push({
-      goal_id:String(vals[r][2]),
-      meta:String(vals[r][3]),
-      tipo:String(vals[r][4]),
-      alvo:Number(vals[r][5]||0),
-      progresso:Number(vals[r][6]||0),
-      concluida:vals[r][7]===true,
-      recompensa_min:Number(vals[r][8]||0),
-      concluida_em:vals[r][9] ? String(vals[r][9]) : ''
-    });
+  const cache=CacheService.getScriptCache();
+  const goalsKey='goals_' + id;
+  let goals=null;
+  const cachedGoals=cache.get(goalsKey);
+  if(cachedGoals){
+    try{goals=JSON.parse(cachedGoals);}catch(_){}
+  }
+  if(!goals){
+    const vals=sh_(TABS.METAS).getDataRange().getValues();
+    goals=[];
+    for(let r=1;r<vals.length;r++) {
+      if(String(vals[r][0])!==id) continue;
+      goals.push({
+        goal_id:String(vals[r][2]),
+        meta:String(vals[r][3]),
+        tipo:String(vals[r][4]),
+        alvo:Number(vals[r][5]||0),
+        progresso:Number(vals[r][6]||0),
+        concluida:vals[r][7]===true,
+        recompensa_min:Number(vals[r][8]||0),
+        concluida_em:vals[r][9] ? String(vals[r][9]) : ''
+      });
+    }
+    cache.put(goalsKey,JSON.stringify(goals),15);
   }
 
+  const maxBonus=Math.max(0,Number(config_().maxBonusMinutes || 240));
   return {
     twitchState:'online',
     session:{
@@ -710,7 +795,8 @@ function publicStateLite_() {
       tempo_ganho_min:Number(row[6]||0),
       tempo_total_min:Number(row[7]||0),
       metas_batidas:Number(row[8]||0),
-      metas_total:Number(row[9]||0)
+      metas_total:Number(row[9]||0),
+      bonus_restante_min:Math.max(0,maxBonus-Number(row[6]||0))
     },
     goals:goals,
     round:roundPublicState_(id)
@@ -730,7 +816,7 @@ function publicState_() {
     session_id:id,data:String(row[1]),inicio:String(row[2]),fim:String(row[3]||''),status:String(row[4]),
     tempo_base_min:Number(row[5]||0),tempo_ganho_min:Number(row[6]||0),tempo_total_min:Number(row[7]||0),
     metas_batidas:Number(row[8]||0),metas_total:Number(row[9]||0)
-  }, goals, game:interactionPublicState_(id), round:roundPublicState_(id) };
+  }, goals, game:null, round:roundPublicState_(id) };
 }
 
 function history_(days) {
