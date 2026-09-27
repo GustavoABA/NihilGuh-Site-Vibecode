@@ -295,6 +295,11 @@ function stamp_(d){ return Utilities.formatDate(d || now_(), TZ, "yyyy-MM-dd'T'H
 function truncate_(value, max){ value=String(value || ''); return value.length > max ? value.slice(0,max) : value; }
 
 function config_() {
+  const cache=CacheService.getScriptCache();
+  const cached=cache.get('nihilguh_config_v3');
+  if(cached){
+    try{return JSON.parse(cached);}catch(_){}
+  }
   const values = sh_(TABS.CONFIG).getDataRange().getValues();
   const goals = [];
   for (let r=1; r<values.length; r++) {
@@ -305,7 +310,7 @@ function config_() {
   }
   const map = {};
   for (let r=1; r<values.length; r++) if (values[r][7]) map[String(values[r][7])] = values[r][8];
-  return {
+  const cfg={
     goals,
     baseMinutes:Number(map['Tempo base da live (min)'] || 240),
     offlineChecks:Number(map['Checks offline para encerrar'] || 5),
@@ -315,6 +320,8 @@ function config_() {
     maxBonusMinutes:Number(map['Máximo de bônus da live (min)'] || 240),
     livepixBridgePlatform:String(map['LivePix bridge platform'] || 'twitch').toLowerCase()
   };
+  cache.put('nihilguh_config_v3',JSON.stringify(cfg),60);
+  return cfg;
 }
 
 function ensureTwitchStatusFresh_() {
@@ -421,6 +428,7 @@ function startSession_(origin) {
   const props=PropertiesService.getScriptProperties();
   props.setProperty('ACTIVE_SESSION_ROW',String(liveRow));
   props.setProperty('ACTIVE_SESSION_ID',id);
+  props.setProperty('LIVEPIX_PROCESSED_' + id,'0');
   const goals = sh_(TABS.METAS);
   cfg.goals.forEach(g => goals.appendRow([id,date_(d),g.id,g.meta,g.tipo,g.alvo,0,false,g.reward,'']));
   event_('session_start',id,origin || 'manual',cfg.baseMinutes);
@@ -441,6 +449,7 @@ function closeSession_(row, origin) {
   const props=PropertiesService.getScriptProperties();
   props.deleteProperty('ACTIVE_SESSION_ROW');
   props.deleteProperty('ACTIVE_SESSION_ID');
+  props.deleteProperty('LIVEPIX_PROCESSED_' + id);
   CacheService.getScriptCache().remove('goals_' + id);
   updatePanel_();
   return { ended:true, sessionId:id };
@@ -530,7 +539,6 @@ function registerVisit_(visitorId) {
   for(let r=1;r<vals.length;r++) if(String(vals[r][0])===id && String(vals[r][2])===visitorId){row=r+1;break;}
   if(row) visitors.getRange(row,5).setValue(stamp_());
   else visitors.appendRow([id,date_(),visitorId,stamp_(),stamp_()]);
-  if(!row) interactionEvent_(id,{type:'visit',listener:'site_visit',amount:1});
   const count=uniqueVisitors_(id);
   updateVisitorGoals_(id,count);
   syncLiveRow_(activeSession_());
@@ -545,13 +553,24 @@ function uniqueVisitors_(id) {
 }
 
 function updateVisitorGoals_(id,count) {
-  const s=sh_(TABS.METAS), vals=s.getDataRange().getValues(), now=stamp_();
-  for(let r=1;r<vals.length;r++) if(String(vals[r][0])===id && String(vals[r][4])==='visitors'){
-    s.getRange(r+1,7).setValue(count);
-    if(vals[r][7]!==true && count>=Number(vals[r][5]||0)){
-      s.getRange(r+1,8).setValue(true); s.getRange(r+1,10).setValue(now);
-      event_('goal_complete',id,'visitors',String(vals[r][2]),Number(vals[r][8]||0));
+  const lock=LockService.getScriptLock();
+  if(!lock.tryLock(5000)) return;
+  try{
+    const active=activeSession_();
+    if(!active || String(active.values[0])!==String(id)) return;
+    const s=sh_(TABS.METAS), vals=s.getDataRange().getValues(), now=stamp_();
+    for(let r=1;r<vals.length;r++) if(String(vals[r][0])===id && String(vals[r][4])==='visitors'){
+      s.getRange(r+1,7).setValue(count);
+      if(vals[r][7]!==true && count>=Number(vals[r][5]||0)){
+        const reward=Number(vals[r][8]||0);
+        s.getRange(r+1,8).setValue(true); s.getRange(r+1,10).setValue(now);
+        event_('goal_complete',id,'visitors',String(vals[r][2]),0);
+        if(reward>0) bonusApplyNoLock_(active,reward,'goal_time','visitors',String(vals[r][2]));
+      }
     }
+    invalidateGoalsCache_(id);
+  } finally {
+    lock.releaseLock();
   }
 }
 
@@ -583,7 +602,6 @@ function streamEvent_(p) {
 
   if(normalized==='livepix_donation') updateLivePix_(id);
   updateStreamGoals_(id);
-  interactionEvent_(id,{type:normalized,listener,provider,amount,user});
   syncLiveRow_(activeSession_());
   updatePanel_();
 
@@ -626,6 +644,11 @@ function eventSeen_(eventId) {
 }
 
 function updateStreamGoals_(sessionId) {
+  const lock=LockService.getScriptLock();
+  if(!lock.tryLock(5000)) return;
+  try{
+  const active=activeSession_();
+  if(!active || String(active.values[0])!==String(sessionId)) return;
   const events=sh_(TABS.EVENTOS).getDataRange().getValues();
   const counts={
     growth_total:0,growth_twitch:0,growth_youtube:0,growth_kick:0,
@@ -664,46 +687,61 @@ function updateStreamGoals_(sessionId) {
     goals.getRange(r+1,7).setValue(progress);
 
     if(vals[r][7]!==true && progress>=Number(vals[r][5]||0)){
+      const reward=Number(vals[r][8]||0);
       goals.getRange(r+1,8).setValue(true);
       goals.getRange(r+1,10).setValue(completedAt);
-      event_('goal_complete',sessionId,'streamelements',String(vals[r][2]),Number(vals[r][8]||0));
+      event_('goal_complete',sessionId,'streamelements',String(vals[r][2]),0);
+      if(reward>0) bonusApplyNoLock_(active,reward,'goal_time','streamelements',String(vals[r][2]));
     }
+  }
+  invalidateGoalsCache_(sessionId);
+  } finally {
+    lock.releaseLock();
   }
 }
 
 function updateLivePix_(sessionId) {
-  const cfg=config_();
-  const events=sh_(TABS.EVENTOS).getDataRange().getValues();
-  let total=0;
-  let awarded=0;
+  const lock=LockService.getScriptLock();
+  if(!lock.tryLock(5000)) return;
+  try{
+    const active=activeSession_();
+    if(!active || String(active.values[0])!==String(sessionId)) return;
+    const cfg=config_();
+    const events=sh_(TABS.EVENTOS).getDataRange().getValues();
+    let total=0;
 
-  for(let r=1;r<events.length;r++){
-    if(String(events[r][1])!==sessionId) continue;
-    const type=String(events[r][2]);
-    if(type==='livepix_donation'){
-      const currency=String(events[r][10] || 'BRL').toUpperCase();
-      if(currency && currency!=='BRL') continue;
-      total+=Number(events[r][5] || 0);
-    } else if(type==='livepix_time'){
-      awarded+=Number(events[r][5] || 0);
+    for(let r=1;r<events.length;r++){
+      if(String(events[r][1])!==sessionId) continue;
+      if(String(events[r][2])==='livepix_donation'){
+        const currency=String(events[r][10] || 'BRL').toUpperCase();
+        if(currency && currency!=='BRL') continue;
+        total+=Number(events[r][5] || 0);
+      }
     }
-  }
 
-  const earned=Math.floor(total / Math.max(1, cfg.livepixPerMinute));
-  const delta=Math.max(0, earned-awarded);
-  if(delta>0){
-    event_('livepix_time',sessionId,'livepix','R$ '+total.toFixed(2)+' acumulados',delta);
-  }
-
-  const goals=sh_(TABS.METAS), vals=goals.getDataRange().getValues(), completedAt=stamp_();
-  for(let r=1;r<vals.length;r++){
-    if(String(vals[r][0])!==sessionId || String(vals[r][4])!=='livepix_amount') continue;
-    goals.getRange(r+1,7).setValue(total);
-    if(vals[r][7]!==true && total>=Number(vals[r][5]||0)){
-      goals.getRange(r+1,8).setValue(true);
-      goals.getRange(r+1,10).setValue(completedAt);
-      event_('goal_complete',sessionId,'livepix',String(vals[r][2]),0);
+    const earned=Math.floor(total / Math.max(1,cfg.livepixPerMinute));
+    const props=PropertiesService.getScriptProperties();
+    const key='LIVEPIX_PROCESSED_' + sessionId;
+    const processed=Math.max(0,Number(props.getProperty(key) || 0));
+    const delta=Math.max(0,earned-processed);
+    if(delta>0){
+      bonusApplyNoLock_(active,delta,'livepix_time','livepix','R$ '+total.toFixed(2)+' acumulados');
+      props.setProperty(key,String(earned));
     }
+
+    const goals=sh_(TABS.METAS), vals=goals.getDataRange().getValues(), completedAt=stamp_();
+    for(let r=1;r<vals.length;r++){
+      if(String(vals[r][0])!==sessionId || String(vals[r][4])!=='livepix_amount') continue;
+      goals.getRange(r+1,7).setValue(total);
+      if(vals[r][7]!==true && total>=Number(vals[r][5]||0)){
+        goals.getRange(r+1,8).setValue(true);
+        goals.getRange(r+1,10).setValue(completedAt);
+        event_('goal_complete',sessionId,'livepix',String(vals[r][2]),0);
+      }
+    }
+    invalidateGoalsCache_(sessionId);
+  } finally {
+    lock.releaseLock();
   }
 }
 
