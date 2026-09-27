@@ -10,9 +10,21 @@
         if (!base) return reject(new Error('backend_not_configured'));
         const callback = '__nihilguh_cb_' + Math.random().toString(36).slice(2);
         const script = document.createElement('script');
-        const timeout = setTimeout(() => cleanup(new Error('timeout')), 10000);
+        let settled = false;
+        const timeout = setTimeout(() => {
+          if (settled) return;
+          settled = true;
+          // Keep a harmless callback alive briefly so a late JSONP response
+          // does not throw "__nihilguh_cb_* is not defined" in the browser.
+          window[callback] = () => {};
+          setTimeout(() => { try { delete window[callback]; } catch {} }, 60000);
+          script.remove();
+          reject(new Error('timeout'));
+        }, 30000);
 
         function cleanup(error, data){
+          if (settled) return;
+          settled = true;
           clearTimeout(timeout);
           try { delete window[callback]; } catch {}
           script.remove();
@@ -40,6 +52,7 @@
     },
 
     state(){ return API.call('state'); },
+    stateLite(){ return API.call('stateLite'); },
     detectorStatus(){ return API.call('detectorStatus'); },
     history(days = cfg.historyDays || 5){ return API.call('history', { days }); },
     records(){ return API.call('records'); },
