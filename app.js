@@ -2,6 +2,7 @@
   const api = window.NihilGuhAPI;
   const page = document.body.dataset.page || 'home';
   let state = null;
+  let refreshInFlight = false;
   let pollHandle = null;
   let secondHandle = null;
   let embedded = new Set();
@@ -324,9 +325,10 @@
   }
 
   async function refresh() {
-    if (!api?.backendUrl) return;
+    if (!api?.backendUrl || refreshInFlight) return;
+    refreshInFlight = true;
     try {
-      state = await api.state();
+      state = await api.stateLite();
       countVisit(state);
       render(state);
     } catch (err) {
@@ -361,6 +363,8 @@
       if ($('overlay-status')) $('overlay-status').textContent = 'ERRO BACKEND';
       if ($('overlay-desc')) $('overlay-desc').textContent = 'Não foi possível ler o Apps Script nem o status da Twitch.';
       if ($('play-root') && page === 'play') $('play-root').innerHTML = '<section class="card offline-card"><h1>Backend indisponível</h1><p class="subtle">Não foi possível ler o estado da live.</p></section>';
+    } finally {
+      refreshInFlight = false;
     }
   }
 
