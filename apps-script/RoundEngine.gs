@@ -464,13 +464,23 @@ function roundJoin_(visitorId,roundId){
   }finally{lock.releaseLock();}
 }
 
-function roundResolveAmount_(sessionId,requested){
-  const cfg=config_(),before=stats_(sessionId),amount=Number(requested||0);
-  if(amount>=0){
-    const allowance=Math.max(0,Number(cfg.maxBonusMinutes||240)-Number(before.gained||0));
-    return Math.min(amount,allowance);
-  }
-  return -Math.min(Math.abs(amount),Number(before.gained||0));
+function roundResolveAmount_(active,requested){
+  const amount=Number(requested||0);
+  const currentBonus=Math.max(0,Number(active && active.values ? active.values[6] : 0));
+  const maxBonus=240;
+  if(amount>=0) return Math.min(amount,Math.max(0,maxBonus-currentBonus));
+  return -Math.min(Math.abs(amount),currentBonus);
+}
+
+function roundApplyTimeToLiveRow_(active,delta){
+  if(!active || !Number.isFinite(Number(delta)) || Number(delta)===0) return;
+  const live=sh_(TABS.LIVES);
+  const base=Math.max(0,Number(active.values[5]||240));
+  const current=Math.max(0,Number(active.values[6]||0));
+  const next=Math.min(240,Math.max(0,current+Number(delta)));
+  live.getRange(active.row,7,1,2).setValues([[next,base+next]]);
+  active.values[6]=next;
+  active.values[7]=base+next;
 }
 
 function roundSubmit_(visitorId,roundId,answer,displayName){
@@ -528,7 +538,7 @@ function roundSubmit_(visitorId,roundId,answer,displayName){
       return{accepted:false,reason:'wrong',round:roundPublicStateFromState_(state)};
     }
 
-    const awarded=roundResolveAmount_(sessionId,requested);
+    const awarded=roundResolveAmount_(active,requested);
     if(awarded>0)event_('round_bonus',sessionId,'round',round.roundId+'|'+round.type,awarded);
     if(awarded<0)event_('round_penalty',sessionId,'round',round.roundId+'|'+round.type,awarded);
 
@@ -544,8 +554,8 @@ function roundSubmit_(visitorId,roundId,answer,displayName){
     round.nextRoundAt=new Date(Date.now()+ROUND_CFG.nextRoundDelaySec*1000).toISOString();
     state.lastWinner=round.winner;
     event_('round_won',sessionId,'round',publicName+'|'+round.roundId,awarded);
+    roundApplyTimeToLiveRow_(active,awarded);
     roundSave_(state);
-    syncLiveRow_(activeSession_());updatePanel_();
 
     return{accepted:true,won:true,awardedMinutes:awarded,queenResult:round.winner.queenResult,round:roundPublicStateFromState_(state)};
   }finally{lock.releaseLock();}
