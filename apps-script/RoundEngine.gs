@@ -7,11 +7,12 @@
 const ROUND_PROP = 'NIHILGUH_ROUND_STATE_V2';
 const ROUND_CFG = {
   nextRoundDelaySec: 8,
+  roundCadenceSec: 10 * 60,
   standardDurationSec: 150,
   longDurationSec: 360,
   reactionDurationSec: 60,
   maxWrongAttemptsPerPlayer: 25,
-  maxTrackedPlayers: 300
+  cacheTtlSec: 21600
 };
 
 const ROUND_REWARDS = {
@@ -157,9 +158,8 @@ function roundBase_(type,index) {
     challenge:{},
     secretAnswer:'',
     secret:{},
-    participants:[],
+    participantCount:0,
     attempts:0,
-    wrongAttempts:{},
     winner:null,
     nextRoundAt:''
   };
@@ -400,6 +400,21 @@ function roundValidatePuzzle_(round,path){
   return board[board.length-1]===0;
 }
 
+function roundNextScheduledAt_(state) {
+  const nextIndex=Number(state.index||0)+1;
+  const total=Array.isArray(state.deck)?state.deck.length:23;
+  if(nextIndex>total) return Date.now()+ROUND_CFG.nextRoundDelaySec*1000;
+  const start=new Date(state.startedAt||now_()).getTime();
+  const slot=start+(nextIndex-1)*ROUND_CFG.roundCadenceSec*1000;
+  return Math.max(Date.now()+ROUND_CFG.nextRoundDelaySec*1000,slot);
+}
+
+function roundScheduleNext_(state,round) {
+  const at=roundNextScheduledAt_(state);
+  round.nextRoundAt=new Date(at).toISOString();
+  return at;
+}
+
 function roundStartNext_(state,sessionId){
   if(!Array.isArray(state.deck)||!state.deck.length)state.deck=roundBuildDeck_();
   const nextIndex=Number(state.index||0)+1;
@@ -421,7 +436,7 @@ function roundTick_(){
   const active=activeSession_();if(!active)return;
   const sessionId=String(active.values[0]);
   const lock=LockService.getScriptLock();
-  if(!lock.tryLock(2500))return;
+  if(!lock.tryLock(100))return;
   try{roundTickNoLock_(sessionId);}finally{lock.releaseLock();}
 }
 
@@ -433,7 +448,7 @@ function roundTickNoLock_(sessionId){
   }
   if(round.status==='active'&&now>=new Date(round.endsAt).getTime()){
     round.status='expired';round.expiredAt=stamp_();
-    round.nextRoundAt=new Date(now+ROUND_CFG.nextRoundDelaySec*1000).toISOString();
+    roundScheduleNext_(state,round);
     event_('round_expired',sessionId,'round',round.roundId,0);
     roundSave_(state);return;
   }
@@ -442,11 +457,34 @@ function roundTickNoLock_(sessionId){
   }
 }
 
+function roundPlayerCacheKey_(prefix,roundId,playerKey) {
+  return prefix + '_' + String(roundId||'').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,40) + '_' + String(playerKey||'').slice(0,20);
+}
+
 function roundAddParticipant_(round,visitorId){
   const key=roundHashVisitor_(visitorId);
-  if(!Array.isArray(round.participants))round.participants=[];
-  if(round.participants.indexOf(key)<0&&round.participants.length<ROUND_CFG.maxTrackedPlayers)round.participants.push(key);
-  return key;
+  const cache=CacheService.getScriptCache();
+  const memberKey=roundPlayerCacheKey_('rm',round.roundId,key);
+  let isNew=false;
+  if(!cache.get(memberKey)){
+    cache.put(memberKey,'1',ROUND_CFG.cacheTtlSec);
+    round.participantCount=Number(round.participantCount||0)+1;
+    isNew=true;
+  }
+  return {key,isNew};
+}
+
+function roundWrongAttempts_(round,playerKey){
+  const raw=CacheService.getScriptCache().get(roundPlayerCacheKey_('ra',round.roundId,playerKey));
+  return Math.max(0,Number(raw||0));
+}
+
+function roundIncrementWrong_(round,playerKey){
+  const cache=CacheService.getScriptCache();
+  const key=roundPlayerCacheKey_('ra',round.roundId,playerKey);
+  const next=roundWrongAttempts_(round,playerKey)+1;
+  cache.put(key,String(next),ROUND_CFG.cacheTtlSec);
+  return next;
 }
 
 function roundJoin_(visitorId,roundId){
@@ -459,28 +497,24 @@ function roundJoin_(visitorId,roundId){
     roundTickNoLock_(sessionId);
     const state=roundEnsure_(sessionId),round=state.current;
     if(!round||round.roundId!==roundId||round.status!=='active')return{joined:false,round:roundPublicStateFromState_(state)};
-    roundAddParticipant_(round,visitorId);roundSave_(state);
+    const joined=roundAddParticipant_(round,visitorId);
+    if(joined.isNew) roundSave_(state);
     return{joined:true,round:roundPublicStateFromState_(state)};
   }finally{lock.releaseLock();}
 }
 
 function roundResolveAmount_(active,requested){
-  const amount=Number(requested||0);
-  const currentBonus=Math.max(0,Number(active && active.values ? active.values[6] : 0));
-  const maxBonus=240;
-  if(amount>=0) return Math.min(amount,Math.max(0,maxBonus-currentBonus));
-  return -Math.min(Math.abs(amount),currentBonus);
+  if(!active) return 0;
+  const cfg=config_();
+  const maxBonus=Math.max(0,Number(cfg.maxBonusMinutes||240));
+  const current=Math.min(maxBonus,Math.max(0,Number(active.values[6]||0)));
+  const next=Math.min(maxBonus,Math.max(0,current+Number(requested||0)));
+  return next-current;
 }
 
 function roundApplyTimeToLiveRow_(active,delta){
-  if(!active || !Number.isFinite(Number(delta)) || Number(delta)===0) return;
-  const live=sh_(TABS.LIVES);
-  const base=Math.max(0,Number(active.values[5]||240));
-  const current=Math.max(0,Number(active.values[6]||0));
-  const next=Math.min(240,Math.max(0,current+Number(delta)));
-  live.getRange(active.row,7,1,2).setValues([[next,base+next]]);
-  active.values[6]=next;
-  active.values[7]=base+next;
+  if(!active) return 0;
+  return bonusApplyNoLock_(active,delta,Number(delta)<0?'round_penalty':'round_bonus','round','compat');
 }
 
 function roundSubmit_(visitorId,roundId,answer,displayName){
@@ -500,10 +534,10 @@ function roundSubmit_(visitorId,roundId,answer,displayName){
     if(!round||round.roundId!==roundId)return{accepted:false,reason:'stale_round',round:roundPublicStateFromState_(state)};
     if(round.status!=='active')return{accepted:false,reason:'round_closed',round:roundPublicStateFromState_(state)};
 
-    const playerKey=roundAddParticipant_(round,visitorId);
+    const joined=roundAddParticipant_(round,visitorId);
+    const playerKey=joined.key;
     round.attempts=Number(round.attempts||0)+1;
-    if(!round.wrongAttempts)round.wrongAttempts={};
-    const wrong=Number(round.wrongAttempts[playerKey]||0);
+    const wrong=roundWrongAttempts_(round,playerKey);
     if(wrong>=ROUND_CFG.maxWrongAttemptsPerPlayer){
       roundSave_(state);
       return{accepted:false,reason:'attempt_limit',round:roundPublicStateFromState_(state)};
@@ -513,7 +547,7 @@ function roundSubmit_(visitorId,roundId,answer,displayName){
 
     if(round.type==='reaction'){
       if(Date.now()<new Date(round.challenge.unlockAt).getTime()){
-        round.wrongAttempts[playerKey]=wrong+1;roundSave_(state);
+        roundIncrementWrong_(round,playerKey);roundSave_(state);
         return{accepted:false,reason:'too_soon',round:roundPublicStateFromState_(state)};
       }
       correct=true;
@@ -524,7 +558,7 @@ function roundSubmit_(visitorId,roundId,answer,displayName){
     }else if(round.type==='queen'){
       selectedDoor=String(answer||'').trim().toUpperCase();
       if(!['A','B'].includes(selectedDoor)){
-        round.wrongAttempts[playerKey]=wrong+1;roundSave_(state);
+        roundIncrementWrong_(round,playerKey);roundSave_(state);
         return{accepted:false,reason:'wrong',round:roundPublicStateFromState_(state)};
       }
       correct=true;
@@ -534,13 +568,12 @@ function roundSubmit_(visitorId,roundId,answer,displayName){
     }
 
     if(!correct){
-      round.wrongAttempts[playerKey]=wrong+1;roundSave_(state);
+      roundIncrementWrong_(round,playerKey);roundSave_(state);
       return{accepted:false,reason:'wrong',round:roundPublicStateFromState_(state)};
     }
 
-    const awarded=roundResolveAmount_(active,requested);
-    if(awarded>0)event_('round_bonus',sessionId,'round',round.roundId+'|'+round.type,awarded);
-    if(awarded<0)event_('round_penalty',sessionId,'round',round.roundId+'|'+round.type,awarded);
+    const timeType=requested<0?'round_penalty':'round_bonus';
+    const awarded=bonusApplyNoLock_(active,requested,timeType,'round',round.roundId+'|'+round.type);
 
     const publicName=displayName||('Visitante '+playerKey.slice(0,4).toUpperCase());
     round.status='won';
@@ -548,13 +581,12 @@ function roundSubmit_(visitorId,roundId,answer,displayName){
       name:publicName,playerKey:playerKey,at:stamp_(),
       awardedMinutes:awarded,
       selectedDoor:selectedDoor,
-      queenResult:round.type==='queen'?(awarded>=0?'bonus':'penalty'):''
+      queenResult:round.type==='queen'?(requested>=0?'bonus':'penalty'):''
     };
     round.wonAt=stamp_();
-    round.nextRoundAt=new Date(Date.now()+ROUND_CFG.nextRoundDelaySec*1000).toISOString();
+    roundScheduleNext_(state,round);
     state.lastWinner=round.winner;
     event_('round_won',sessionId,'round',publicName+'|'+round.roundId,awarded);
-    roundApplyTimeToLiveRow_(active,awarded);
     roundSave_(state);
 
     return{accepted:true,won:true,awardedMinutes:awarded,queenResult:round.winner.queenResult,round:roundPublicStateFromState_(state)};
@@ -570,6 +602,24 @@ function roundPublicStateFromState_(state){
     index:Number(state.index||0),
     totalRounds:Array.isArray(state.deck)?state.deck.length:23
   };
+
+  const now=Date.now();
+  let challenge=Object.assign({},r.challenge||{});
+
+  if(r.type==='flash'){
+    const answering=now>=new Date(r.challenge.hideAt||0).getTime();
+    challenge=answering
+      ? {phase:'answer',hideAt:r.challenge.hideAt,length:Number(r.challenge.length||0)}
+      : {phase:'memorize',hideAt:r.challenge.hideAt,length:Number(r.challenge.length||0),flashText:String(r.challenge.flashText||'')};
+  }
+
+  if(r.type==='memory'){
+    const answering=now>=new Date(r.challenge.revealUntil||0).getTime();
+    challenge=answering
+      ? {phase:'answer',revealUntil:r.challenge.revealUntil,targetSymbol:r.challenge.targetSymbol,cardCount:Array.isArray(r.challenge.cards)?r.challenge.cards.length:0}
+      : {phase:'memorize',revealUntil:r.challenge.revealUntil,cards:Array.isArray(r.challenge.cards)?r.challenge.cards:[],cardCount:Array.isArray(r.challenge.cards)?r.challenge.cards.length:0};
+  }
+
   return{
     stateVersion:Number(state.stateVersion||0),
     deckComplete:false,
@@ -586,8 +636,8 @@ function roundPublicStateFromState_(state){
     penaltyMinutes:Number(r.penaltyMinutes||0),
     title:r.title,
     instruction:r.instruction,
-    challenge:r.challenge||{},
-    participants:Array.isArray(r.participants)?r.participants.length:0,
+    challenge:challenge,
+    participants:Number(r.participantCount||0),
     attempts:Number(r.attempts||0),
     winner:r.winner?{
       name:r.winner.name,
