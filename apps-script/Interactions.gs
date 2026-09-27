@@ -9,6 +9,7 @@
  */
 const INTERACTION_PROP = 'NIHILGUH_GAME_STATE_V3';
 const INTERACTION_CFG = {
+  enabled: false,
   bossMaxHp: 1000,
   bossDefeatMinutes: 30,
   lastChanceAtSec: 15 * 60,
@@ -48,6 +49,7 @@ const INTERACTION_RECENT_TYPES = [
 ];
 
 function interactionSessionStart_(sessionId, startedAt) {
+  if (!INTERACTION_CFG.enabled) return;
   if (!sessionId) return;
   const now = new Date(startedAt || now_()).getTime();
   const game = {
@@ -77,6 +79,7 @@ function interactionSessionStart_(sessionId, startedAt) {
 }
 
 function interactionSessionEnd_(sessionId) {
+  if (!INTERACTION_CFG.enabled) return;
   const game = interactionLoad_();
   if (!game || game.sessionId !== String(sessionId || '')) return;
   game.ending = true;
@@ -200,10 +203,10 @@ function interactionMissionProgress_(mission, snap) {
 }
 
 function interactionAddMinutes_(sessionId, type, minutes, detail) {
+  if (!INTERACTION_CFG.enabled) return 0;
   minutes = Number(minutes || 0);
-  if (minutes <= 0) return;
-  event_(type, sessionId, 'interaction', detail || type, minutes);
-  syncLiveRow_(activeSession_());
+  if (minutes <= 0) return 0;
+  return applyBonusDelta_(sessionId,minutes,type,'interaction',detail || type);
 }
 
 function interactionUnlockLoot_(game, sessionId, id, label, url) {
@@ -232,6 +235,7 @@ function interactionBossDamage_(game, sessionId, amount, source, detail) {
 }
 
 function interactionEvent_(sessionId, data) {
+  if (!INTERACTION_CFG.enabled) return;
   if (!sessionId) return;
   const game = interactionEnsure_(sessionId);
   const type = String((data && data.type) || '');
@@ -269,6 +273,7 @@ function interactionEvent_(sessionId, data) {
 }
 
 function interactionGoalComplete_(sessionId, goalId) {
+  if (!INTERACTION_CFG.enabled) return;
   if (!sessionId) return;
   const game = interactionEnsure_(sessionId);
   const now = interactionNowMs_();
@@ -347,6 +352,7 @@ function interactionVoteSeen_(sessionId, voteId, visitorId) {
 }
 
 function interactionVote_(visitorId, optionId) {
+  if (!INTERACTION_CFG.enabled) throw new Error('legacy_interactions_disabled');
   visitorId = String(visitorId || '').slice(0,100);
   optionId = String(optionId || '').slice(0,80);
   if (!visitorId) throw new Error('invalid_visitor');
@@ -459,6 +465,7 @@ function interactionFailMission_(game, sessionId, holderName, eventPrefix) {
 }
 
 function interactionTick_() {
+  if (!INTERACTION_CFG.enabled) return;
   const active = activeSession_();
   if (!active) return;
   const sessionId = String(active.values[0]);
@@ -554,6 +561,7 @@ function interactionRecentEvents_(sessionId, limit) {
 }
 
 function interactionPublicState_(sessionId) {
+  if (!INTERACTION_CFG.enabled) return null;
   if (!sessionId) return null;
   const game = interactionEnsure_(sessionId);
   const snap = interactionMetricSnapshot_(sessionId);
@@ -636,6 +644,7 @@ function interactionRecords_() {
 }
 
 function interactionAdmin_(action, p) {
+  if (!INTERACTION_CFG.enabled) throw new Error('legacy_interactions_disabled');
   const active=activeSession_();
   if(!active) throw new Error('no_active_session');
   const sessionId=String(active.values[0]);
