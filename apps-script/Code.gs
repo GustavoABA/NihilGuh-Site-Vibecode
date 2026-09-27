@@ -26,6 +26,7 @@ function doGet(e) {
     let data;
 
     if (action === 'state') { ensureTwitchStatusFresh_(); interactionTick_(); roundTick_(); data = publicState_(); }
+    else if (action === 'stateLite') { roundTick_(); data = publicStateLite_(); }
     else if (action === 'history') data = history_(Number(p.days || 5));
     else if (action === 'records') data = { records:interactionRecords_() };
     else if (action === 'visit') data = registerVisit_(String(p.visitorId || ''));
@@ -667,6 +668,54 @@ function addMinutes_(minutes) {
 
 function forceStart_(){ startSession_('admin'); PropertiesService.getScriptProperties().setProperty('OFFLINE_COUNT','0'); return publicState_(); }
 function forceEnd_(){ const a=activeSession_(); if(!a) return { ended:false }; return closeSession_(a.row,'admin'); }
+
+function publicStateLite_() {
+  const active=activeSession_();
+  if(!active) {
+    return {
+      twitchState:PropertiesService.getScriptProperties().getProperty('TWITCH_STATE') || 'unknown',
+      session:null,
+      goals:[],
+      round:null
+    };
+  }
+
+  const row=active.values;
+  const id=String(row[0]);
+  const vals=sh_(TABS.METAS).getDataRange().getValues();
+  const goals=[];
+  for(let r=1;r<vals.length;r++) {
+    if(String(vals[r][0])!==id) continue;
+    goals.push({
+      goal_id:String(vals[r][2]),
+      meta:String(vals[r][3]),
+      tipo:String(vals[r][4]),
+      alvo:Number(vals[r][5]||0),
+      progresso:Number(vals[r][6]||0),
+      concluida:vals[r][7]===true,
+      recompensa_min:Number(vals[r][8]||0),
+      concluida_em:vals[r][9] ? String(vals[r][9]) : ''
+    });
+  }
+
+  return {
+    twitchState:'online',
+    session:{
+      session_id:id,
+      data:String(row[1]),
+      inicio:String(row[2]),
+      fim:String(row[3]||''),
+      status:String(row[4]),
+      tempo_base_min:Number(row[5]||0),
+      tempo_ganho_min:Number(row[6]||0),
+      tempo_total_min:Number(row[7]||0),
+      metas_batidas:Number(row[8]||0),
+      metas_total:Number(row[9]||0)
+    },
+    goals:goals,
+    round:roundPublicState_(id)
+  };
+}
 
 function publicState_() {
   const active=activeSession_();
