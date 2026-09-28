@@ -7,7 +7,7 @@
 const ROUND_PROP = 'NIHILGUH_ROUND_STATE_V2';
 const ROUND_CFG = {
   nextRoundDelaySec: 8,
-  roundCadenceSec: 10 * 60,
+  roundCadenceSec: 10 * 60 + 45,
   standardDurationSec: 150,
   longDurationSec: 360,
   reactionDurationSec: 60,
@@ -78,10 +78,22 @@ function roundShuffleArray_(arr) {
   return out;
 }
 
+function roundCompactState_(state) {
+  if(!state) return state;
+  if(state.current){
+    if(Array.isArray(state.current.participants)){
+      state.current.participantCount=Math.max(Number(state.current.participantCount||0),state.current.participants.length);
+      delete state.current.participants;
+    }
+    if(state.current.wrongAttempts) delete state.current.wrongAttempts;
+  }
+  return state;
+}
+
 function roundLoad_() {
   try {
     const raw=PropertiesService.getScriptProperties().getProperty(ROUND_PROP);
-    return raw ? JSON.parse(raw) : null;
+    return raw ? roundCompactState_(JSON.parse(raw)) : null;
   } catch (_) {
     return null;
   }
@@ -89,9 +101,12 @@ function roundLoad_() {
 
 function roundSave_(state) {
   if (!state) return;
+  roundCompactState_(state);
   state.stateVersion=Number(state.stateVersion||0)+1;
   state.updatedAt=stamp_();
-  PropertiesService.getScriptProperties().setProperty(ROUND_PROP,JSON.stringify(state));
+  const json=JSON.stringify(state);
+  if(json.length>7600) throw new Error('round_state_too_large');
+  PropertiesService.getScriptProperties().setProperty(ROUND_PROP,json);
 }
 
 function roundEnsure_(sessionId) {
