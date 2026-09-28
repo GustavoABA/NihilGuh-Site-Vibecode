@@ -558,3 +558,5 @@ body[data-page="home"] .support-card{display:none!important}
   .support-actions{align-items:stretch}
   .support-feature .livepix-btn{width:100%}
 }
+
+.phase-wait{margin:14px auto 0;color:var(--muted);font-size:.9rem;font-weight:750;text-align:center}
