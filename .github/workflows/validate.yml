@@ -25,20 +25,7 @@ jobs:
           node --check /tmp/backend.js
       - name: Check ALL_IN_ONE sync
         run: |
-          python - <<'PY'
-          from pathlib import Path
-          header = """/**
- * NIHILGUH — ALL IN ONE
- * Gerado de Code.gs + Interactions.gs + RoundEngine.gs.
- * Cole este arquivo inteiro no projeto Apps Script do site.
- */
-
-"""
-          expected = header + Path("apps-script/Code.gs").read_text() + "\n\n" + Path("apps-script/Interactions.gs").read_text() + "\n\n" + Path("apps-script/RoundEngine.gs").read_text() + "\n"
-          actual = Path("apps-script/ALL_IN_ONE.gs").read_text()
-          if actual != expected:
-              raise SystemExit("ALL_IN_ONE.gs is out of sync with source files")
-          PY
+          python -c 'from pathlib import Path; h="/**\n * NIHILGUH — ALL IN ONE\n * Gerado de Code.gs + Interactions.gs + RoundEngine.gs.\n * Cole este arquivo inteiro no projeto Apps Script do site.\n */\n\n"; e=h+Path("apps-script/Code.gs").read_text()+"\n\n"+Path("apps-script/Interactions.gs").read_text()+"\n\n"+Path("apps-script/RoundEngine.gs").read_text()+"\n"; a=Path("apps-script/ALL_IN_ONE.gs").read_text(); assert a==e, "ALL_IN_ONE.gs is out of sync with source files"'
       - name: Check required routes
         run: |
           test -f index.html
