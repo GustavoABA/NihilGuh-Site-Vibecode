@@ -399,7 +399,22 @@ function pollTwitchStatus() {
   }
 }
 
+function activeSessionCacheSet_(active) {
+  const cache=CacheService.getScriptCache();
+  if(!active){ cache.remove('active_session_v3'); return; }
+  cache.put('active_session_v3',JSON.stringify({row:active.row,values:active.values}),3);
+}
+
 function activeSession_() {
+  const cache=CacheService.getScriptCache();
+  const cached=cache.get('active_session_v3');
+  if(cached){
+    try{
+      const parsed=JSON.parse(cached);
+      if(parsed && parsed.row>1 && Array.isArray(parsed.values) && String(parsed.values[4]).toUpperCase()==='ONLINE') return parsed;
+    }catch(_){}
+  }
+
   const props=PropertiesService.getScriptProperties();
   const cachedRow=Number(props.getProperty('ACTIVE_SESSION_ROW') || 0);
   const cachedId=String(props.getProperty('ACTIVE_SESSION_ID') || '');
@@ -407,7 +422,11 @@ function activeSession_() {
 
   if(cachedRow>1 && cachedId){
     const row=s.getRange(cachedRow,1,1,11).getValues()[0];
-    if(String(row[0])===cachedId && String(row[4]).toUpperCase()==='ONLINE') return {row:cachedRow,values:row};
+    if(String(row[0])===cachedId && String(row[4]).toUpperCase()==='ONLINE'){
+      const active={row:cachedRow,values:row};
+      activeSessionCacheSet_(active);
+      return active;
+    }
     props.deleteProperty('ACTIVE_SESSION_ROW');
     props.deleteProperty('ACTIVE_SESSION_ID');
   }
@@ -417,9 +436,12 @@ function activeSession_() {
     if(String(vals[r][4]).toUpperCase()==='ONLINE'){
       props.setProperty('ACTIVE_SESSION_ROW',String(r+1));
       props.setProperty('ACTIVE_SESSION_ID',String(vals[r][0]));
-      return {row:r+1,values:vals[r]};
+      const active={row:r+1,values:vals[r]};
+      activeSessionCacheSet_(active);
+      return active;
     }
   }
+  activeSessionCacheSet_(null);
   return null;
 }
 
@@ -434,6 +456,7 @@ function startSession_(origin) {
   props.setProperty('ACTIVE_SESSION_ROW',String(liveRow));
   props.setProperty('ACTIVE_SESSION_ID',id);
   props.setProperty('LIVEPIX_PROCESSED_' + id,'0');
+  activeSessionCacheSet_(null);
   const goals = sh_(TABS.METAS);
   cfg.goals.forEach(g => goals.appendRow([id,date_(d),g.id,g.meta,g.tipo,g.alvo,0,false,g.reward,'']));
   event_('session_start',id,origin || 'manual',cfg.baseMinutes);
@@ -456,6 +479,7 @@ function closeSession_(row, origin) {
   props.deleteProperty('ACTIVE_SESSION_ID');
   props.deleteProperty('LIVEPIX_PROCESSED_' + id);
   CacheService.getScriptCache().remove('goals_' + id);
+  activeSessionCacheSet_(null);
   updatePanel_();
   return { ended:true, sessionId:id };
 }
@@ -501,6 +525,7 @@ function syncLiveRow_(active) {
   sh_(TABS.LIVES).getRange(active.row,9,1,2).setValues([[counts.completed,counts.goalCount]]);
   active.values[8]=counts.completed;
   active.values[9]=counts.goalCount;
+  activeSessionCacheSet_(active);
   invalidateGoalsCache_(id);
 }
 
@@ -519,6 +544,7 @@ function bonusApplyNoLock_(active, requestedDelta, type, origin, detail) {
   sh_(TABS.LIVES).getRange(active.row,7,1,2).setValues([[next,base+next]]);
   active.values[6]=next;
   active.values[7]=base+next;
+  activeSessionCacheSet_(active);
   event_(type || 'time_change',String(active.values[0]),origin || 'system',detail || '',applied);
   return applied;
 }
@@ -826,6 +852,10 @@ function publicStateLite_() {
   }
 
   const maxBonus=Math.max(0,Number(config_().maxBonusMinutes || 240));
+  const round=roundPublicState_(id);
+  if(round && !round.deckComplete){
+    round.availableRewardMinutes=Math.max(0,Math.min(Number(round.rewardMinutes||0),maxBonus-Number(row[6]||0)));
+  }
   return {
     twitchState:'online',
     session:{
@@ -842,7 +872,7 @@ function publicStateLite_() {
       bonus_restante_min:Math.max(0,maxBonus-Number(row[6]||0))
     },
     goals:goals,
-    round:roundPublicState_(id)
+    round:round
   };
 }
 
