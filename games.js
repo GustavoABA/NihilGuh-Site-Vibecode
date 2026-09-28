@@ -48,25 +48,45 @@
   }
 
   function renderFlash(r) {
-    const hidden=Date.now()>=new Date(r.challenge?.hideAt||0).getTime();
+    const phase=String(r.challenge?.phase||'memorize');
+    if(phase==='answer'){
+      return shell(r,
+        '<div class="flash-stage is-hidden" id="flash-stage">'+
+          '<div class="flash-word" id="flash-word">••••••••</div>'+
+          '<small>Agora digite o que você viu.</small>'+
+        '</div>'+
+        '<div id="flash-answer">'+answerForm('O que apareceu?')+'</div>'
+      );
+    }
     return shell(r,
-      '<div class="flash-stage '+(hidden?'is-hidden':'')+'" id="flash-stage">'+
-        '<div class="flash-word" id="flash-word">'+(hidden?'••••••••':esc(r.challenge?.flashText||''))+'</div>'+
-        '<small>'+(hidden?'Agora digite o que você viu.':'Memorize. Vai sumir para todos ao mesmo tempo.')+'</small>'+
+      '<div class="flash-stage" id="flash-stage">'+
+        '<div class="flash-word" id="flash-word">'+esc(r.challenge?.flashText||'')+'</div>'+
+        '<small>Memorize. Vai sumir para todos ao mesmo tempo.</small>'+
       '</div>'+
-      '<div id="flash-answer" '+(hidden?'':'hidden')+'>'+answerForm('O que apareceu?')+'</div>'
+      '<div class="phase-wait" id="flash-wait" hidden>Aguardando a pergunta…</div>'
     );
   }
 
   function renderMemory(r) {
+    const phase=String(r.challenge?.phase||'memorize');
+    if(phase==='answer'){
+      const count=Math.max(0,Number(r.challenge?.cardCount||0));
+      return shell(r,
+        '<div class="memory-target">Onde estava <strong>'+esc(r.challenge?.targetSymbol||'?')+'</strong>?</div>'+
+        '<div class="memory-grid" id="memory-grid">'+Array.from({length:count},(_,i)=>
+          '<button type="button" class="memory-card is-hidden" data-memory-index="'+i+'" data-game-answer="cell:'+i+'">'+
+          '<span class="card-face">?</span></button>'
+        ).join('')+'</div>'
+      );
+    }
     const cards=Array.isArray(r.challenge?.cards)?r.challenge.cards:[];
-    const hidden=Date.now()>=new Date(r.challenge?.revealUntil||0).getTime();
     return shell(r,
-      '<div class="memory-target">Depois que virar: encontre <strong>'+esc(r.challenge?.targetSymbol||'?')+'</strong></div>'+
+      '<div class="memory-target">Memorize a posição de todas as cartas.</div>'+
       '<div class="memory-grid" id="memory-grid">'+cards.map((v,i)=>
-        '<button type="button" class="memory-card '+(hidden?'is-hidden':'')+'" data-memory-index="'+i+'" data-game-answer="cell:'+i+'" '+(hidden?'':'disabled')+'>'+
-        '<span class="card-face">'+(hidden?'?':esc(v))+'</span></button>'
-      ).join('')+'</div>'
+        '<button type="button" class="memory-card" data-memory-index="'+i+'" disabled>'+
+        '<span class="card-face">'+esc(v)+'</span></button>'
+      ).join('')+'</div>'+
+      '<div class="phase-wait" id="memory-wait" hidden>Aguardando a pergunta…</div>'
     );
   }
 
@@ -209,20 +229,23 @@
       const ready=Date.now()>=new Date(r.challenge?.unlockAt||0).getTime();
       btn.disabled=!ready;btn.classList.toggle('ready',ready);btn.textContent=ready?'CLIQUE AGORA!':'ESPERE…';
     }
-    if(r.type==='memory'){
+    if(r.type==='memory' && String(r.challenge?.phase||'memorize')==='memorize'){
       const hidden=Date.now()>=new Date(r.challenge?.revealUntil||0).getTime();
-      if(hidden)document.querySelectorAll('.memory-card').forEach(card=>{
-        card.disabled=false;card.classList.add('is-hidden');
-        const face=card.querySelector('.card-face');if(face)face.textContent='?';
-      });
+      if(hidden){
+        document.querySelectorAll('.memory-card').forEach(card=>{
+          card.disabled=true;card.classList.add('is-hidden');
+          const face=card.querySelector('.card-face');if(face)face.textContent='?';
+        });
+        const wait=document.getElementById('memory-wait');if(wait)wait.hidden=false;
+      }
     }
-    if(r.type==='flash'){
+    if(r.type==='flash' && String(r.challenge?.phase||'memorize')==='memorize'){
       const hidden=Date.now()>=new Date(r.challenge?.hideAt||0).getTime();
-      const stage=document.getElementById('flash-stage'),word=document.getElementById('flash-word'),answer=document.getElementById('flash-answer');
+      const stage=document.getElementById('flash-stage'),word=document.getElementById('flash-word'),wait=document.getElementById('flash-wait');
       if(hidden&&stage){
         stage.classList.add('is-hidden');
         if(word)word.textContent='••••••••';
-        if(answer)answer.hidden=false;
+        if(wait)wait.hidden=false;
       }
     }
   }
