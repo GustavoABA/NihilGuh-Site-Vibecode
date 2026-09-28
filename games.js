@@ -10,7 +10,7 @@
     const pct=Math.max(0,Math.min(100,Math.round((Number(r.index||1)-1)/Math.max(1,Number(r.totalRounds||23))*100)));
     return '<div class="game-progress"><i style="width:'+pct+'%"></i></div>'+
       '<div class="play-stats"><span>ATO '+esc(r.act||1)+'</span><span id="play-players">'+esc(r.participants||0)+' participando</span>'+
-      '<span>+'+esc(r.rewardMinutes||0)+' min</span><span id="play-round-clock">--:--</span></div>';
+      '<span>'+(r.type==='queen' ? ('+'+esc(r.availableRewardMinutes ?? r.rewardMinutes ?? 0)+' / −10 min') : ('+'+esc(r.availableRewardMinutes ?? r.rewardMinutes ?? 0)+' min'))+'</span><span id="play-round-clock">--:--</span></div>';
   }
 
   function shell(r,body) {
