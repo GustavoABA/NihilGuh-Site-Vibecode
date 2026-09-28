@@ -2,49 +2,79 @@
 
 Hub de live e interação da comunidade publicado em GitHub Pages, com estado autoritativo em Google Apps Script.
 
-## Experiência pública
+## Rotas
 
-- / — perfil do criador, canais, Twitch, apoio e resumo da rodada.
-- /live/ — sala da live com player Twitch, relógio, metas e rodada atual.
-- /play/ — minigame mobile-first; todos disputam a mesma rodada.
-- /overlay/ — overlay 600×400 para OBS.
-- /overlay.html — URL legada mantida compatível.
-- /admin.html — painel privado de controle.
+- `/` — perfil, canais, comunidade, apoio e estado da live.
+- `/live/` — player Twitch, relógio, metas e rodada.
+- `/play/` — minigame global sincronizado.
+- `/overlay/` — overlay OBS 600×400.
+- `/overlay.html` — URL legada do overlay.
+- `/admin.html` — painel privado.
 
-## Regra central da live
+## Relógio
 
-Cada sessão começa com **240 minutos (4h)**. Metas, LivePix, eventos e minigames podem conceder até **240 minutos extras**, portanto o teto é **480 minutos (8h)**.
+Cada sessão nasce com **240 min (4h)**.
 
-A Twitch é usada como sinal de sessão através da DecAPI já adotada pelo projeto. Quando a transmissão passa de offline para online, o backend cria uma nova sessão e uma nova sequência de rodadas.
+Existe um único saldo de bônus autoritativo entre **0 e 240 min**, compartilhado por minigames, metas, LivePix e ajustes administrativos. O tempo total nunca passa de **480 min (8h)**.
+
+A Escolha da Rainha pode retirar bônus já conquistado, mas nunca reduz a base de 4h.
 
 ## Minigames
 
-O arquivo apps-script/RoundEngine.gs mantém uma rodada autoritativa por sessão. A resposta correta não é enviada ao navegador. O primeiro acerto válido é processado dentro de LockService, fecha a rodada para todos, concede o bônus de tempo permitido e agenda a próxima rodada.
+Uma live recebe um baralho global de **23 rodadas**. O mesmo desafio é exibido para todos.
 
-Tipos iniciais:
-- Sequência do Coelho;
-- Conta da Rainha;
-- Palavra Embaralhada;
-- Código do Cheshire;
-- Sorriso Relâmpago (reflexo).
+O potencial nominal positivo do baralho é **+240 min**:
+- Reflexo do Gato ×3;
+- Caça ao Coelho ×3;
+- Ache o Diferente ×2;
+- Digite Antes que Suma ×2;
+- Palavra Embaralhada ×2;
+- Sequência Maluca ×2;
+- Conta da Rainha ×2;
+- Memória de Cartas ×2;
+- Código do Cheshire ×2;
+- Labirinto do Abismo ×1;
+- Puzzle Deslizante 4×4 ×1;
+- Escolha da Rainha ×1.
 
-O identificador do visitante é local ao navegador e serve para a dinâmica casual; não é autenticação forte.
+As rodadas são distribuídas ao longo de aproximadamente **4 horas**, em vez de serem consumidas na primeira hora.
+
+O primeiro acerto válido fecha a rodada sob `LockService`. Labirinto e puzzle são reexecutados no backend para validar o caminho/movimentos.
+
+Memória e Digite Antes que Suma usam duas fases públicas: o conteúdo de memorização deixa de ser enviado quando entra a fase de resposta.
+
+## Estado e escala
+
+- Google Sheets: histórico persistente de lives, metas, visitantes e eventos.
+- ScriptProperties: somente o estado global compacto da rodada.
+- CacheService: presença/tentativas por jogador, configuração e leituras quentes.
+- `stateLite`: endpoint usado pelo polling público.
+- uma única requisição de polling por navegador fica em voo por vez.
+
+O identificador do jogador continua sendo casual, baseado no navegador. Não é autenticação forte e não deve ser usado para prêmios de valor real.
+
+## Motor legado
+
+O antigo motor automático de Boss/Caos/Votos/Missões permanece no código apenas para referência histórica, mas está **desativado**. Ele não altera mais o relógio nem cria mecânicas invisíveis.
+
+## Segurança
+
+- ações administrativas mutáveis usam POST;
+- ações administrativas por GET foram removidas;
+- `ADMIN_KEY` e `BRIDGE_KEY` não são mais impressas nos logs de `setup()`;
+- respostas corretas continuam somente no backend.
 
 ## Backend
 
 Fontes:
-- apps-script/Code.gs
-- apps-script/Interactions.gs
-- apps-script/RoundEngine.gs
+- `apps-script/Code.gs`
+- `apps-script/Interactions.gs`
+- `apps-script/RoundEngine.gs`
 
-Para publicar sem gerenciar vários arquivos, use apps-script/ALL_IN_ONE.gs.
+Para publicar, use `apps-script/ALL_IN_ONE.gs`. O CI verifica que ele é exatamente a concatenação das três fontes acima.
 
-O Google Sheets continua como histórico e registro de sessões/metas/eventos. O estado volátil dos jogos fica em ScriptProperties, evitando depender de varreduras do Sheets para cada detalhe da rodada.
+## Deploy
 
-## Segurança do painel
+O GitHub Pages publica automaticamente o branch `main`.
 
-Comandos administrativos do frontend usam POST. A ADMIN_KEY não é enviada na query string. O navegador envia um requestId aleatório e consulta apenas o resultado temporário dessa operação.
-
-## GitHub Pages
-
-.github/workflows/pages.yml publica automaticamente o conteúdo do branch main.
+O Apps Script precisa ser atualizado separadamente por **Gerenciar implantações → Editar → Nova versão**, preservando a mesma URL `/exec`.
