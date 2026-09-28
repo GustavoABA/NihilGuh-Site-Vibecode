@@ -16,8 +16,7 @@ function setup() {
   triggers.forEach(t => ScriptApp.deleteTrigger(t));
   ScriptApp.newTrigger('pollTwitchStatus').timeBased().everyMinutes(1).create();
   pollTwitchStatus();
-  Logger.log('ADMIN_KEY=' + props.getProperty('ADMIN_KEY'));
-  Logger.log('BRIDGE_KEY=' + props.getProperty('BRIDGE_KEY'));
+  Logger.log('NihilGuh backend configurado. Chaves privadas não são exibidas em logs.');
   return {
     ok:true,
     adminKey:props.getProperty('ADMIN_KEY'),
@@ -31,7 +30,7 @@ function doGet(e) {
     const action = p.action || 'state';
     let data;
 
-    if (action === 'state') { ensureTwitchStatusFresh_(); interactionTick_(); roundTick_(); data = publicState_(); }
+    if (action === 'state') { ensureTwitchStatusFresh_(); roundTick_(); data = publicState_(); }
     else if (action === 'stateLite') { roundTick_(); data = publicStateLite_(); }
     else if (action === 'history') data = history_(Number(p.days || 5));
     else if (action === 'records') data = { records:interactionRecords_() };
@@ -48,16 +47,7 @@ function doGet(e) {
       requireBridge_(p.bridgeKey);
       data = streamEvent_(p);
     } else {
-      requireAdmin_(p.adminKey);
-      if (action === 'sync') data = (pollTwitchStatus(), interactionTick_(), publicState_());
-      else if (action === 'forceStart') data = forceStart_();
-      else if (action === 'forceEnd') data = forceEnd_();
-      else if (action === 'completeGoal') data = completeGoal_(String(p.goalId || ''), 'admin');
-      else if (action === 'addMinutes') data = addMinutes_(Number(p.minutes || 0));
-      else if (['triggerChaos','triggerVote','triggerRandom','triggerLastChance','bossDamage','resetGame'].includes(action)) data = interactionAdmin_(action,p);
-      else if (action === 'bridgeInfo') data = { bridgeKey:PropertiesService.getScriptProperties().getProperty('BRIDGE_KEY') || '' };
-      else if (action === 'livepixTest') data = { connected:Boolean(livepixAccessToken_('messages:write')) };
-      else throw new Error('unknown_action');
+      throw new Error('unknown_action');
     }
 
     return output_(p.callback, { ok:true, ...data });
@@ -144,12 +134,12 @@ function adminPostStatus_(requestId) {
 }
 
 function adminPostAction_(action, p) {
-  if (action === 'sync') return (pollTwitchStatus(), interactionTick_(), roundTick_(), publicState_());
+  if (action === 'sync') return (pollTwitchStatus(), roundTick_(), publicState_());
   if (action === 'forceStart') return forceStart_();
   if (action === 'forceEnd') return forceEnd_();
   if (action === 'completeGoal') return completeGoal_(String(p.goalId || ''), 'admin');
   if (action === 'addMinutes') return addMinutes_(Number(p.minutes || 0));
-  if (['triggerChaos','triggerVote','triggerRandom','triggerLastChance','bossDamage','resetGame'].includes(action)) return interactionAdmin_(action,p);
+  if (['triggerChaos','triggerVote','triggerRandom','triggerLastChance','bossDamage','resetGame'].includes(action)) throw new Error('legacy_interactions_disabled');
   if (action === 'bridgeInfo') return { bridgeKey:PropertiesService.getScriptProperties().getProperty('BRIDGE_KEY') || '' };
   if (action === 'livepixTest') return { connected:Boolean(livepixAccessToken_('messages:write')) };
   throw new Error('unknown_admin_action');
@@ -311,6 +301,11 @@ function stamp_(d){ return Utilities.formatDate(d || now_(), TZ, "yyyy-MM-dd'T'H
 function truncate_(value, max){ value=String(value || ''); return value.length > max ? value.slice(0,max) : value; }
 
 function config_() {
+  const cache=CacheService.getScriptCache();
+  const cached=cache.get('nihilguh_config_v3');
+  if(cached){
+    try{return JSON.parse(cached);}catch(_){}
+  }
   const values = sh_(TABS.CONFIG).getDataRange().getValues();
   const goals = [];
   for (let r=1; r<values.length; r++) {
@@ -321,7 +316,7 @@ function config_() {
   }
   const map = {};
   for (let r=1; r<values.length; r++) if (values[r][7]) map[String(values[r][7])] = values[r][8];
-  return {
+  const cfg={
     goals,
     baseMinutes:Number(map['Tempo base da live (min)'] || 240),
     offlineChecks:Number(map['Checks offline para encerrar'] || 5),
@@ -331,6 +326,8 @@ function config_() {
     maxBonusMinutes:Number(map['Máximo de bônus da live (min)'] || 240),
     livepixBridgePlatform:String(map['LivePix bridge platform'] || 'twitch').toLowerCase()
   };
+  cache.put('nihilguh_config_v3',JSON.stringify(cfg),60);
+  return cfg;
 }
 
 function ensureTwitchStatusFresh_() {
@@ -401,13 +398,56 @@ function pollTwitchStatus() {
     }
     updatePanel_();
   } finally { lock.releaseLock(); }
+
+  // Keep the shared round clock moving even when nobody has /play/ open.
+  if (PropertiesService.getScriptProperties().getProperty('TWITCH_STATE') === 'online') {
+    roundTick_();
+  }
+}
+
+function activeSessionCacheSet_(active) {
+  const cache=CacheService.getScriptCache();
+  if(!active){ cache.remove('active_session_v3'); return; }
+  cache.put('active_session_v3',JSON.stringify({row:active.row,values:active.values}),3);
 }
 
 function activeSession_() {
-  const s = sh_(TABS.LIVES), vals = s.getDataRange().getValues();
-  for (let r=vals.length-1; r>=1; r--) {
-    if (String(vals[r][4]).toUpperCase() === 'ONLINE') return { row:r+1, values:vals[r] };
+  const cache=CacheService.getScriptCache();
+  const cached=cache.get('active_session_v3');
+  if(cached){
+    try{
+      const parsed=JSON.parse(cached);
+      if(parsed && parsed.row>1 && Array.isArray(parsed.values) && String(parsed.values[4]).toUpperCase()==='ONLINE') return parsed;
+    }catch(_){}
   }
+
+  const props=PropertiesService.getScriptProperties();
+  const cachedRow=Number(props.getProperty('ACTIVE_SESSION_ROW') || 0);
+  const cachedId=String(props.getProperty('ACTIVE_SESSION_ID') || '');
+  const s=sh_(TABS.LIVES);
+
+  if(cachedRow>1 && cachedId){
+    const row=s.getRange(cachedRow,1,1,11).getValues()[0];
+    if(String(row[0])===cachedId && String(row[4]).toUpperCase()==='ONLINE'){
+      const active={row:cachedRow,values:row};
+      activeSessionCacheSet_(active);
+      return active;
+    }
+    props.deleteProperty('ACTIVE_SESSION_ROW');
+    props.deleteProperty('ACTIVE_SESSION_ID');
+  }
+
+  const vals=s.getDataRange().getValues();
+  for(let r=vals.length-1;r>=1;r--){
+    if(String(vals[r][4]).toUpperCase()==='ONLINE'){
+      props.setProperty('ACTIVE_SESSION_ROW',String(r+1));
+      props.setProperty('ACTIVE_SESSION_ID',String(vals[r][0]));
+      const active={row:r+1,values:vals[r]};
+      activeSessionCacheSet_(active);
+      return active;
+    }
+  }
+  activeSessionCacheSet_(null);
   return null;
 }
 
@@ -417,6 +457,12 @@ function startSession_(origin) {
   const cfg = config_(), d=now_(), id='live_' + Utilities.formatDate(d,TZ,'yyyyMMdd_HHmmss');
   const live = sh_(TABS.LIVES);
   live.appendRow([id,date_(d),stamp_(d),'','ONLINE',cfg.baseMinutes,0,cfg.baseMinutes,0,cfg.goals.length,origin || 'manual']);
+  const liveRow=live.getLastRow();
+  const props=PropertiesService.getScriptProperties();
+  props.setProperty('ACTIVE_SESSION_ROW',String(liveRow));
+  props.setProperty('ACTIVE_SESSION_ID',id);
+  props.setProperty('LIVEPIX_PROCESSED_' + id,'0');
+  activeSessionCacheSet_(null);
   const goals = sh_(TABS.METAS);
   cfg.goals.forEach(g => goals.appendRow([id,date_(d),g.id,g.meta,g.tipo,g.alvo,0,false,g.reward,'']));
   event_('session_start',id,origin || 'manual',cfg.baseMinutes);
@@ -434,35 +480,91 @@ function closeSession_(row, origin) {
   event_('session_end',id,origin || 'manual',stats.total);
   interactionSessionEnd_(id);
   roundSessionEnd_(id);
+  const props=PropertiesService.getScriptProperties();
+  props.deleteProperty('ACTIVE_SESSION_ROW');
+  props.deleteProperty('ACTIVE_SESSION_ID');
+  props.deleteProperty('LIVEPIX_PROCESSED_' + id);
+  CacheService.getScriptCache().remove('goals_' + id);
+  activeSessionCacheSet_(null);
   updatePanel_();
   return { ended:true, sessionId:id };
 }
 
+function sessionRowById_(sessionId) {
+  const active=activeSession_();
+  if(active && String(active.values[0])===String(sessionId)) return active;
+  const s=sh_(TABS.LIVES), vals=s.getDataRange().getValues();
+  for(let r=vals.length-1;r>=1;r--) if(String(vals[r][0])===String(sessionId)) return {row:r+1,values:vals[r]};
+  return null;
+}
+
 function stats_(sessionId) {
-  const liveVals=sh_(TABS.LIVES).getDataRange().getValues();
-  let base=240;
-  for(let r=1;r<liveVals.length;r++) if(String(liveVals[r][0])===sessionId){base=Number(liveVals[r][5]||240);break;}
-  const gVals=sh_(TABS.METAS).getDataRange().getValues();
-  let gained=0,completed=0,goalCount=0;
-  for(let r=1;r<gVals.length;r++) if(String(gVals[r][0])===sessionId){
+  const found=sessionRowById_(sessionId);
+  if(!found) return {base:240,gained:0,total:240,completed:0,goalCount:0};
+  const row=found.values;
+  return {
+    base:Number(row[5]||240),
+    gained:Math.max(0,Number(row[6]||0)),
+    total:Number(row[7]||row[5]||240),
+    completed:Number(row[8]||0),
+    goalCount:Number(row[9]||0)
+  };
+}
+
+function invalidateGoalsCache_(sessionId) {
+  CacheService.getScriptCache().remove('goals_' + String(sessionId || ''));
+}
+
+function goalCounts_(sessionId) {
+  const vals=sh_(TABS.METAS).getDataRange().getValues();
+  let completed=0,goalCount=0;
+  for(let r=1;r<vals.length;r++) if(String(vals[r][0])===String(sessionId)){
     goalCount++;
-    if(gVals[r][7]===true){completed++;gained+=Number(gVals[r][8]||0);}
+    if(vals[r][7]===true) completed++;
   }
-  const eVals=sh_(TABS.EVENTOS).getDataRange().getValues();
-  for(let r=1;r<eVals.length;r++) {
-    if(String(eVals[r][1])!==sessionId) continue;
-    const eventType=String(eVals[r][2]);
-    if(INTERACTION_TIME_EVENTS.includes(eventType)) gained+=Number(eVals[r][5]||0);
-  }
-  const maxBonus=Number(config_().maxBonusMinutes || 240);
-  gained=Math.min(Math.max(0,gained),maxBonus);
-  return {base,gained,total:base+gained,completed,goalCount};
+  return {completed,goalCount};
 }
 
 function syncLiveRow_(active) {
-  if (!active) return;
-  const id=String(active.values[0]), stats=stats_(id);
-  sh_(TABS.LIVES).getRange(active.row,7,1,4).setValues([[stats.gained,stats.total,stats.completed,stats.goalCount]]);
+  if(!active) return;
+  const id=String(active.values[0]), counts=goalCounts_(id);
+  sh_(TABS.LIVES).getRange(active.row,9,1,2).setValues([[counts.completed,counts.goalCount]]);
+  active.values[8]=counts.completed;
+  active.values[9]=counts.goalCount;
+  activeSessionCacheSet_(active);
+  invalidateGoalsCache_(id);
+}
+
+function bonusApplyNoLock_(active, requestedDelta, type, origin, detail) {
+  if(!active) throw new Error('no_active_session');
+  const requested=Number(requestedDelta || 0);
+  if(!Number.isFinite(requested) || requested===0) return 0;
+  const cfg=config_();
+  const maxBonus=Math.max(0,Number(cfg.maxBonusMinutes || 240));
+  const base=Math.max(0,Number(active.values[5] || cfg.baseMinutes || 240));
+  const current=Math.min(maxBonus,Math.max(0,Number(active.values[6] || 0)));
+  const next=Math.min(maxBonus,Math.max(0,current + requested));
+  const applied=next-current;
+  if(applied===0) return 0;
+
+  sh_(TABS.LIVES).getRange(active.row,7,1,2).setValues([[next,base+next]]);
+  active.values[6]=next;
+  active.values[7]=base+next;
+  activeSessionCacheSet_(active);
+  event_(type || 'time_change',String(active.values[0]),origin || 'system',detail || '',applied);
+  return applied;
+}
+
+function applyBonusDelta_(sessionId, requestedDelta, type, origin, detail) {
+  const lock=LockService.getScriptLock();
+  if(!lock.tryLock(10000)) throw new Error('busy');
+  try{
+    const active=activeSession_();
+    if(!active || String(active.values[0])!==String(sessionId)) throw new Error('no_active_session');
+    return bonusApplyNoLock_(active,requestedDelta,type,origin,detail);
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function registerVisit_(visitorId) {
@@ -474,7 +576,6 @@ function registerVisit_(visitorId) {
   for(let r=1;r<vals.length;r++) if(String(vals[r][0])===id && String(vals[r][2])===visitorId){row=r+1;break;}
   if(row) visitors.getRange(row,5).setValue(stamp_());
   else visitors.appendRow([id,date_(),visitorId,stamp_(),stamp_()]);
-  if(!row) interactionEvent_(id,{type:'visit',listener:'site_visit',amount:1});
   const count=uniqueVisitors_(id);
   updateVisitorGoals_(id,count);
   syncLiveRow_(activeSession_());
@@ -489,13 +590,24 @@ function uniqueVisitors_(id) {
 }
 
 function updateVisitorGoals_(id,count) {
-  const s=sh_(TABS.METAS), vals=s.getDataRange().getValues(), now=stamp_();
-  for(let r=1;r<vals.length;r++) if(String(vals[r][0])===id && String(vals[r][4])==='visitors'){
-    s.getRange(r+1,7).setValue(count);
-    if(vals[r][7]!==true && count>=Number(vals[r][5]||0)){
-      s.getRange(r+1,8).setValue(true); s.getRange(r+1,10).setValue(now);
-      event_('goal_complete',id,'visitors',String(vals[r][2]),Number(vals[r][8]||0));
+  const lock=LockService.getScriptLock();
+  if(!lock.tryLock(5000)) return;
+  try{
+    const active=activeSession_();
+    if(!active || String(active.values[0])!==String(id)) return;
+    const s=sh_(TABS.METAS), vals=s.getDataRange().getValues(), now=stamp_();
+    for(let r=1;r<vals.length;r++) if(String(vals[r][0])===id && String(vals[r][4])==='visitors'){
+      s.getRange(r+1,7).setValue(count);
+      if(vals[r][7]!==true && count>=Number(vals[r][5]||0)){
+        const reward=Number(vals[r][8]||0);
+        s.getRange(r+1,8).setValue(true); s.getRange(r+1,10).setValue(now);
+        event_('goal_complete',id,'visitors',String(vals[r][2]),0);
+        if(reward>0) bonusApplyNoLock_(active,reward,'goal_time','visitors',String(vals[r][2]));
+      }
     }
+    invalidateGoalsCache_(id);
+  } finally {
+    lock.releaseLock();
   }
 }
 
@@ -527,7 +639,6 @@ function streamEvent_(p) {
 
   if(normalized==='livepix_donation') updateLivePix_(id);
   updateStreamGoals_(id);
-  interactionEvent_(id,{type:normalized,listener,provider,amount,user});
   syncLiveRow_(activeSession_());
   updatePanel_();
 
@@ -570,6 +681,11 @@ function eventSeen_(eventId) {
 }
 
 function updateStreamGoals_(sessionId) {
+  const lock=LockService.getScriptLock();
+  if(!lock.tryLock(5000)) return;
+  try{
+  const active=activeSession_();
+  if(!active || String(active.values[0])!==String(sessionId)) return;
   const events=sh_(TABS.EVENTOS).getDataRange().getValues();
   const counts={
     growth_total:0,growth_twitch:0,growth_youtube:0,growth_kick:0,
@@ -608,68 +724,95 @@ function updateStreamGoals_(sessionId) {
     goals.getRange(r+1,7).setValue(progress);
 
     if(vals[r][7]!==true && progress>=Number(vals[r][5]||0)){
+      const reward=Number(vals[r][8]||0);
       goals.getRange(r+1,8).setValue(true);
       goals.getRange(r+1,10).setValue(completedAt);
-      event_('goal_complete',sessionId,'streamelements',String(vals[r][2]),Number(vals[r][8]||0));
+      event_('goal_complete',sessionId,'streamelements',String(vals[r][2]),0);
+      if(reward>0) bonusApplyNoLock_(active,reward,'goal_time','streamelements',String(vals[r][2]));
     }
+  }
+  invalidateGoalsCache_(sessionId);
+  } finally {
+    lock.releaseLock();
   }
 }
 
 function updateLivePix_(sessionId) {
-  const cfg=config_();
-  const events=sh_(TABS.EVENTOS).getDataRange().getValues();
-  let total=0;
-  let awarded=0;
+  const lock=LockService.getScriptLock();
+  if(!lock.tryLock(5000)) return;
+  try{
+    const active=activeSession_();
+    if(!active || String(active.values[0])!==String(sessionId)) return;
+    const cfg=config_();
+    const events=sh_(TABS.EVENTOS).getDataRange().getValues();
+    let total=0;
 
-  for(let r=1;r<events.length;r++){
-    if(String(events[r][1])!==sessionId) continue;
-    const type=String(events[r][2]);
-    if(type==='livepix_donation'){
-      const currency=String(events[r][10] || 'BRL').toUpperCase();
-      if(currency && currency!=='BRL') continue;
-      total+=Number(events[r][5] || 0);
-    } else if(type==='livepix_time'){
-      awarded+=Number(events[r][5] || 0);
+    for(let r=1;r<events.length;r++){
+      if(String(events[r][1])!==sessionId) continue;
+      if(String(events[r][2])==='livepix_donation'){
+        const currency=String(events[r][10] || 'BRL').toUpperCase();
+        if(currency && currency!=='BRL') continue;
+        total+=Number(events[r][5] || 0);
+      }
     }
-  }
 
-  const earned=Math.floor(total / Math.max(1, cfg.livepixPerMinute));
-  const delta=Math.max(0, earned-awarded);
-  if(delta>0){
-    event_('livepix_time',sessionId,'livepix','R$ '+total.toFixed(2)+' acumulados',delta);
-  }
-
-  const goals=sh_(TABS.METAS), vals=goals.getDataRange().getValues(), completedAt=stamp_();
-  for(let r=1;r<vals.length;r++){
-    if(String(vals[r][0])!==sessionId || String(vals[r][4])!=='livepix_amount') continue;
-    goals.getRange(r+1,7).setValue(total);
-    if(vals[r][7]!==true && total>=Number(vals[r][5]||0)){
-      goals.getRange(r+1,8).setValue(true);
-      goals.getRange(r+1,10).setValue(completedAt);
-      event_('goal_complete',sessionId,'livepix',String(vals[r][2]),0);
+    const earned=Math.floor(total / Math.max(1,cfg.livepixPerMinute));
+    const props=PropertiesService.getScriptProperties();
+    const key='LIVEPIX_PROCESSED_' + sessionId;
+    const processed=Math.max(0,Number(props.getProperty(key) || 0));
+    const delta=Math.max(0,earned-processed);
+    if(delta>0){
+      bonusApplyNoLock_(active,delta,'livepix_time','livepix','R$ '+total.toFixed(2)+' acumulados');
+      props.setProperty(key,String(earned));
     }
+
+    const goals=sh_(TABS.METAS), vals=goals.getDataRange().getValues(), completedAt=stamp_();
+    for(let r=1;r<vals.length;r++){
+      if(String(vals[r][0])!==sessionId || String(vals[r][4])!=='livepix_amount') continue;
+      goals.getRange(r+1,7).setValue(total);
+      if(vals[r][7]!==true && total>=Number(vals[r][5]||0)){
+        goals.getRange(r+1,8).setValue(true);
+        goals.getRange(r+1,10).setValue(completedAt);
+        event_('goal_complete',sessionId,'livepix',String(vals[r][2]),0);
+      }
+    }
+    invalidateGoalsCache_(sessionId);
+  } finally {
+    lock.releaseLock();
   }
 }
 
 function completeGoal_(goalId, origin) {
-  const active=activeSession_(); if(!active) throw new Error('no_active_session');
-  const id=String(active.values[0]), s=sh_(TABS.METAS), vals=s.getDataRange().getValues();
-  for(let r=1;r<vals.length;r++) if(String(vals[r][0])===id && String(vals[r][2])===goalId){
-    if(vals[r][7]!==true){
-      s.getRange(r+1,7).setValue(Number(vals[r][5]||1));
-      s.getRange(r+1,8).setValue(true); s.getRange(r+1,10).setValue(stamp_());
-      event_('goal_complete',id,origin || 'admin',goalId,Number(vals[r][8]||0));
+  const lock=LockService.getScriptLock();
+  if(!lock.tryLock(10000)) throw new Error('busy');
+  try{
+    const active=activeSession_(); if(!active) throw new Error('no_active_session');
+    const id=String(active.values[0]), s=sh_(TABS.METAS), vals=s.getDataRange().getValues();
+    for(let r=1;r<vals.length;r++) if(String(vals[r][0])===id && String(vals[r][2])===goalId){
+      if(vals[r][7]!==true){
+        const reward=Number(vals[r][8]||0);
+        s.getRange(r+1,7).setValue(Number(vals[r][5]||1));
+        s.getRange(r+1,8).setValue(true);
+        s.getRange(r+1,10).setValue(stamp_());
+        event_('goal_complete',id,origin || 'admin',goalId,0);
+        if(reward>0) bonusApplyNoLock_(active,reward,'goal_time',origin || 'admin',goalId);
+      }
+      syncLiveRow_(active);
+      updatePanel_();
+      return publicState_();
     }
-    syncLiveRow_(activeSession_()); updatePanel_(); return publicState_();
+    throw new Error('goal_not_found');
+  } finally {
+    lock.releaseLock();
   }
-  throw new Error('goal_not_found');
 }
 
 function addMinutes_(minutes) {
   if(!Number.isFinite(minutes) || minutes<=0 || minutes>240) throw new Error('invalid_minutes');
   const active=activeSession_(); if(!active) throw new Error('no_active_session');
-  const id=String(active.values[0]); event_('manual_time',id,'admin','minutos adicionados',minutes);
-  syncLiveRow_(activeSession_()); updatePanel_(); return publicState_();
+  applyBonusDelta_(String(active.values[0]),minutes,'manual_time','admin','minutos adicionados');
+  updatePanel_();
+  return publicState_();
 }
 
 function forceStart_(){ startSession_('admin'); PropertiesService.getScriptProperties().setProperty('OFFLINE_COUNT','0'); return publicState_(); }
@@ -688,22 +831,37 @@ function publicStateLite_() {
 
   const row=active.values;
   const id=String(row[0]);
-  const vals=sh_(TABS.METAS).getDataRange().getValues();
-  const goals=[];
-  for(let r=1;r<vals.length;r++) {
-    if(String(vals[r][0])!==id) continue;
-    goals.push({
-      goal_id:String(vals[r][2]),
-      meta:String(vals[r][3]),
-      tipo:String(vals[r][4]),
-      alvo:Number(vals[r][5]||0),
-      progresso:Number(vals[r][6]||0),
-      concluida:vals[r][7]===true,
-      recompensa_min:Number(vals[r][8]||0),
-      concluida_em:vals[r][9] ? String(vals[r][9]) : ''
-    });
+  const cache=CacheService.getScriptCache();
+  const goalsKey='goals_' + id;
+  let goals=null;
+  const cachedGoals=cache.get(goalsKey);
+  if(cachedGoals){
+    try{goals=JSON.parse(cachedGoals);}catch(_){}
+  }
+  if(!goals){
+    const vals=sh_(TABS.METAS).getDataRange().getValues();
+    goals=[];
+    for(let r=1;r<vals.length;r++) {
+      if(String(vals[r][0])!==id) continue;
+      goals.push({
+        goal_id:String(vals[r][2]),
+        meta:String(vals[r][3]),
+        tipo:String(vals[r][4]),
+        alvo:Number(vals[r][5]||0),
+        progresso:Number(vals[r][6]||0),
+        concluida:vals[r][7]===true,
+        recompensa_min:Number(vals[r][8]||0),
+        concluida_em:vals[r][9] ? String(vals[r][9]) : ''
+      });
+    }
+    cache.put(goalsKey,JSON.stringify(goals),15);
   }
 
+  const maxBonus=Math.max(0,Number(config_().maxBonusMinutes || 240));
+  const round=roundPublicState_(id);
+  if(round && !round.deckComplete){
+    round.availableRewardMinutes=Math.max(0,Math.min(Number(round.rewardMinutes||0),maxBonus-Number(row[6]||0)));
+  }
   return {
     twitchState:'online',
     session:{
@@ -716,10 +874,11 @@ function publicStateLite_() {
       tempo_ganho_min:Number(row[6]||0),
       tempo_total_min:Number(row[7]||0),
       metas_batidas:Number(row[8]||0),
-      metas_total:Number(row[9]||0)
+      metas_total:Number(row[9]||0),
+      bonus_restante_min:Math.max(0,maxBonus-Number(row[6]||0))
     },
     goals:goals,
-    round:roundPublicState_(id)
+    round:round
   };
 }
 
@@ -736,7 +895,7 @@ function publicState_() {
     session_id:id,data:String(row[1]),inicio:String(row[2]),fim:String(row[3]||''),status:String(row[4]),
     tempo_base_min:Number(row[5]||0),tempo_ganho_min:Number(row[6]||0),tempo_total_min:Number(row[7]||0),
     metas_batidas:Number(row[8]||0),metas_total:Number(row[9]||0)
-  }, goals, game:interactionPublicState_(id), round:roundPublicState_(id) };
+  }, goals, game:null, round:roundPublicState_(id) };
 }
 
 function history_(days) {
@@ -799,6 +958,7 @@ function requireBridge_(key) {
  */
 const INTERACTION_PROP = 'NIHILGUH_GAME_STATE_V3';
 const INTERACTION_CFG = {
+  enabled: false,
   bossMaxHp: 1000,
   bossDefeatMinutes: 30,
   lastChanceAtSec: 15 * 60,
@@ -838,6 +998,7 @@ const INTERACTION_RECENT_TYPES = [
 ];
 
 function interactionSessionStart_(sessionId, startedAt) {
+  if (!INTERACTION_CFG.enabled) return;
   if (!sessionId) return;
   const now = new Date(startedAt || now_()).getTime();
   const game = {
@@ -867,6 +1028,7 @@ function interactionSessionStart_(sessionId, startedAt) {
 }
 
 function interactionSessionEnd_(sessionId) {
+  if (!INTERACTION_CFG.enabled) return;
   const game = interactionLoad_();
   if (!game || game.sessionId !== String(sessionId || '')) return;
   game.ending = true;
@@ -990,10 +1152,10 @@ function interactionMissionProgress_(mission, snap) {
 }
 
 function interactionAddMinutes_(sessionId, type, minutes, detail) {
+  if (!INTERACTION_CFG.enabled) return 0;
   minutes = Number(minutes || 0);
-  if (minutes <= 0) return;
-  event_(type, sessionId, 'interaction', detail || type, minutes);
-  syncLiveRow_(activeSession_());
+  if (minutes <= 0) return 0;
+  return applyBonusDelta_(sessionId,minutes,type,'interaction',detail || type);
 }
 
 function interactionUnlockLoot_(game, sessionId, id, label, url) {
@@ -1022,6 +1184,7 @@ function interactionBossDamage_(game, sessionId, amount, source, detail) {
 }
 
 function interactionEvent_(sessionId, data) {
+  if (!INTERACTION_CFG.enabled) return;
   if (!sessionId) return;
   const game = interactionEnsure_(sessionId);
   const type = String((data && data.type) || '');
@@ -1059,6 +1222,7 @@ function interactionEvent_(sessionId, data) {
 }
 
 function interactionGoalComplete_(sessionId, goalId) {
+  if (!INTERACTION_CFG.enabled) return;
   if (!sessionId) return;
   const game = interactionEnsure_(sessionId);
   const now = interactionNowMs_();
@@ -1137,6 +1301,7 @@ function interactionVoteSeen_(sessionId, voteId, visitorId) {
 }
 
 function interactionVote_(visitorId, optionId) {
+  if (!INTERACTION_CFG.enabled) throw new Error('legacy_interactions_disabled');
   visitorId = String(visitorId || '').slice(0,100);
   optionId = String(optionId || '').slice(0,80);
   if (!visitorId) throw new Error('invalid_visitor');
@@ -1249,6 +1414,7 @@ function interactionFailMission_(game, sessionId, holderName, eventPrefix) {
 }
 
 function interactionTick_() {
+  if (!INTERACTION_CFG.enabled) return;
   const active = activeSession_();
   if (!active) return;
   const sessionId = String(active.values[0]);
@@ -1344,6 +1510,7 @@ function interactionRecentEvents_(sessionId, limit) {
 }
 
 function interactionPublicState_(sessionId) {
+  if (!INTERACTION_CFG.enabled) return null;
   if (!sessionId) return null;
   const game = interactionEnsure_(sessionId);
   const snap = interactionMetricSnapshot_(sessionId);
@@ -1426,6 +1593,7 @@ function interactionRecords_() {
 }
 
 function interactionAdmin_(action, p) {
+  if (!INTERACTION_CFG.enabled) throw new Error('legacy_interactions_disabled');
   const active=activeSession_();
   if(!active) throw new Error('no_active_session');
   const sessionId=String(active.values[0]);
@@ -1455,11 +1623,12 @@ function interactionAdmin_(action, p) {
 const ROUND_PROP = 'NIHILGUH_ROUND_STATE_V2';
 const ROUND_CFG = {
   nextRoundDelaySec: 8,
+  roundCadenceSec: 10 * 60 + 45,
   standardDurationSec: 150,
   longDurationSec: 360,
   reactionDurationSec: 60,
   maxWrongAttemptsPerPlayer: 25,
-  maxTrackedPlayers: 300
+  cacheTtlSec: 21600
 };
 
 const ROUND_REWARDS = {
@@ -1525,10 +1694,22 @@ function roundShuffleArray_(arr) {
   return out;
 }
 
+function roundCompactState_(state) {
+  if(!state) return state;
+  if(state.current){
+    if(Array.isArray(state.current.participants)){
+      state.current.participantCount=Math.max(Number(state.current.participantCount||0),state.current.participants.length);
+      delete state.current.participants;
+    }
+    if(state.current.wrongAttempts) delete state.current.wrongAttempts;
+  }
+  return state;
+}
+
 function roundLoad_() {
   try {
     const raw=PropertiesService.getScriptProperties().getProperty(ROUND_PROP);
-    return raw ? JSON.parse(raw) : null;
+    return raw ? roundCompactState_(JSON.parse(raw)) : null;
   } catch (_) {
     return null;
   }
@@ -1536,9 +1717,13 @@ function roundLoad_() {
 
 function roundSave_(state) {
   if (!state) return;
+  roundCompactState_(state);
   state.stateVersion=Number(state.stateVersion||0)+1;
   state.updatedAt=stamp_();
-  PropertiesService.getScriptProperties().setProperty(ROUND_PROP,JSON.stringify(state));
+  const json=JSON.stringify(state);
+  const bytes=Utilities.newBlob(json).getBytes().length;
+  if(bytes>7600) throw new Error('round_state_too_large');
+  PropertiesService.getScriptProperties().setProperty(ROUND_PROP,json);
 }
 
 function roundEnsure_(sessionId) {
@@ -1605,9 +1790,8 @@ function roundBase_(type,index) {
     challenge:{},
     secretAnswer:'',
     secret:{},
-    participants:[],
+    participantCount:0,
     attempts:0,
-    wrongAttempts:{},
     winner:null,
     nextRoundAt:''
   };
@@ -1848,6 +2032,21 @@ function roundValidatePuzzle_(round,path){
   return board[board.length-1]===0;
 }
 
+function roundNextScheduledAt_(state) {
+  const nextIndex=Number(state.index||0)+1;
+  const total=Array.isArray(state.deck)?state.deck.length:23;
+  if(nextIndex>total) return Date.now()+ROUND_CFG.nextRoundDelaySec*1000;
+  const start=new Date(state.startedAt||now_()).getTime();
+  const slot=start+(nextIndex-1)*ROUND_CFG.roundCadenceSec*1000;
+  return Math.max(Date.now()+ROUND_CFG.nextRoundDelaySec*1000,slot);
+}
+
+function roundScheduleNext_(state,round) {
+  const at=roundNextScheduledAt_(state);
+  round.nextRoundAt=new Date(at).toISOString();
+  return at;
+}
+
 function roundStartNext_(state,sessionId){
   if(!Array.isArray(state.deck)||!state.deck.length)state.deck=roundBuildDeck_();
   const nextIndex=Number(state.index||0)+1;
@@ -1869,7 +2068,7 @@ function roundTick_(){
   const active=activeSession_();if(!active)return;
   const sessionId=String(active.values[0]);
   const lock=LockService.getScriptLock();
-  if(!lock.tryLock(2500))return;
+  if(!lock.tryLock(100))return;
   try{roundTickNoLock_(sessionId);}finally{lock.releaseLock();}
 }
 
@@ -1881,7 +2080,7 @@ function roundTickNoLock_(sessionId){
   }
   if(round.status==='active'&&now>=new Date(round.endsAt).getTime()){
     round.status='expired';round.expiredAt=stamp_();
-    round.nextRoundAt=new Date(now+ROUND_CFG.nextRoundDelaySec*1000).toISOString();
+    roundScheduleNext_(state,round);
     event_('round_expired',sessionId,'round',round.roundId,0);
     roundSave_(state);return;
   }
@@ -1890,11 +2089,34 @@ function roundTickNoLock_(sessionId){
   }
 }
 
+function roundPlayerCacheKey_(prefix,roundId,playerKey) {
+  return prefix + '_' + String(roundId||'').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,40) + '_' + String(playerKey||'').slice(0,20);
+}
+
 function roundAddParticipant_(round,visitorId){
   const key=roundHashVisitor_(visitorId);
-  if(!Array.isArray(round.participants))round.participants=[];
-  if(round.participants.indexOf(key)<0&&round.participants.length<ROUND_CFG.maxTrackedPlayers)round.participants.push(key);
-  return key;
+  const cache=CacheService.getScriptCache();
+  const memberKey=roundPlayerCacheKey_('rm',round.roundId,key);
+  let isNew=false;
+  if(!cache.get(memberKey)){
+    cache.put(memberKey,'1',ROUND_CFG.cacheTtlSec);
+    round.participantCount=Number(round.participantCount||0)+1;
+    isNew=true;
+  }
+  return {key,isNew};
+}
+
+function roundWrongAttempts_(round,playerKey){
+  const raw=CacheService.getScriptCache().get(roundPlayerCacheKey_('ra',round.roundId,playerKey));
+  return Math.max(0,Number(raw||0));
+}
+
+function roundIncrementWrong_(round,playerKey){
+  const cache=CacheService.getScriptCache();
+  const key=roundPlayerCacheKey_('ra',round.roundId,playerKey);
+  const next=roundWrongAttempts_(round,playerKey)+1;
+  cache.put(key,String(next),ROUND_CFG.cacheTtlSec);
+  return next;
 }
 
 function roundJoin_(visitorId,roundId){
@@ -1907,28 +2129,24 @@ function roundJoin_(visitorId,roundId){
     roundTickNoLock_(sessionId);
     const state=roundEnsure_(sessionId),round=state.current;
     if(!round||round.roundId!==roundId||round.status!=='active')return{joined:false,round:roundPublicStateFromState_(state)};
-    roundAddParticipant_(round,visitorId);roundSave_(state);
+    const joined=roundAddParticipant_(round,visitorId);
+    if(joined.isNew) roundSave_(state);
     return{joined:true,round:roundPublicStateFromState_(state)};
   }finally{lock.releaseLock();}
 }
 
 function roundResolveAmount_(active,requested){
-  const amount=Number(requested||0);
-  const currentBonus=Math.max(0,Number(active && active.values ? active.values[6] : 0));
-  const maxBonus=240;
-  if(amount>=0) return Math.min(amount,Math.max(0,maxBonus-currentBonus));
-  return -Math.min(Math.abs(amount),currentBonus);
+  if(!active) return 0;
+  const cfg=config_();
+  const maxBonus=Math.max(0,Number(cfg.maxBonusMinutes||240));
+  const current=Math.min(maxBonus,Math.max(0,Number(active.values[6]||0)));
+  const next=Math.min(maxBonus,Math.max(0,current+Number(requested||0)));
+  return next-current;
 }
 
 function roundApplyTimeToLiveRow_(active,delta){
-  if(!active || !Number.isFinite(Number(delta)) || Number(delta)===0) return;
-  const live=sh_(TABS.LIVES);
-  const base=Math.max(0,Number(active.values[5]||240));
-  const current=Math.max(0,Number(active.values[6]||0));
-  const next=Math.min(240,Math.max(0,current+Number(delta)));
-  live.getRange(active.row,7,1,2).setValues([[next,base+next]]);
-  active.values[6]=next;
-  active.values[7]=base+next;
+  if(!active) return 0;
+  return bonusApplyNoLock_(active,delta,Number(delta)<0?'round_penalty':'round_bonus','round','compat');
 }
 
 function roundSubmit_(visitorId,roundId,answer,displayName){
@@ -1948,10 +2166,10 @@ function roundSubmit_(visitorId,roundId,answer,displayName){
     if(!round||round.roundId!==roundId)return{accepted:false,reason:'stale_round',round:roundPublicStateFromState_(state)};
     if(round.status!=='active')return{accepted:false,reason:'round_closed',round:roundPublicStateFromState_(state)};
 
-    const playerKey=roundAddParticipant_(round,visitorId);
+    const joined=roundAddParticipant_(round,visitorId);
+    const playerKey=joined.key;
     round.attempts=Number(round.attempts||0)+1;
-    if(!round.wrongAttempts)round.wrongAttempts={};
-    const wrong=Number(round.wrongAttempts[playerKey]||0);
+    const wrong=roundWrongAttempts_(round,playerKey);
     if(wrong>=ROUND_CFG.maxWrongAttemptsPerPlayer){
       roundSave_(state);
       return{accepted:false,reason:'attempt_limit',round:roundPublicStateFromState_(state)};
@@ -1961,7 +2179,7 @@ function roundSubmit_(visitorId,roundId,answer,displayName){
 
     if(round.type==='reaction'){
       if(Date.now()<new Date(round.challenge.unlockAt).getTime()){
-        round.wrongAttempts[playerKey]=wrong+1;roundSave_(state);
+        roundIncrementWrong_(round,playerKey);roundSave_(state);
         return{accepted:false,reason:'too_soon',round:roundPublicStateFromState_(state)};
       }
       correct=true;
@@ -1972,7 +2190,7 @@ function roundSubmit_(visitorId,roundId,answer,displayName){
     }else if(round.type==='queen'){
       selectedDoor=String(answer||'').trim().toUpperCase();
       if(!['A','B'].includes(selectedDoor)){
-        round.wrongAttempts[playerKey]=wrong+1;roundSave_(state);
+        roundIncrementWrong_(round,playerKey);roundSave_(state);
         return{accepted:false,reason:'wrong',round:roundPublicStateFromState_(state)};
       }
       correct=true;
@@ -1982,13 +2200,12 @@ function roundSubmit_(visitorId,roundId,answer,displayName){
     }
 
     if(!correct){
-      round.wrongAttempts[playerKey]=wrong+1;roundSave_(state);
+      roundIncrementWrong_(round,playerKey);roundSave_(state);
       return{accepted:false,reason:'wrong',round:roundPublicStateFromState_(state)};
     }
 
-    const awarded=roundResolveAmount_(active,requested);
-    if(awarded>0)event_('round_bonus',sessionId,'round',round.roundId+'|'+round.type,awarded);
-    if(awarded<0)event_('round_penalty',sessionId,'round',round.roundId+'|'+round.type,awarded);
+    const timeType=requested<0?'round_penalty':'round_bonus';
+    const awarded=bonusApplyNoLock_(active,requested,timeType,'round',round.roundId+'|'+round.type);
 
     const publicName=displayName||('Visitante '+playerKey.slice(0,4).toUpperCase());
     round.status='won';
@@ -1996,13 +2213,12 @@ function roundSubmit_(visitorId,roundId,answer,displayName){
       name:publicName,playerKey:playerKey,at:stamp_(),
       awardedMinutes:awarded,
       selectedDoor:selectedDoor,
-      queenResult:round.type==='queen'?(awarded>=0?'bonus':'penalty'):''
+      queenResult:round.type==='queen'?(requested>=0?'bonus':'penalty'):''
     };
     round.wonAt=stamp_();
-    round.nextRoundAt=new Date(Date.now()+ROUND_CFG.nextRoundDelaySec*1000).toISOString();
+    roundScheduleNext_(state,round);
     state.lastWinner=round.winner;
     event_('round_won',sessionId,'round',publicName+'|'+round.roundId,awarded);
-    roundApplyTimeToLiveRow_(active,awarded);
     roundSave_(state);
 
     return{accepted:true,won:true,awardedMinutes:awarded,queenResult:round.winner.queenResult,round:roundPublicStateFromState_(state)};
@@ -2018,6 +2234,24 @@ function roundPublicStateFromState_(state){
     index:Number(state.index||0),
     totalRounds:Array.isArray(state.deck)?state.deck.length:23
   };
+
+  const now=Date.now();
+  let challenge=Object.assign({},r.challenge||{});
+
+  if(r.type==='flash'){
+    const answering=now>=new Date(r.challenge.hideAt||0).getTime();
+    challenge=answering
+      ? {phase:'answer',hideAt:r.challenge.hideAt,length:Number(r.challenge.length||0)}
+      : {phase:'memorize',hideAt:r.challenge.hideAt,length:Number(r.challenge.length||0),flashText:String(r.challenge.flashText||'')};
+  }
+
+  if(r.type==='memory'){
+    const answering=now>=new Date(r.challenge.revealUntil||0).getTime();
+    challenge=answering
+      ? {phase:'answer',revealUntil:r.challenge.revealUntil,targetSymbol:r.challenge.targetSymbol,cardCount:Array.isArray(r.challenge.cards)?r.challenge.cards.length:0}
+      : {phase:'memorize',revealUntil:r.challenge.revealUntil,cards:Array.isArray(r.challenge.cards)?r.challenge.cards:[],cardCount:Array.isArray(r.challenge.cards)?r.challenge.cards.length:0};
+  }
+
   return{
     stateVersion:Number(state.stateVersion||0),
     deckComplete:false,
@@ -2034,8 +2268,8 @@ function roundPublicStateFromState_(state){
     penaltyMinutes:Number(r.penaltyMinutes||0),
     title:r.title,
     instruction:r.instruction,
-    challenge:r.challenge||{},
-    participants:Array.isArray(r.participants)?r.participants.length:0,
+    challenge:challenge,
+    participants:Number(r.participantCount||0),
     attempts:Number(r.attempts||0),
     winner:r.winner?{
       name:r.winner.name,
