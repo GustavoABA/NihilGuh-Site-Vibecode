@@ -213,7 +213,7 @@
       return;
     }
 
-    const signature = r.roundId + ':' + r.status;
+    const signature = r.roundId + ':' + r.status + ':' + String(r.challenge?.phase || '');
     if (signature !== lastPlaySignature) {
       lastPlaySignature = signature;
       if (r.status === 'active') {
