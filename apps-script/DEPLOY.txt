@@ -1,34 +1,46 @@
 NIHILGUH — DEPLOY DO APPS SCRIPT
 
 IMPORTANTE
-O GitHub Pages publica o frontend automaticamente, mas mudanças em Apps Script NÃO são publicadas pelo GitHub.
-Sempre que apps-script/ALL_IN_ONE.gs mudar, publique uma nova versão do Web App.
+O GitHub Pages publica o frontend automaticamente.
+O Google Apps Script NÃO é atualizado pelo GitHub.
 
-1. Abra https://script.new
-2. Apague o conteúdo de Code.gs.
-3. Cole todo o conteúdo de apps-script/ALL_IN_ONE.gs.
-4. Execute setup() uma vez se este for um projeto novo e autorize.
-5. Implantar > Nova implantação (ou Gerenciar implantações > Editar, para atualizar a implantação existente).
-6. Tipo: Aplicativo da Web.
-7. Executar como: Eu.
-8. Quem tem acesso: Qualquer pessoa.
-9. Implante a nova versão.
-10. Se a URL /exec mudou, abra o site uma vez com ?backend=URL_DO_EXEC.
+ATUALIZAÇÃO NORMAL DO BACKEND
+1. Abra o projeto Apps Script que já está ligado ao site.
+2. Substitua o conteúdo pelo arquivo apps-script/ALL_IN_ONE.gs atual.
+3. Clique em Implantar > Gerenciar implantações.
+4. Abra a implantação Web App atual em Editar.
+5. Em Versão, escolha Nova versão.
+6. Executar como: Eu.
+7. Quem tem acesso: Qualquer pessoa.
+8. Clique em Implantar.
 
-ROTAS DO FRONTEND
+NÃO crie uma implantação nova para uma atualização comum.
+Editar a implantação existente mantém o mesmo código e a mesma URL /exec.
+
+Somente em projeto novo:
+- execute setup() uma vez para criar ADMIN_KEY, BRIDGE_KEY e o gatilho de pollTwitchStatus;
+- depois publique o Web App.
+
+ROTAS
 /             perfil e hub
 /live/        sala da transmissão
 /play/        minigames
 /overlay/     overlay OBS 600x400
-/overlay.html compatibilidade com a URL antiga
+/overlay.html compatibilidade
 /admin.html   painel privado
 
-BACKEND ATUAL
-- detecta Twitch online/offline
-- inicia live com 240 min
-- limita bônus acumulado a 240 min (8h totais)
-- registra visitantes, metas, StreamElements e LivePix
-- cria uma rodada de minigame por vez
-- primeiro acerto válido vence via LockService
-- fecha a rodada para todos e inicia a próxima automaticamente
-- comandos administrativos usam POST
+BACKEND CONSOLIDADO
+- Twitch online inicia a sessão automaticamente;
+- Twitch offline por checks consecutivos encerra a sessão;
+- base: 240 min;
+- saldo de bônus único: 0..240 min;
+- máximo absoluto: 480 min / 8h;
+- 23 rodadas globais distribuídas por aproximadamente 4h;
+- primeiro vencedor protegido por LockService;
+- Labirinto/Puzzle validados no servidor;
+- Memória/Flash em duas fases;
+- jogadores/tentativas em CacheService;
+- estado global compacto em ScriptProperties;
+- motor legado Boss/Caos/Votos desativado;
+- painel administrativo via POST;
+- stateLite usado no polling público.
