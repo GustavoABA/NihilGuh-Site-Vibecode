@@ -151,7 +151,7 @@
       r?.winner ? r.winner.name + ' alterou o relógio em ' + signedMinutes(r.winner.awardedMinutes) + '.' :
       'Preparando a próxima rodada.';
     if ($('home-round-people')) $('home-round-people').textContent = r ? (r.participants || 0) + ' participando' : 'Preparando jogadores…';
-    if ($('home-round-reward')) $('home-round-reward').textContent = r?.status === 'active' ? '+' + r.rewardMinutes : '—';
+    if ($('home-round-reward')) $('home-round-reward').textContent = r?.status === 'active' ? '+' + (r.availableRewardMinutes ?? r.rewardMinutes ?? 0) : '—';
   }
 
   function renderLive(s) {
@@ -170,7 +170,7 @@
       live && r?.status === 'active' ? r.instruction :
       live && r?.winner ? r.winner.name + ' fechou a rodada em ' + signedMinutes(r.winner.awardedMinutes) + '. A próxima começa em instantes.' :
       'Abra a página de jogo quando a live começar.';
-    if ($('live-round-meta')) $('live-round-meta').textContent = r ? (r.participants || 0) + ' jogadores · prêmio +' + (r.rewardMinutes || 0) + ' min' : '—';
+    if ($('live-round-meta')) $('live-round-meta').textContent = r ? (r.participants || 0) + ' jogadores · prêmio +' + (r.availableRewardMinutes ?? r.rewardMinutes ?? 0) + ' min' : '—';
 
     const goals = $('live-goals-list');
     if (goals) {
@@ -225,11 +225,12 @@
         const amount = Number(r.winner.awardedMinutes || 0);
         const signed = amount > 0 ? '+' + amount : String(amount);
         const queen = r.type === 'queen';
-        root.innerHTML = '<section class="card winner '+(amount<0?'penalty':'')+'">'+
-          '<div class="crown">'+(amount<0?'💀':'♛')+'</div>'+
+        const queenPenalty = queen && r.winner.queenResult === 'penalty';
+        root.innerHTML = '<section class="card winner '+(queenPenalty?'penalty':'')+'">'+
+          '<div class="crown">'+(queenPenalty?'💀':'♛')+'</div>'+
           '<span class="eyebrow">'+(queen?'A RAINHA DECIDIU':'RODADA CONCLUÍDA')+'</span>'+
           '<h1>'+esc(r.winner.name)+(queen?' escolheu a Porta '+esc(r.winner.selectedDoor||''):' chegou primeiro')+'</h1>'+
-          '<strong>'+esc(signed)+' minutos na live</strong>'+
+          '<strong>'+(queenPenalty && amount===0 ? 'A Rainha não encontrou bônus para roubar' : esc(signed)+' minutos na live')+'</strong>'+
           '<p class="subtle">Próxima brincadeira em <span id="play-next-clock">'+clock(roundSeconds(r))+'</span>.</p></section>';
       } else {
         root.innerHTML = '<section class="card winner"><div class="crown">⌛</div><h1>Ninguém venceu esta rodada</h1><p class="subtle">Próxima brincadeira em <span id="play-next-clock">'+clock(roundSeconds(r))+'</span>.</p></section>';
@@ -273,7 +274,9 @@
         if (feedback) {
           feedback.className = 'feedback ' + (amount < 0 ? 'bad' : 'good');
           feedback.textContent = round.type === 'queen'
-            ? (amount < 0 ? 'A RAINHA ROUBOU ' + Math.abs(amount) + ' MINUTOS!' : 'PORTA CERTA! +' + amount + ' MINUTOS!')
+            ? (res.queenResult === 'penalty'
+                ? (amount < 0 ? 'A RAINHA ROUBOU ' + Math.abs(amount) + ' MINUTOS!' : 'A RAINHA TENTOU ROUBAR, MAS NÃO HAVIA BÔNUS.')
+                : 'PORTA CERTA! +' + amount + ' MINUTOS!')
             : 'VOCÊ CHEGOU PRIMEIRO! ' + signed + ' min';
         }
       } else {
