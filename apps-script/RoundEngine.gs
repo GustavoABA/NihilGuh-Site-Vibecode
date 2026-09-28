@@ -105,7 +105,8 @@ function roundSave_(state) {
   state.stateVersion=Number(state.stateVersion||0)+1;
   state.updatedAt=stamp_();
   const json=JSON.stringify(state);
-  if(json.length>7600) throw new Error('round_state_too_large');
+  const bytes=Utilities.newBlob(json).getBytes().length;
+  if(bytes>7600) throw new Error('round_state_too_large');
   PropertiesService.getScriptProperties().setProperty(ROUND_PROP,json);
 }
 
