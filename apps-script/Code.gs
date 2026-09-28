@@ -392,6 +392,11 @@ function pollTwitchStatus() {
     }
     updatePanel_();
   } finally { lock.releaseLock(); }
+
+  // Keep the shared round clock moving even when nobody has /play/ open.
+  if (PropertiesService.getScriptProperties().getProperty('TWITCH_STATE') === 'online') {
+    roundTick_();
+  }
 }
 
 function activeSession_() {
