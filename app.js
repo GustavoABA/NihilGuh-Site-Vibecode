@@ -213,7 +213,7 @@
       return;
     }
 
-    const signature = r.roundId + ':' + r.status + ':' + String(r.challenge?.phase || '');
+    const signature = r.roundId + ':' + r.status + ':' + String(r.challenge?.phase || '') + ':' + String(r.availableRewardMinutes ?? r.rewardMinutes ?? 0);
     if (signature !== lastPlaySignature) {
       lastPlaySignature = signature;
       if (r.status === 'active') {
