@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="app.css?v=14">
+  <link rel="stylesheet" href="app.css?v=15">
 </head>
 <body data-page="home">
   <main class="shell">
@@ -78,26 +78,25 @@
             <span class="status-badge" data-live-badge>● AO VIVO</span>
           </div>
           <div class="player-wrap" id="home-player"></div>
+
+          <section class="home-game-stage" aria-live="polite">
+            <div class="home-game-bar">
+              <div>
+                <span class="eyebrow">JOGO ATIVO</span>
+                <strong>Continue assistindo e jogue aqui mesmo.</strong>
+              </div>
+              <label class="home-player-name">
+                <span>Seu nome</span>
+                <input id="home-player-name-input" maxlength="24" autocomplete="nickname" placeholder="Visitante">
+              </label>
+            </div>
+            <div id="home-game-root" class="home-game-root"></div>
+          </section>
+
           <div class="live-summary">
             <div class="metric"><span>Tempo restante</span><strong class="timer" id="home-timer">04:00:00</strong></div>
             <div class="metric"><span>Comunidade</span><strong id="home-earned">+0 min</strong></div>
             <div class="metric"><span>Tempo total</span><strong id="home-total">4h</strong></div>
-          </div>
-        </article>
-
-        <article class="card round-card" id="home-challenge" data-live-only hidden>
-          <div class="round-grid">
-            <div>
-              <span class="eyebrow">DESAFIO DA LIVE</span>
-              <h2 class="round-title" id="home-round-title">Carregando jogo atual…</h2>
-              <p class="round-copy" id="home-round-copy">Sincronizando com a rodada da live.</p>
-              <div class="round-meta"><span id="home-round-people">—</span><span>primeiro acerto vence</span></div>
-              <div class="actions">
-                <a class="btn primary" href="play/">🎮 Jogar agora</a>
-                <a class="btn secondary" href="live/">Abrir sala da live</a>
-              </div>
-            </div>
-            <div class="reward"><span>prêmio</span><b id="home-round-reward">—</b><span>minutos</span></div>
           </div>
         </article>
       </section>
@@ -106,6 +105,7 @@
   </main>
   <script src="site.config.js?v=14"></script>
   <script src="goals-api.js?v=14"></script>
-  <script src="app.js?v=14"></script>
+  <script src="games.js?v=15"></script>
+  <script src="app.js?v=15"></script>
 </body>
 </html>
