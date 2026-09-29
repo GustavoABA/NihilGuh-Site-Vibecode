@@ -5,6 +5,7 @@
  * Todas as respostas são validadas no backend sob ScriptLock.
  */
 const ROUND_PROP = 'NIHILGUH_ROUND_STATE_V2';
+const ROUND_WINS_PREFIX = 'NIHILGUH_ROUND_WINS_';
 const ROUND_CFG = {
   nextRoundDelaySec: 8,
   flashCycleMs: 12000,
@@ -28,6 +29,41 @@ const ROUND_REWARDS = {
   queen:15
 };
 
+function roundWinnersKey_(sessionId) {
+  return ROUND_WINS_PREFIX + String(sessionId || '').slice(0,80);
+}
+
+function roundResetWinners_(sessionId) {
+  PropertiesService.getScriptProperties().setProperty(roundWinnersKey_(sessionId),'[]');
+}
+
+function roundRegisterWinner_(sessionId,round,winner) {
+  const props=PropertiesService.getScriptProperties();
+  const key=roundWinnersKey_(sessionId);
+  let wins=[];
+  try{wins=JSON.parse(props.getProperty(key)||'[]');}catch(_){wins=[];}
+  wins.push({
+    roundId:String(round.roundId||''),
+    type:String(round.type||''),
+    title:String(round.title||'Jogo do Mundo Louco'),
+    winner:String(winner.name||'Visitante'),
+    minutes:Number(winner.awardedMinutes||0),
+    at:String(winner.at||stamp_())
+  });
+  wins=wins.slice(-23);
+  props.setProperty(key,JSON.stringify(wins));
+}
+
+function roundRecentWinners_(sessionId) {
+  try{
+    const raw=PropertiesService.getScriptProperties().getProperty(roundWinnersKey_(sessionId));
+    const wins=raw?JSON.parse(raw):[];
+    return Array.isArray(wins)?wins.slice(-23):[];
+  }catch(_){
+    return [];
+  }
+}
+
 function roundSessionStart_(sessionId, startedAt) {
   if (!sessionId) return;
   const deck = roundBuildDeck_();
@@ -42,6 +78,7 @@ function roundSessionStart_(sessionId, startedAt) {
     startedAt:new Date(startedAt || now_()).toISOString(),
     updatedAt:stamp_()
   };
+  roundResetWinners_(sessionId);
   roundSave_(state);
   roundStartNext_(state,String(sessionId));
 }
@@ -629,7 +666,8 @@ function roundSubmit_(visitorId,roundId,answer,displayName){
     round.wonAt=stamp_();
     roundScheduleNext_(state,round);
     state.lastWinner=round.winner;
-    event_('round_won',sessionId,'round',publicName+'|'+round.roundId,awarded);
+    event_('round_won',sessionId,'round',publicName+'|'+round.roundId+'|'+round.type+'|'+round.title,awarded);
+    roundRegisterWinner_(sessionId,round,round.winner);
     roundSave_(state);
 
     return{accepted:true,won:true,awardedMinutes:awarded,queenResult:round.winner.queenResult,round:roundPublicStateFromState_(state)};
