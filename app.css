@@ -560,3 +560,92 @@ body[data-page="home"] .support-card{display:none!important}
 }
 
 .phase-wait{margin:14px auto 0;color:var(--muted);font-size:.9rem;font-weight:750;text-align:center}
+
+
+/* Live-first home: player + synchronized game in one continuous surface */
+body[data-page="home"].is-live .live-home-content{padding-top:0}
+body[data-page="home"].is-live .hero-card{padding-bottom:0;overflow:visible}
+body[data-page="home"] #home-player{
+  margin-bottom:0;
+  border-bottom-left-radius:0;
+  border-bottom-right-radius:0;
+}
+.home-game-stage{
+  margin:0;
+  padding:18px 20px 22px;
+  border-top:1px solid rgba(196,151,255,.18);
+  border-bottom:1px solid rgba(196,151,255,.14);
+  background:
+    radial-gradient(circle at 15% 0%,rgba(180,108,255,.10),transparent 38%),
+    rgba(8,4,14,.58);
+}
+.home-game-bar{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:12px;
+}
+.home-game-bar>div{display:grid;gap:4px}
+.home-game-bar strong{font-size:.95rem;color:#eee5f5}
+.home-player-name{
+  display:grid;
+  gap:4px;
+  min-width:170px;
+  color:var(--muted);
+  font-size:.72rem;
+  font-weight:800;
+}
+.home-player-name input{
+  width:100%;
+  min-height:38px;
+  padding:0 11px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;
+  outline:none;
+  background:rgba(255,255,255,.045);
+  color:#fff;
+}
+.home-player-name input:focus{
+  border-color:rgba(180,108,255,.55);
+  box-shadow:0 0 0 3px rgba(180,108,255,.10);
+}
+.home-game-root .game-card{
+  min-height:0;
+  padding:12px 0 0;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+.home-game-root .game-card>.eyebrow{display:none}
+.home-game-root .game-card h1{font-size:clamp(1.55rem,4vw,2.3rem)}
+.home-game-root .challenge-icon{margin-top:2px}
+.home-game-root .game-progress{margin-top:16px}
+.home-game-state{
+  min-height:130px;
+  display:grid;
+  place-content:center;
+  gap:7px;
+  text-align:center;
+  color:#fff;
+}
+.home-game-state strong{font-size:1.2rem}
+.home-game-state span{color:var(--muted);line-height:1.45}
+.home-game-state.penalty strong{color:var(--danger)}
+body[data-page="home"] .live-summary{
+  margin:0;
+  border-top:0;
+  border-radius:0 0 18px 18px;
+  background:rgba(5,3,9,.72);
+}
+body[data-page="home"] .player-wrap iframe{display:block}
+body[data-page="home"] .player-wrap{background:#000}
+
+@media(max-width:700px){
+  .home-game-stage{padding:16px 14px 20px}
+  .home-game-bar{align-items:stretch;flex-direction:column}
+  .home-player-name{min-width:0;width:100%}
+}
