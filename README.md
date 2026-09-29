@@ -84,3 +84,16 @@ O Apps Script precisa ser atualizado separadamente por **Gerenciar implantaçõe
 Quando a Twitch está online, a home prioriza a transmissão: o player aparece primeiro e o minigame global fica imediatamente abaixo do vídeo, permitindo assistir e jogar na mesma página.
 
 O embed usa autoplay com áudio inicialmente mutado para maximizar compatibilidade com as políticas de reprodução automática dos navegadores. Em dispositivos móveis, a Twitch pode exigir interação do usuário para iniciar o vídeo.
+
+
+## Overlay OBS
+
+O overlay 600×400 é transparente e usa um ciclo sincronizado pela hora de início da live:
+
+1. **5 minutos:** somente o cronômetro.
+2. **12 segundos:** CTA animado com o avatar apontando para `twitch.tv/nihilguh`.
+3. **20 minutos:** somente o cronômetro.
+4. **20 segundos:** resumo animado dos vencedores daquele ciclo, mostrando jogador, jogo e minutos aplicados.
+5. O ciclo recomeça.
+
+O backend mantém um feed compacto com até 23 vencedores da sessão. O overlay não consulta a planilha inteira a cada atualização.
