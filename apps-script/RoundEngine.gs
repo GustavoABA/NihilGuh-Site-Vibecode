@@ -56,9 +56,32 @@ function roundRegisterWinner_(sessionId,round,winner) {
 
 function roundRecentWinners_(sessionId) {
   try{
-    const raw=PropertiesService.getScriptProperties().getProperty(roundWinnersKey_(sessionId));
-    const wins=raw?JSON.parse(raw):[];
-    return Array.isArray(wins)?wins.slice(-23):[];
+    const props=PropertiesService.getScriptProperties();
+    const key=roundWinnersKey_(sessionId);
+    const raw=props.getProperty(key);
+    if(raw){
+      const wins=JSON.parse(raw);
+      return Array.isArray(wins)?wins.slice(-23):[];
+    }
+
+    // Migration for a live already running when this feature is deployed.
+    const vals=sh_(TABS.EVENTOS).getDataRange().getValues();
+    const wins=[];
+    for(let i=1;i<vals.length;i++){
+      if(String(vals[i][1])!==String(sessionId) || String(vals[i][2])!=='round_won') continue;
+      const parts=String(vals[i][4]||'').split('|');
+      wins.push({
+        roundId:String(parts[1]||''),
+        type:String(parts[2]||''),
+        title:String(parts[3]||'Jogo do Mundo Louco'),
+        winner:String(parts[0]||'Visitante'),
+        minutes:Number(vals[i][5]||0),
+        at:String(vals[i][0]||'')
+      });
+    }
+    const compact=wins.slice(-23);
+    props.setProperty(key,JSON.stringify(compact));
+    return compact;
   }catch(_){
     return [];
   }
