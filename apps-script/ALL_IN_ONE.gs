@@ -878,7 +878,8 @@ function publicStateLite_() {
       bonus_restante_min:Math.max(0,maxBonus-Number(row[6]||0))
     },
     goals:goals,
-    round:round
+    round:round,
+    overlay:{recentWins:roundRecentWinners_(id)}
   };
 }
 
@@ -1621,6 +1622,7 @@ function interactionAdmin_(action, p) {
  * Todas as respostas são validadas no backend sob ScriptLock.
  */
 const ROUND_PROP = 'NIHILGUH_ROUND_STATE_V2';
+const ROUND_WINS_PREFIX = 'NIHILGUH_ROUND_WINS_';
 const ROUND_CFG = {
   nextRoundDelaySec: 8,
   flashCycleMs: 12000,
@@ -1644,6 +1646,64 @@ const ROUND_REWARDS = {
   queen:15
 };
 
+function roundWinnersKey_(sessionId) {
+  return ROUND_WINS_PREFIX + String(sessionId || '').slice(0,80);
+}
+
+function roundResetWinners_(sessionId) {
+  PropertiesService.getScriptProperties().setProperty(roundWinnersKey_(sessionId),'[]');
+}
+
+function roundRegisterWinner_(sessionId,round,winner) {
+  const props=PropertiesService.getScriptProperties();
+  const key=roundWinnersKey_(sessionId);
+  let wins=[];
+  try{wins=JSON.parse(props.getProperty(key)||'[]');}catch(_){wins=[];}
+  wins.push({
+    roundId:String(round.roundId||''),
+    type:String(round.type||''),
+    title:String(round.title||'Jogo do Mundo Louco'),
+    winner:String(winner.name||'Visitante'),
+    minutes:Number(winner.awardedMinutes||0),
+    at:String(winner.at||stamp_())
+  });
+  wins=wins.slice(-23);
+  props.setProperty(key,JSON.stringify(wins));
+}
+
+function roundRecentWinners_(sessionId) {
+  try{
+    const props=PropertiesService.getScriptProperties();
+    const key=roundWinnersKey_(sessionId);
+    const raw=props.getProperty(key);
+    if(raw){
+      const wins=JSON.parse(raw);
+      return Array.isArray(wins)?wins.slice(-23):[];
+    }
+
+    // Migration for a live already running when this feature is deployed.
+    const vals=sh_(TABS.EVENTOS).getDataRange().getValues();
+    const wins=[];
+    for(let i=1;i<vals.length;i++){
+      if(String(vals[i][1])!==String(sessionId) || String(vals[i][2])!=='round_won') continue;
+      const parts=String(vals[i][4]||'').split('|');
+      wins.push({
+        roundId:String(parts[1]||''),
+        type:String(parts[2]||''),
+        title:String(parts[3]||'Jogo do Mundo Louco'),
+        winner:String(parts[0]||'Visitante'),
+        minutes:Number(vals[i][5]||0),
+        at:String(vals[i][0]||'')
+      });
+    }
+    const compact=wins.slice(-23);
+    props.setProperty(key,JSON.stringify(compact));
+    return compact;
+  }catch(_){
+    return [];
+  }
+}
+
 function roundSessionStart_(sessionId, startedAt) {
   if (!sessionId) return;
   const deck = roundBuildDeck_();
@@ -1658,6 +1718,7 @@ function roundSessionStart_(sessionId, startedAt) {
     startedAt:new Date(startedAt || now_()).toISOString(),
     updatedAt:stamp_()
   };
+  roundResetWinners_(sessionId);
   roundSave_(state);
   roundStartNext_(state,String(sessionId));
 }
@@ -2245,7 +2306,8 @@ function roundSubmit_(visitorId,roundId,answer,displayName){
     round.wonAt=stamp_();
     roundScheduleNext_(state,round);
     state.lastWinner=round.winner;
-    event_('round_won',sessionId,'round',publicName+'|'+round.roundId,awarded);
+    event_('round_won',sessionId,'round',publicName+'|'+round.roundId+'|'+round.type+'|'+round.title,awarded);
+    roundRegisterWinner_(sessionId,round,round.winner);
     roundSave_(state);
 
     return{accepted:true,won:true,awardedMinutes:awarded,queenResult:round.winner.queenResult,round:roundPublicStateFromState_(state)};
