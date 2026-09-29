@@ -8,6 +8,8 @@
   let embedded = new Set();
   let lastPlaySignature = '';
   let lastHomeGameSignature = '';
+  let lastOverlayView = '';
+  let lastOverlayWinnerPage = -1;
 
   const $ = (id) => document.getElementById(id);
   const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
@@ -349,20 +351,101 @@
     bindPlayerNameInput('player-name-input');
   }
 
-  function renderOverlay(s) {
+  const OVERLAY_TIMER_A_SEC = 5 * 60;
+  const OVERLAY_CTA_SEC = 12;
+  const OVERLAY_TIMER_B_SEC = 20 * 60;
+  const OVERLAY_WINS_SEC = 20;
+  const OVERLAY_CYCLE_SEC = OVERLAY_TIMER_A_SEC + OVERLAY_CTA_SEC + OVERLAY_TIMER_B_SEC + OVERLAY_WINS_SEC;
+
+  function overlayElapsedSeconds(s) {
+    if (!isLive(s)) return 0;
+    const started = new Date(s.session.inicio).getTime();
+    return Number.isFinite(started) ? Math.max(0, Math.floor((Date.now() - started) / 1000)) : 0;
+  }
+
+  function overlayCycleState(s) {
+    const elapsed = overlayElapsedSeconds(s);
+    const cycleIndex = Math.floor(elapsed / OVERLAY_CYCLE_SEC);
+    const pos = elapsed % OVERLAY_CYCLE_SEC;
+    const ctaStart = OVERLAY_TIMER_A_SEC;
+    const timerBStart = ctaStart + OVERLAY_CTA_SEC;
+    const winsStart = timerBStart + OVERLAY_TIMER_B_SEC;
+
+    let mode = 'timer';
+    if (pos >= ctaStart && pos < timerBStart) mode = 'cta';
+    else if (pos >= winsStart) mode = 'wins';
+
+    return { elapsed, cycleIndex, pos, mode, winsStart };
+  }
+
+  function setOverlayView(mode) {
+    for (const name of ['timer','cta','wins']) {
+      const el = $('overlay-view-' + name);
+      if (!el) continue;
+      const active = name === mode;
+      el.hidden = !active;
+      el.classList.toggle('is-active',active);
+    }
+    if (lastOverlayView !== mode) {
+      lastOverlayView = mode;
+      lastOverlayWinnerPage = -1;
+    }
+  }
+
+  function overlayWinsForCycle(s, cycle) {
+    const wins = Array.isArray(s?.overlay?.recentWins) ? s.overlay.recentWins : [];
+    if (!wins.length || !isLive(s)) return [];
+
+    const start = new Date(s.session.inicio).getTime() + cycle.cycleIndex * OVERLAY_CYCLE_SEC * 1000;
+    const end = start + OVERLAY_CYCLE_SEC * 1000;
+    const filtered = wins.filter(w => {
+      const at = new Date(w.at).getTime();
+      return Number.isFinite(at) && at >= start && at < end;
+    });
+    return filtered.length ? filtered : [];
+  }
+
+  function overlayWinnerRowsHtml(wins, cycle) {
+    if (!wins.length) {
+      return '<div class="overlay-no-wins"><strong>Ninguém zerou um jogo nesse ciclo.</strong><span>O relógio ficou intacto… por enquanto.</span></div>';
+    }
+
+    const pageSize = 4;
+    const pages = Math.max(1, Math.ceil(wins.length / pageSize));
+    const winsProgress = Math.max(0, cycle.pos - cycle.winsStart);
+    const pageDuration = OVERLAY_WINS_SEC / pages;
+    const page = Math.min(pages - 1, Math.floor(winsProgress / Math.max(.5,pageDuration)));
+    const slice = wins.slice(page * pageSize, page * pageSize + pageSize);
+
+    if (page !== lastOverlayWinnerPage) lastOverlayWinnerPage = page;
+
+    return slice.map(w => {
+      const minutes = Number(w.minutes || 0);
+      const delta = minutes > 0 ? '+' + minutes + ' min' : minutes < 0 ? String(minutes) + ' min' : '0 min';
+      return '<div class="overlay-win-row">'+
+        '<div class="overlay-win-player"><strong>'+esc(w.winner || 'Visitante')+'</strong><span>'+esc(w.title || 'Jogo do Mundo Louco')+'</span></div>'+
+        '<b class="'+(minutes<0?'negative':'')+'">'+esc(delta)+'</b>'+
+      '</div>';
+    }).join('');
+  }
+
+  function paintOverlayFrame(s) {
     const live = isLive(s);
-    if ($('overlay-status')) $('overlay-status').textContent = live ? (s?.fallback ? '● AO VIVO · FALLBACK' : '● AO VIVO') : 'OFFLINE';
+    const cycle = overlayCycleState(s);
+    const mode = live ? cycle.mode : 'timer';
+    setOverlayView(mode);
+
     if ($('overlay-clock')) $('overlay-clock').textContent = live ? clock(remainingSeconds(s)) : '04:00:00';
-    const r = s?.round;
-    if ($('overlay-round')) $('overlay-round').textContent = live ? roundLabel(r) : 'Aguardando a próxima live';
-    if ($('overlay-desc')) $('overlay-desc').textContent = !live ? 'O cronômetro começa em 4 horas quando a Twitch entrar online.' :
-      s?.fallback ? 'Cronômetro sincronizado diretamente com o uptime da Twitch. Bônus e minigames voltam quando o backend responder.' :
-      r?.status === 'active' ? r.instruction :
-      r?.deckComplete ? 'As 23 rodadas desta live foram concluídas.' :
-      r?.winner ? r.winner.name + ' alterou o relógio em ' + signedMinutes(r.winner.awardedMinutes) + '.' : 'Preparando próxima rodada.';
-    if ($('overlay-meta')) $('overlay-meta').textContent = r ? (r.participants || 0) + ' jogadores' : 'Mundo Louco';
-    if ($('overlay-bonus')) $('overlay-bonus').textContent = live ? (s?.fallback ? 'backend desconectado' : '+' + mins(s.session.tempo_ganho_min) + ' pela comunidade') : 'até 8h';
-    $('overlay-round')?.classList.toggle('overlay-winner',Boolean(r?.winner && r.status==='won'));
+
+    if (mode === 'wins') {
+      const wins = overlayWinsForCycle(s,cycle);
+      if ($('overlay-win-count')) $('overlay-win-count').textContent = wins.length ? wins.length + (wins.length===1?' vitória':' vitórias') : 'nenhuma vitória';
+      if ($('overlay-winners-list')) $('overlay-winners-list').innerHTML = overlayWinnerRowsHtml(wins,cycle);
+    }
+  }
+
+  function renderOverlay(s) {
+    paintOverlayFrame(s);
   }
 
   function render(s) {
@@ -424,7 +507,7 @@
       if($('home-next-game-clock')) $('home-next-game-clock').textContent=clock(roundSeconds(state.round));
     }
     if (page === 'live' && $('live-clock') && isLive(state)) $('live-clock').textContent = clock(remainingSeconds(state));
-    if (page === 'overlay' && $('overlay-clock') && isLive(state)) $('overlay-clock').textContent = clock(remainingSeconds(state));
+    if (page === 'overlay') paintOverlayFrame(state);
     if (page === 'play' && state.round) paintPlayDynamic(state.round);
   }
 
