@@ -480,6 +480,15 @@ function roundTickNoLock_(sessionId){
     if(Number(state.index||0)<(state.deck||[]).length)roundStartNext_(state,sessionId);
     return;
   }
+  // Migrate rounds expired by older deployments back into the new no-deadline model.
+  if(round.status==='expired'){
+    round.status='active';
+    round.expiredAt='';
+    round.nextRoundAt='';
+    roundSave_(state);
+    return;
+  }
+
   // Active rounds never expire while the Twitch session is online.
   // They remain globally active until a valid winner closes them.
   if(round.status!=='active'&&round.nextRoundAt&&now>=new Date(round.nextRoundAt).getTime()){
