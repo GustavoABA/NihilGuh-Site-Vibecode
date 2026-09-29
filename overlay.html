@@ -1,22 +1,46 @@
 <!doctype html>
 <html lang="pt-BR" class="overlay-page">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=600,initial-scale=1">
-  <meta name="theme-color" content="#00000000"><title>NihilGuh — Overlay 600x400</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="app.css?v=15">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=600,initial-scale=1">
+  <meta name="theme-color" content="#00000000">
+  <title>NihilGuh — Overlay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css?v=16">
 </head>
-<body data-page="overlay">
-  <main class="overlay-shell">
-    <div class="overlay-top"><div class="overlay-title">NIHILGUH // MUNDO LOUCO</div><strong id="overlay-status">OFFLINE</strong></div>
-    <div class="overlay-main">
-      <div class="overlay-clock" id="overlay-clock">04:00:00</div>
-      <div class="overlay-round" id="overlay-round">Aguardando a próxima live</div>
-      <div class="overlay-desc" id="overlay-desc">O cronômetro começa em 4 horas quando a Twitch entrar online.</div>
-    </div>
-    <div class="overlay-bottom"><span id="overlay-meta">Mundo Louco</span><span id="overlay-bonus">até 8h</span></div>
+<body data-page="overlay" class="overlay-clean-page">
+  <main class="overlay-shell overlay-clean-shell">
+    <section class="overlay-scene is-active" id="overlay-view-timer" aria-live="polite">
+      <div class="overlay-timer-only" id="overlay-clock">04:00:00</div>
+    </section>
+
+    <section class="overlay-scene" id="overlay-view-cta" hidden>
+      <div class="overlay-cta-scene">
+        <div class="overlay-mascot" aria-hidden="true">
+          <img src="assets/avatar-nihilguh.webp" alt="">
+          <span class="overlay-point">👉</span>
+        </div>
+        <div class="overlay-cta-copy">
+          <span>ENTRA NA LIVE</span>
+          <strong>twitch.tv/nihilguh</strong>
+          <small>o caos tá acontecendo agora</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="overlay-scene" id="overlay-view-wins" hidden>
+      <div class="overlay-winners-head">
+        <span>QUEM MEXEU NO RELÓGIO?</span>
+        <strong id="overlay-win-count">—</strong>
+      </div>
+      <div class="overlay-winners-list" id="overlay-winners-list"></div>
+    </section>
   </main>
-  <script src="site.config.js?v=14"></script><script src="goals-api.js?v=14"></script><script src="app.js?v=15"></script>
+
+  <script src="site.config.js?v=14"></script>
+  <script src="goals-api.js?v=14"></script>
+  <script src="app.js?v=16"></script>
 </body>
 </html>
