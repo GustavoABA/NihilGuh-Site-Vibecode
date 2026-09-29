@@ -872,7 +872,8 @@ function publicStateLite_() {
       bonus_restante_min:Math.max(0,maxBonus-Number(row[6]||0))
     },
     goals:goals,
-    round:round
+    round:round,
+    overlay:{recentWins:roundRecentWinners_(id)}
   };
 }
 
