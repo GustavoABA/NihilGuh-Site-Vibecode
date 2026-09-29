@@ -7,6 +7,7 @@
   let secondHandle = null;
   let embedded = new Set();
   let lastPlaySignature = '';
+  let lastHomeGameSignature = '';
 
   const $ = (id) => document.getElementById(id);
   const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
@@ -46,7 +47,7 @@
     }
     if (embedded.has(targetId)) return;
     const parent = location.hostname || 'gustavoaba.github.io';
-    target.innerHTML = '<iframe title="Live NihilGuh na Twitch" allowfullscreen="true" scrolling="no" src="https://player.twitch.tv/?channel=nihilguh&parent=' + encodeURIComponent(parent) + '&autoplay=false&muted=true"></iframe>';
+    target.innerHTML = '<iframe title="Live NihilGuh na Twitch" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen="true" scrolling="no" src="https://player.twitch.tv/?channel=nihilguh&parent=' + encodeURIComponent(parent) + '&autoplay=true&muted=true"></iframe>';
     embedded.add(targetId);
   }
 
@@ -125,6 +126,53 @@
     return (n > 0 ? '+' : '') + n + ' min';
   }
 
+  function renderHomeGame(r) {
+    const root=$('home-game-root');
+    if(!root) return;
+
+    if(!r){
+      lastHomeGameSignature='preparing';
+      root.innerHTML='<div class="home-game-state"><strong>Preparando o primeiro jogo…</strong><span>Assim que o backend criar a rodada ela aparece aqui.</span></div>';
+      return;
+    }
+
+    if(r.deckComplete){
+      lastHomeGameSignature='deck-complete';
+      root.innerHTML='<div class="home-game-state"><strong>Wonderland concluído ♛</strong><span>As 23 rodadas desta live foram vencidas.</span></div>';
+      return;
+    }
+
+    const signature=r.roundId+':'+r.status+':'+String(r.challenge?.phase||'')+':'+String(r.availableRewardMinutes??r.rewardMinutes??0);
+    if(signature===lastHomeGameSignature){
+      window.NihilGuhGameUI?.tick(r);
+      return;
+    }
+    lastHomeGameSignature=signature;
+
+    if(r.status==='active'){
+      const ui=window.NihilGuhGameUI;
+      root.innerHTML=ui ? ui.render(r) : '<div class="home-game-state"><strong>'+esc(r.title)+'</strong><span>'+esc(r.instruction)+'</span></div>';
+      if(ui) ui.mount(r,submitRound,'home-game-root');
+      joinRound(r);
+      return;
+    }
+
+    if(r.status==='won' && r.winner){
+      const amount=Number(r.winner.awardedMinutes||0);
+      const queen=r.type==='queen';
+      const penalty=queen&&r.winner.queenResult==='penalty';
+      const result=penalty
+        ? (amount<0 ? String(amount)+' min no relógio' : 'nenhum bônus disponível para roubar')
+        : '+'+Math.max(0,amount)+' min no relógio';
+      root.innerHTML='<div class="home-game-state winner-inline '+(penalty?'penalty':'')+'"><strong>'+
+        esc(r.winner.name)+(queen?' escolheu a Porta '+esc(r.winner.selectedDoor||''):' venceu')+
+        '</strong><span>'+esc(result)+' · próximo jogo em <b id="home-next-game-clock">'+clock(roundSeconds(r))+'</b></span></div>';
+      return;
+    }
+
+    root.innerHTML='<div class="home-game-state"><strong>Sincronizando a próxima rodada…</strong></div>';
+  }
+
   function renderHome(s) {
     const live = isLive(s);
     setStatus(live);
@@ -143,15 +191,7 @@
     if ($('home-earned')) $('home-earned').textContent = '+' + mins(s.session.tempo_ganho_min);
     if ($('home-total')) $('home-total').textContent = mins(s.session.tempo_total_min);
 
-    const r = s?.round;
-    if ($('home-round-title')) $('home-round-title').textContent = roundLabel(r);
-    if ($('home-round-copy')) $('home-round-copy').textContent =
-      r?.deckComplete ? 'As 23 rodadas desta live foram concluídas.' :
-      r?.status === 'active' ? r.instruction :
-      r?.winner ? r.winner.name + ' alterou o relógio em ' + signedMinutes(r.winner.awardedMinutes) + '.' :
-      'Preparando a próxima rodada.';
-    if ($('home-round-people')) $('home-round-people').textContent = r ? (r.participants || 0) + ' participando' : 'Preparando jogadores…';
-    if ($('home-round-reward')) $('home-round-reward').textContent = r?.status === 'active' ? '+' + (r.availableRewardMinutes ?? r.rewardMinutes ?? 0) : '—';
+    renderHomeGame(s?.round);
   }
 
   function renderLive(s) {
@@ -283,6 +323,7 @@
         const map = {
           wrong:'Resposta incorreta. Tente novamente.',
           too_soon:'Cedo demais! Espere o sinal.',
+          wait_phase:'Espere a fase de resposta.',
           round_closed:'Alguém já concluiu esta rodada.',
           stale_round:'Essa rodada já terminou.',
           attempt_limit:'Limite de tentativas desta rodada atingido.'
@@ -295,13 +336,17 @@
     }
   }
 
+  function bindPlayerNameInput(id) {
+    const name=$(id);
+    if(!name) return;
+    name.value=playerName();
+    const save=()=>localStorage.setItem('nihilguh_player_name',name.value.trim().slice(0,24));
+    name.addEventListener('change',save);
+    name.addEventListener('blur',save);
+  }
+
   function bindPlay() {
-    const name = $('player-name-input');
-    if (name) {
-      name.value = playerName();
-      name.addEventListener('change',() => localStorage.setItem('nihilguh_player_name',name.value.trim().slice(0,24)));
-      name.addEventListener('blur',() => localStorage.setItem('nihilguh_player_name',name.value.trim().slice(0,24)));
-    }
+    bindPlayerNameInput('player-name-input');
   }
 
   function renderOverlay(s) {
@@ -347,7 +392,7 @@
           if ($('home-timer')) $('home-timer').textContent = clock(remainingSeconds(state));
           if ($('home-earned')) $('home-earned').textContent = 'backend offline';
           if ($('home-total')) $('home-total').textContent = '4h base';
-          if ($('home-challenge')) $('home-challenge').hidden = true;
+          if ($('home-game-root')) $('home-game-root').innerHTML = '<div class="home-game-state"><strong>Minigames aguardando o backend.</strong><span>A live continua tocando normalmente.</span></div>';
         } else if (page === 'live') {
           renderLive(state);
           if ($('live-round-title')) $('live-round-title').textContent = 'Backend temporariamente indisponível';
@@ -373,15 +418,20 @@
 
   function paintSecond() {
     if (!state) return;
-    if (page === 'home' && $('home-timer') && isLive(state)) $('home-timer').textContent = clock(remainingSeconds(state));
+    if (page === 'home' && $('home-timer') && isLive(state)) {
+      $('home-timer').textContent = clock(remainingSeconds(state));
+      if(state.round) window.NihilGuhGameUI?.tick(state.round);
+      if($('home-next-game-clock')) $('home-next-game-clock').textContent=clock(roundSeconds(state.round));
+    }
     if (page === 'live' && $('live-clock') && isLive(state)) $('live-clock').textContent = clock(remainingSeconds(state));
     if (page === 'overlay' && $('overlay-clock') && isLive(state)) $('overlay-clock').textContent = clock(remainingSeconds(state));
     if (page === 'play' && state.round) paintPlayDynamic(state.round);
   }
 
   if (page === 'play') bindPlay();
+  if (page === 'home') bindPlayerNameInput('home-player-name-input');
   refresh();
-  const pollMs = page === 'overlay' || page === 'play' ? 3000 : 10000;
+  const pollMs = page === 'overlay' || page === 'play' || page === 'home' ? 3000 : 10000;
   pollHandle = setInterval(() => document.visibilityState === 'visible' && refresh(),pollMs);
   secondHandle = setInterval(paintSecond,500);
   addEventListener('pagehide',() => { clearInterval(pollHandle); clearInterval(secondHandle); },{once:true});
