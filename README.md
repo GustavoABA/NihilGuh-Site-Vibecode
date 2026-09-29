@@ -37,11 +37,11 @@ O potencial nominal positivo do baralho é **+240 min**:
 - Puzzle Deslizante 4×4 ×1;
 - Escolha da Rainha ×1.
 
-As rodadas são distribuídas ao longo de aproximadamente **4 horas**, em vez de serem consumidas na primeira hora.
+Cada rodada permanece **ativa sem limite de tempo enquanto a Twitch estiver online**. Ela só termina quando alguém vence. Após a vitória, o backend aplica a alteração no relógio, mostra o resultado por alguns segundos e então cria a próxima rodada global.
 
 O primeiro acerto válido fecha a rodada sob `LockService`. Labirinto e puzzle são reexecutados no backend para validar o caminho/movimentos.
 
-Memória e Digite Antes que Suma usam duas fases públicas: o conteúdo de memorização deixa de ser enviado quando entra a fase de resposta.
+Memória e Digite Antes que Suma usam ciclos globais repetidos de memorização → resposta. Enquanto ninguém vence, o ciclo recomeça para que quem entrar depois ainda tenha chance de participar; o conteúdo secreto deixa de ser enviado durante a fase de resposta.
 
 ## Estado e escala
 
@@ -78,3 +78,9 @@ Para publicar, use `apps-script/ALL_IN_ONE.gs`. O CI verifica que ele é exatame
 O GitHub Pages publica automaticamente o branch `main`.
 
 O Apps Script precisa ser atualizado separadamente por **Gerenciar implantações → Editar → Nova versão**, preservando a mesma URL `/exec`.
+
+## Home durante a live
+
+Quando a Twitch está online, a home prioriza a transmissão: o player aparece primeiro e o minigame global fica imediatamente abaixo do vídeo, permitindo assistir e jogar na mesma página.
+
+O embed usa autoplay com áudio inicialmente mutado para maximizar compatibilidade com as políticas de reprodução automática dos navegadores. Em dispositivos móveis, a Twitch pode exigir interação do usuário para iniciar o vídeo.
