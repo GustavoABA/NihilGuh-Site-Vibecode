@@ -649,3 +649,277 @@ body[data-page="home"] .player-wrap{background:#000}
   .home-game-bar{align-items:stretch;flex-direction:column}
   .home-player-name{min-width:0;width:100%}
 }
+
+
+/* =========================================================
+   OBS CLEAN OVERLAY v16
+   timer -> CTA -> timer -> winners
+   ========================================================= */
+html.overlay-page,
+html.overlay-page body,
+body.overlay-clean-page{
+  width:100%;
+  height:100%;
+  min-height:0;
+  margin:0;
+  overflow:hidden;
+  background:transparent!important;
+  background-color:transparent!important;
+  color-scheme:normal;
+}
+
+body.overlay-clean-page .overlay-clean-shell{
+  width:600px;
+  height:400px;
+  padding:0;
+  margin:0;
+  display:grid;
+  place-items:center;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  overflow:hidden;
+}
+
+.overlay-scene{
+  grid-area:1/1;
+  width:100%;
+  min-height:180px;
+  display:grid;
+  place-items:center;
+  padding:18px 24px;
+  opacity:0;
+  transform:translateY(12px) scale(.985);
+  pointer-events:none;
+}
+.overlay-scene.is-active{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  animation:overlaySceneIn .52s cubic-bezier(.2,.8,.2,1) both;
+}
+.overlay-scene[hidden]{display:none!important}
+
+.overlay-timer-only{
+  font-size:86px;
+  line-height:.88;
+  font-weight:950;
+  letter-spacing:-.075em;
+  font-variant-numeric:tabular-nums;
+  color:#fff;
+  text-shadow:
+    0 4px 12px rgba(0,0,0,.92),
+    0 0 26px rgba(0,0,0,.90),
+    0 0 2px rgba(255,255,255,.45);
+  animation:overlayTimerBreath 3.5s ease-in-out infinite;
+}
+
+/* CTA */
+.overlay-cta-scene{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:20px;
+}
+.overlay-mascot{
+  position:relative;
+  width:122px;
+  height:122px;
+  flex:0 0 122px;
+  animation:overlayMascotFloat 1.8s ease-in-out infinite;
+}
+.overlay-mascot img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  border-radius:50%;
+  filter:drop-shadow(0 12px 18px rgba(0,0,0,.45));
+}
+.overlay-point{
+  position:absolute;
+  right:-18px;
+  top:47px;
+  font-size:38px;
+  filter:drop-shadow(0 4px 7px rgba(0,0,0,.55));
+  animation:overlayPoint .65s ease-in-out infinite alternate;
+}
+.overlay-cta-copy{
+  position:relative;
+  min-width:330px;
+  padding:16px 18px 17px;
+  border-radius:17px;
+  border:1px solid rgba(194,141,255,.28);
+  background:linear-gradient(135deg,rgba(20,9,31,.91),rgba(10,5,17,.78));
+  box-shadow:0 18px 46px rgba(0,0,0,.40),0 0 32px rgba(153,69,255,.12);
+  overflow:hidden;
+}
+.overlay-cta-copy::after{
+  content:"";
+  position:absolute;
+  top:-30%;
+  bottom:-30%;
+  left:-34%;
+  width:24%;
+  transform:rotate(15deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.19),transparent);
+  animation:overlayCtaShine 2.1s ease-in-out infinite;
+}
+.overlay-cta-copy span{
+  display:block;
+  margin-bottom:5px;
+  color:#c28cff;
+  font-size:.76rem;
+  font-weight:950;
+  letter-spacing:.16em;
+}
+.overlay-cta-copy strong{
+  position:relative;
+  z-index:1;
+  display:block;
+  color:#fff;
+  font-size:30px;
+  line-height:1.04;
+  font-weight:950;
+  letter-spacing:-.045em;
+  white-space:nowrap;
+  text-shadow:0 3px 12px rgba(0,0,0,.65),0 0 18px rgba(180,108,255,.24);
+  animation:overlayLinkPulse 1.15s ease-in-out infinite;
+}
+.overlay-cta-copy small{
+  display:block;
+  margin-top:7px;
+  color:#d8cce3;
+  font-size:.82rem;
+  font-weight:750;
+}
+
+/* WINNERS */
+#overlay-view-wins{
+  align-items:center;
+}
+.overlay-winners-head{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:12px;
+  text-shadow:0 3px 10px rgba(0,0,0,.78);
+}
+.overlay-winners-head span{
+  color:#c38cff;
+  font-size:.72rem;
+  font-weight:950;
+  letter-spacing:.15em;
+}
+.overlay-winners-head strong{
+  color:#f3eaff;
+  font-size:.78rem;
+  font-weight:850;
+}
+.overlay-winners-list{
+  width:100%;
+  display:grid;
+  gap:7px;
+}
+.overlay-win-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  min-height:48px;
+  padding:8px 12px;
+  border-left:3px solid rgba(180,108,255,.72);
+  border-radius:7px 13px 13px 7px;
+  background:linear-gradient(90deg,rgba(25,11,39,.88),rgba(9,5,15,.72));
+  box-shadow:0 10px 28px rgba(0,0,0,.28);
+  animation:overlayWinnerIn .44s cubic-bezier(.2,.8,.2,1) both;
+}
+.overlay-win-row:nth-child(2){animation-delay:.07s}
+.overlay-win-row:nth-child(3){animation-delay:.14s}
+.overlay-win-row:nth-child(4){animation-delay:.21s}
+.overlay-win-player{display:grid;gap:2px;min-width:0}
+.overlay-win-player strong{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#fff;
+  font-size:1rem;
+  font-weight:900;
+  text-shadow:0 2px 8px rgba(0,0,0,.72);
+}
+.overlay-win-player span{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#c8bbd2;
+  font-size:.73rem;
+  font-weight:700;
+}
+.overlay-win-row>b{
+  flex:0 0 auto;
+  color:#89f0bd;
+  font-size:1.03rem;
+  font-weight:950;
+  text-shadow:0 0 16px rgba(96,228,170,.22);
+}
+.overlay-win-row>b.negative{
+  color:#ff8daf;
+  text-shadow:0 0 16px rgba(255,107,157,.22);
+}
+.overlay-no-wins{
+  min-height:150px;
+  display:grid;
+  place-content:center;
+  gap:6px;
+  text-align:center;
+  color:#fff;
+  text-shadow:0 3px 12px rgba(0,0,0,.82);
+}
+.overlay-no-wins strong{font-size:1.15rem}
+.overlay-no-wins span{color:#c9bcd3;font-size:.83rem}
+
+@keyframes overlaySceneIn{
+  from{opacity:0;transform:translateY(12px) scale(.985);filter:blur(4px)}
+  to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+}
+@keyframes overlayTimerBreath{
+  0%,100%{transform:scale(1);opacity:1}
+  50%{transform:scale(1.012);opacity:.97}
+}
+@keyframes overlayMascotFloat{
+  0%,100%{transform:translateY(0) rotate(-1deg)}
+  50%{transform:translateY(-7px) rotate(1deg)}
+}
+@keyframes overlayPoint{
+  from{transform:translateX(0) rotate(-4deg)}
+  to{transform:translateX(11px) rotate(4deg)}
+}
+@keyframes overlayLinkPulse{
+  0%,100%{transform:scale(1);filter:brightness(1)}
+  50%{transform:scale(1.018);filter:brightness(1.13)}
+}
+@keyframes overlayCtaShine{
+  0%,18%{left:-34%;opacity:0}
+  30%{opacity:1}
+  62%{left:116%;opacity:.75}
+  72%,100%{left:116%;opacity:0}
+}
+@keyframes overlayWinnerIn{
+  from{opacity:0;transform:translateX(-18px)}
+  to{opacity:1;transform:translateX(0)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .overlay-scene.is-active,
+  .overlay-timer-only,
+  .overlay-mascot,
+  .overlay-point,
+  .overlay-cta-copy::after,
+  .overlay-cta-copy strong,
+  .overlay-win-row{animation:none!important}
+}
