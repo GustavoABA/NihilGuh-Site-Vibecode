@@ -35,10 +35,10 @@ BACKEND CONSOLIDADO
 - base: 240 min;
 - saldo de bônus único: 0..240 min;
 - máximo absoluto: 480 min / 8h;
-- 23 rodadas globais distribuídas por aproximadamente 4h;
+- rodada global sem prazo: permanece ativa até alguém vencer;
 - primeiro vencedor protegido por LockService;
 - Labirinto/Puzzle validados no servidor;
-- Memória/Flash em duas fases;
+- Memória/Flash repetem ciclos sincronizados de memorizar/responder até alguém vencer;
 - jogadores/tentativas em CacheService;
 - estado global compacto em ScriptProperties;
 - motor legado Boss/Caos/Votos desativado;
