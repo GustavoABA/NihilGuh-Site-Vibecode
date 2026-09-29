@@ -7,10 +7,8 @@
 const ROUND_PROP = 'NIHILGUH_ROUND_STATE_V2';
 const ROUND_CFG = {
   nextRoundDelaySec: 8,
-  roundCadenceSec: 10 * 60 + 45,
-  standardDurationSec: 150,
-  longDurationSec: 360,
-  reactionDurationSec: 60,
+  flashCycleMs: 12000,
+  memoryCycleMs: 15000,
   maxWrongAttemptsPerPlayer: 25,
   cacheTtlSec: 21600
 };
@@ -158,7 +156,6 @@ function roundAct_(index) {
 
 function roundBase_(type,index) {
   const now=Date.now();
-  const longGame=['maze','puzzle'].includes(type);
   return {
     roundId:'round_'+Utilities.getUuid().slice(0,10),
     index:Number(index||1),
@@ -166,7 +163,7 @@ function roundBase_(type,index) {
     type:type,
     status:'active',
     startedAt:new Date(now).toISOString(),
-    endsAt:new Date(now+(longGame?ROUND_CFG.longDurationSec:ROUND_CFG.standardDurationSec)*1000).toISOString(),
+    endsAt:'',
     rewardMinutes:Number(ROUND_REWARDS[type]||5),
     penaltyMinutes:0,
     title:'',
@@ -192,7 +189,6 @@ function roundBuildChallenge_(sessionId,index,type) {
     base.instruction='Espere o sorriso acender. O primeiro clique válido vence.';
     base.challenge={unlockAt:new Date(unlockMs).toISOString()};
     base.secretAnswer='__REACTION__';
-    base.endsAt=new Date(now+ROUND_CFG.reactionDurationSec*1000).toISOString();
   }
 
   else if(type==='hunt'){
@@ -231,8 +227,14 @@ function roundBuildChallenge_(sessionId,index,type) {
     const raw=words[Math.floor(Math.random()*words.length)].toUpperCase();
     const visibleMs=act===1?2600:(act===2?1900:1400);
     base.title='Digite Antes que Suma';
-    base.instruction='Memorize a palavra. Ela vai desaparecer para todos ao mesmo tempo.';
-    base.challenge={flashText:raw,hideAt:new Date(now+visibleMs).toISOString(),length:raw.length};
+    base.instruction='Memorize a palavra quando ela aparecer. O ciclo se repete até alguém acertar.';
+    base.challenge={
+      flashText:raw,
+      cycleStartedAt:new Date(now).toISOString(),
+      revealMs:visibleMs,
+      cycleMs:ROUND_CFG.flashCycleMs,
+      length:raw.length
+    };
     base.secretAnswer=raw;
   }
 
@@ -289,11 +291,13 @@ function roundBuildChallenge_(sessionId,index,type) {
     const targetSymbol=selected[targetIndex];
     const revealMs=act===1?5500:(act===2?4300:3300);
     base.title='Memória de Cartas';
-    base.instruction='Memorize as cartas. Quando virarem, encontre o símbolo pedido.';
+    base.instruction='Memorize as cartas. O ciclo se repete até alguém encontrar a posição correta.';
     base.challenge={
       cards:selected,
       targetSymbol:targetSymbol,
-      revealUntil:new Date(now+revealMs).toISOString()
+      cycleStartedAt:new Date(now).toISOString(),
+      revealMs:revealMs,
+      cycleMs:ROUND_CFG.memoryCycleMs
     };
     base.secretAnswer='cell:'+targetIndex;
   }
@@ -416,19 +420,33 @@ function roundValidatePuzzle_(round,path){
   return board[board.length-1]===0;
 }
 
-function roundNextScheduledAt_(state) {
-  const nextIndex=Number(state.index||0)+1;
-  const total=Array.isArray(state.deck)?state.deck.length:23;
-  if(nextIndex>total) return Date.now()+ROUND_CFG.nextRoundDelaySec*1000;
-  const start=new Date(state.startedAt||now_()).getTime();
-  const slot=start+(nextIndex-1)*ROUND_CFG.roundCadenceSec*1000;
-  return Math.max(Date.now()+ROUND_CFG.nextRoundDelaySec*1000,slot);
-}
-
 function roundScheduleNext_(state,round) {
-  const at=roundNextScheduledAt_(state);
+  const at=Date.now()+ROUND_CFG.nextRoundDelaySec*1000;
   round.nextRoundAt=new Date(at).toISOString();
   return at;
+}
+
+function roundPhase_(round,atMs) {
+  if(!round || !['flash','memory'].includes(round.type)) return 'answer';
+  const ch=round.challenge||{};
+  const start=new Date(ch.cycleStartedAt||round.startedAt||now_()).getTime();
+  const revealMs=Math.max(500,Number(ch.revealMs || (round.type==='flash'?2000:4500)));
+  const cycleMs=Math.max(revealMs+1500,Number(ch.cycleMs || (round.type==='flash'?12000:15000)));
+  const elapsed=Math.max(0,Number(atMs||Date.now())-start);
+  return (elapsed%cycleMs)<revealMs ? 'memorize' : 'answer';
+}
+
+function roundPhaseEndsAt_(round,atMs) {
+  if(!round || !['flash','memory'].includes(round.type)) return '';
+  const ch=round.challenge||{};
+  const start=new Date(ch.cycleStartedAt||round.startedAt||now_()).getTime();
+  const revealMs=Math.max(500,Number(ch.revealMs || (round.type==='flash'?2000:4500)));
+  const cycleMs=Math.max(revealMs+1500,Number(ch.cycleMs || (round.type==='flash'?12000:15000)));
+  const nowMs=Number(atMs||Date.now());
+  const elapsed=Math.max(0,nowMs-start);
+  const cycleStart=start+Math.floor(elapsed/cycleMs)*cycleMs;
+  const phase=roundPhase_(round,nowMs);
+  return new Date(phase==='memorize'?cycleStart+revealMs:cycleStart+cycleMs).toISOString();
 }
 
 function roundStartNext_(state,sessionId){
@@ -462,12 +480,8 @@ function roundTickNoLock_(sessionId){
     if(Number(state.index||0)<(state.deck||[]).length)roundStartNext_(state,sessionId);
     return;
   }
-  if(round.status==='active'&&now>=new Date(round.endsAt).getTime()){
-    round.status='expired';round.expiredAt=stamp_();
-    roundScheduleNext_(state,round);
-    event_('round_expired',sessionId,'round',round.roundId,0);
-    roundSave_(state);return;
-  }
+  // Active rounds never expire while the Twitch session is online.
+  // They remain globally active until a valid winner closes them.
   if(round.status!=='active'&&round.nextRoundAt&&now>=new Date(round.nextRoundAt).getTime()){
     roundStartNext_(state,sessionId);
   }
@@ -561,6 +575,10 @@ function roundSubmit_(visitorId,roundId,answer,displayName){
 
     let correct=false,selectedDoor='',requested=Number(round.rewardMinutes||0);
 
+    if(['flash','memory'].includes(round.type) && roundPhase_(round,Date.now())!=='answer'){
+      return{accepted:false,reason:'wait_phase',round:roundPublicStateFromState_(state)};
+    }
+
     if(round.type==='reaction'){
       if(Date.now()<new Date(round.challenge.unlockAt).getTime()){
         roundIncrementWrong_(round,playerKey);roundSave_(state);
@@ -623,17 +641,19 @@ function roundPublicStateFromState_(state){
   let challenge=Object.assign({},r.challenge||{});
 
   if(r.type==='flash'){
-    const answering=now>=new Date(r.challenge.hideAt||0).getTime();
-    challenge=answering
-      ? {phase:'answer',hideAt:r.challenge.hideAt,length:Number(r.challenge.length||0)}
-      : {phase:'memorize',hideAt:r.challenge.hideAt,length:Number(r.challenge.length||0),flashText:String(r.challenge.flashText||'')};
+    const phase=roundPhase_(r,now);
+    const phaseEndsAt=roundPhaseEndsAt_(r,now);
+    challenge=phase==='answer'
+      ? {phase:'answer',phaseEndsAt:phaseEndsAt,length:Number(r.challenge.length||0)}
+      : {phase:'memorize',phaseEndsAt:phaseEndsAt,length:Number(r.challenge.length||0),flashText:String(r.challenge.flashText||'')};
   }
 
   if(r.type==='memory'){
-    const answering=now>=new Date(r.challenge.revealUntil||0).getTime();
-    challenge=answering
-      ? {phase:'answer',revealUntil:r.challenge.revealUntil,targetSymbol:r.challenge.targetSymbol,cardCount:Array.isArray(r.challenge.cards)?r.challenge.cards.length:0}
-      : {phase:'memorize',revealUntil:r.challenge.revealUntil,cards:Array.isArray(r.challenge.cards)?r.challenge.cards:[],cardCount:Array.isArray(r.challenge.cards)?r.challenge.cards.length:0};
+    const phase=roundPhase_(r,now);
+    const phaseEndsAt=roundPhaseEndsAt_(r,now);
+    challenge=phase==='answer'
+      ? {phase:'answer',phaseEndsAt:phaseEndsAt,targetSymbol:r.challenge.targetSymbol,cardCount:Array.isArray(r.challenge.cards)?r.challenge.cards.length:0}
+      : {phase:'memorize',phaseEndsAt:phaseEndsAt,cards:Array.isArray(r.challenge.cards)?r.challenge.cards:[],cardCount:Array.isArray(r.challenge.cards)?r.challenge.cards.length:0};
   }
 
   return{
