@@ -137,7 +137,7 @@
     return renderText(r);
   }
 
-  function mount(r,submit) {
+  function mount(r,submit,rootId='play-root') {
     local.round=r;local.submit=submit;
     if(local.roundId!==r.roundId){
       local.roundId=r.roundId;
@@ -145,7 +145,7 @@
       local.puzzleBoard=Array.isArray(r.challenge?.board)?r.challenge.board.slice():[];
       local.puzzleMoves='';
     }
-    const root=document.getElementById('play-root');
+    const root=document.getElementById(rootId);
     if(!root)return;
     root.onclick=(e)=>{
       const answer=e.target.closest('[data-game-answer]');
@@ -158,7 +158,7 @@
     root.onsubmit=(e)=>{
       if(e.target.id!=='answer-form')return;
       e.preventDefault();
-      const input=document.getElementById('answer-input');
+      const input=root.querySelector('#answer-input');
       const value=input?.value||'';
       if(input)input.value='';
       submit(r,value);
@@ -230,7 +230,7 @@
       btn.disabled=!ready;btn.classList.toggle('ready',ready);btn.textContent=ready?'CLIQUE AGORA!':'ESPERE…';
     }
     if(r.type==='memory' && String(r.challenge?.phase||'memorize')==='memorize'){
-      const hidden=Date.now()>=new Date(r.challenge?.revealUntil||0).getTime();
+      const hidden=Date.now()>=new Date(r.challenge?.phaseEndsAt||0).getTime();
       if(hidden){
         document.querySelectorAll('.memory-card').forEach(card=>{
           card.disabled=true;card.classList.add('is-hidden');
@@ -240,7 +240,7 @@
       }
     }
     if(r.type==='flash' && String(r.challenge?.phase||'memorize')==='memorize'){
-      const hidden=Date.now()>=new Date(r.challenge?.hideAt||0).getTime();
+      const hidden=Date.now()>=new Date(r.challenge?.phaseEndsAt||0).getTime();
       const stage=document.getElementById('flash-stage'),word=document.getElementById('flash-word'),wait=document.getElementById('flash-wait');
       if(hidden&&stage){
         stage.classList.add('is-hidden');
