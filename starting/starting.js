@@ -158,10 +158,16 @@
     gsap.set(eyes,{x:lookX,y:lookY,scaleY:blink,transformOrigin:'50% 50%'});
 
     const voice=vocalActivity(t);
-    const syllable=Math.pow(Math.abs(Math.sin(t*8.8)),1.5);
-    const phrase=Math.abs(Math.sin(t*2.17+.35));
-    const open=.985+voice*(syllable*.105+phrase*.03);
-    gsap.set(mouth,{y:Math.sin(t*1.4)*1.8,scaleY:open,transformOrigin:'50% 8%'});
+    const syllable=Math.pow(Math.abs(Math.sin(t*8.6)),1.45);
+    const phrase=Math.abs(Math.sin(t*2.0+.35));
+    const open=.99+voice*(syllable*.075+phrase*.02);
+    const widen=1+voice*phrase*.012;
+    gsap.set(mouth,{
+      y:Math.sin(t*1.15)*1.2,
+      scaleY:open,
+      scaleX:widen,
+      transformOrigin:'50% 10%'
+    });
   }
 
   function updateHare(t,section){
