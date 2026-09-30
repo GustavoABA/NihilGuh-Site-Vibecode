@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const MASTER_DURATION = 181;
+  const MASTER_DURATION = 179.583;
   const REST_MS = 2 * 60 * 1000;
   const params = new URLSearchParams(location.search);
   const DEFAULT_AUDIO_SRC = '../assets/audio/harpy-hare.mp3';
@@ -15,37 +15,33 @@
     { start:38, end:70, scene:'hare', icon:'➶' },
     { start:70, end:94, scene:'cheshire', icon:'☾' },
     { start:94, end:128, scene:'dancer', icon:'♠' },
-    { start:128, end:166, scene:'cheshire', icon:'☾' },
-    { start:166, end:181.2, scene:'bird', icon:'⌁' }
+    { start:128, end:165.5, scene:'cheshire', icon:'☾' },
+    { start:165.5, end:MASTER_DURATION + .5, scene:'bird', icon:'⌁' }
   ];
 
-  // Texto fornecido pelo usuário. Os tempos são uma calibração inicial para o master ~3:01.
+  // Legendas fornecidas pelo usuário.
   const CAPTIONS = [
-    {t:14.0, text:'Lebre Harpia'}, {t:16.2, text:'Onde você enterrou todos os seus filhos?'}, {t:20.8, text:'Me conte, digo eu'},
-    {t:25.0, text:'Lebre Harpia'}, {t:27.2, text:'Onde você enterrou todos os seus filhos?'}, {t:32.0, text:'Me conte, digo eu'},
-
-    {t:38.0, text:'Todas as flechas que você roubou'}, {t:42.8, text:'Partidas ao meio, agora queimadas e quebradas'},
-    {t:47.7, text:'Assim como seu coração que estava tão ansioso para se esconder'}, {t:53.4, text:'Você não pode mantê-los todos enjaulados'},
-    {t:58.1, text:'Eles vão lutar e fugir'}, {t:62.5, text:'Mãe, me conte, digo eu'}, {t:67.0, text:'(La-la-la, la-la-la, la-la-la)'},
-
-    {t:70.0, text:'Lebre Harpia'}, {t:72.2, text:'Onde você enterrou todos os seus filhos?'}, {t:76.8, text:'Me conte, digo eu'},
-    {t:81.0, text:'Lebre Harpia'}, {t:83.2, text:'Onde você enterrou todos os seus filhos?'}, {t:88.0, text:'Me conte, digo eu'},
-
-    {t:94.0, text:'Paredes de floresta e tetos estrelados'}, {t:98.8, text:'Cortinas áridas que você está tecendo'},
-    {t:103.8, text:'Assim como as histórias que você mantém dentro da sua cabeça'}, {t:109.5, text:'Ela não pode mantê-los todos seguros'},
-    {t:114.0, text:'Eles vão morrer e ter medo'}, {t:118.5, text:'Mãe, me conte, digo eu'}, {t:123.0, text:'(Mãe, me conte, digo eu)'},
-
-    {t:128.0, text:'Lebre Harpia'}, {t:130.0, text:'Onde você enterrou todos os seus filhos?'}, {t:133.7, text:'Me conte, digo eu'},
-    {t:137.0, text:'Lebre Harpia'}, {t:139.0, text:'Onde você enterrou todos os seus filhos?'}, {t:142.8, text:'Me conte, digo eu'},
-    {t:146.0, text:'Lebre Harpia'}, {t:148.0, text:'Onde você enterrou todos os seus filhos?'}, {t:151.8, text:'Me conte, digo eu'},
-    {t:155.0, text:'Lebre Harpia'}, {t:157.0, text:'Onde você enterrou todos os seus filhos?'}, {t:160.7, text:'Me conte, digo eu (me conte, digo eu)'},
-
-    {t:166.0, text:'Ela não pode mantê-los todos enjaulados'}, {t:169.6, text:'Eles estarão distantes e voarão para longe'},
-    {t:173.3, text:'Mãe, me diga que você vai ficar'}, {t:176.8, text:'Nós estaremos distantes e voaremos para longe'}
+    {t:14.0,text:'Lebre Harpia'},{t:16.2,text:'Onde você enterrou todos os seus filhos?'},{t:20.8,text:'Me conte, digo eu'},
+    {t:25.0,text:'Lebre Harpia'},{t:27.2,text:'Onde você enterrou todos os seus filhos?'},{t:32.0,text:'Me conte, digo eu'},
+    {t:38.0,text:'Todas as flechas que você roubou'},{t:42.8,text:'Partidas ao meio, agora queimadas e quebradas'},
+    {t:47.7,text:'Assim como seu coração que estava tão ansioso para se esconder'},{t:53.4,text:'Você não pode mantê-los todos enjaulados'},
+    {t:58.1,text:'Eles vão lutar e fugir'},{t:62.5,text:'Mãe, me conte, digo eu'},{t:67.0,text:'(La-la-la, la-la-la, la-la-la)'},
+    {t:70.0,text:'Lebre Harpia'},{t:72.2,text:'Onde você enterrou todos os seus filhos?'},{t:76.8,text:'Me conte, digo eu'},
+    {t:81.0,text:'Lebre Harpia'},{t:83.2,text:'Onde você enterrou todos os seus filhos?'},{t:88.0,text:'Me conte, digo eu'},
+    {t:94.0,text:'Paredes de floresta e tetos estrelados'},{t:98.8,text:'Cortinas áridas que você está tecendo'},
+    {t:103.8,text:'Assim como as histórias que você mantém dentro da sua cabeça'},{t:109.5,text:'Ela não pode mantê-los todos seguros'},
+    {t:114.0,text:'Eles vão morrer e ter medo'},{t:118.5,text:'Mãe, me conte, digo eu'},{t:123.0,text:'(Mãe, me conte, digo eu)'},
+    {t:128.0,text:'Lebre Harpia'},{t:130.0,text:'Onde você enterrou todos os seus filhos?'},{t:133.7,text:'Me conte, digo eu'},
+    {t:137.0,text:'Lebre Harpia'},{t:139.0,text:'Onde você enterrou todos os seus filhos?'},{t:142.8,text:'Me conte, digo eu'},
+    {t:146.0,text:'Lebre Harpia'},{t:148.0,text:'Onde você enterrou todos os seus filhos?'},{t:151.8,text:'Me conte, digo eu'},
+    {t:155.0,text:'Lebre Harpia'},{t:157.0,text:'Onde você enterrou todos os seus filhos?'},{t:160.7,text:'Me conte, digo eu (me conte, digo eu)'},
+    {t:165.5,text:'Ela não pode mantê-los todos enjaulados'},{t:169.0,text:'Eles estarão distantes e voarão para longe'},
+    {t:172.7,text:'Mãe, me diga que você vai ficar'},{t:176.0,text:'Nós estaremos distantes e voaremos para longe'}
   ];
 
   const $ = id => document.getElementById(id);
   const audio = $('harpy-audio');
+  const film = $('reference-film');
   const broadcast = $('broadcast');
   const gate = $('start-gate');
   const gateTitle = $('start-gate-title');
@@ -63,350 +59,379 @@
   const debugSeek = $('debug-seek');
 
   const queryOffset = params.get('offset');
-  let offset = queryOffset !== null
-    ? Number(queryOffset || 0)
-    : Number(localStorage.getItem('nihilguh_harpy_offset') || 0);
-  let activeScene = 'intro';
+  let offset = queryOffset !== null ? Number(queryOffset || 0) : Number(localStorage.getItem('nihilguh_harpy_offset') || 0);
   let activeCaption = -1;
+  let activeScene = '';
   let resting = false;
   let restTimer = null;
-  let previewStartedAt = performance.now();
-  let previewPausedAt = 0;
-  let previewPaused = false;
-  let raf = 0;
-  let analyser = null;
-  let analyserData = null;
-  let audioContext = null;
   let audioReady = false;
-  let audioSource = '';
-  let localObjectUrl = '';
-  let userGestureUnlocked = false;
   let audioDrivesTimeline = false;
+  let localObjectUrl = '';
   let virtualStartedAt = performance.now();
   let virtualPausedAt = 0;
   let virtualPaused = false;
   let virtualEndHandled = false;
+  let analyser = null;
+  let analyserData = null;
+  let audioContext = null;
+  let analyserSourceConnected = false;
 
-  function virtualTime() {
-    if (PREVIEW) return previewPaused ? previewPausedAt : (performance.now() - previewStartedAt) / 1000;
-    return virtualPaused ? virtualPausedAt : (performance.now() - virtualStartedAt) / 1000;
+  const sceneElements = new Map();
+  const scrubbers = [];
+  const loops = [];
+
+  function clamp(v,min=0,max=1){ return Math.min(max,Math.max(min,v)); }
+  function sectionAt(t){ return SECTIONS.find(s => t >= s.start && t < s.end) || SECTIONS[SECTIONS.length - 1]; }
+
+  function makeScrubber(el,keyframes,start,end,easing='linear'){
+    if(!el) return null;
+    const anim=el.animate(keyframes,{duration:Math.max(1,(end-start)*1000),fill:'both',easing});
+    anim.pause();
+    scrubbers.push({anim,start,end,el});
+    return anim;
   }
 
-  function adjustedTime() {
-    const raw = audioDrivesTimeline && !audio.paused
-      ? Number(audio.currentTime || 0)
-      : virtualTime();
-    return Math.max(0, Math.min(MASTER_DURATION, raw + offset));
+  function makeLoop(el,keyframes,start,end,duration,easing='linear'){
+    if(!el) return null;
+    const anim=el.animate(keyframes,{duration,iterations:Infinity,fill:'both',easing});
+    anim.pause();
+    loops.push({anim,start,end,duration,el});
+    return anim;
   }
 
-  function sectionAt(t) {
-    return SECTIONS.find(s => t >= s.start && t < s.end) || SECTIONS[SECTIONS.length - 1];
+  function setupSceneAnimations(){
+    document.querySelectorAll('.scene').forEach(el => {
+      const name=el.dataset.scene;
+      const sec=SECTIONS.find(s=>s.scene===name);
+      sceneElements.set(name,el);
+      if(!sec || name==='rest') return;
+      makeScrubber(el,[
+        {opacity:0,transform:'scale(1.018)',offset:0},
+        {opacity:1,transform:'scale(1)',offset:.07},
+        {opacity:1,transform:'scale(1)',offset:.91},
+        {opacity:0,transform:'scale(.988)',offset:1}
+      ],sec.start,sec.end,'linear');
+    });
+
+    const hareStart=38, hareEnd=70;
+    makeLoop($('hare-motion'),[
+      {transform:'translate3d(-42vw,-45%,0) rotate(-2deg)',opacity:0,offset:0},
+      {transform:'translate3d(-20vw,-50%,0) rotate(1deg)',opacity:1,offset:.08},
+      {transform:'translate3d(22vw,-55%,0) rotate(-1deg)',opacity:1,offset:.42},
+      {transform:'translate3d(64vw,-47%,0) rotate(1.5deg)',opacity:1,offset:.76},
+      {transform:'translate3d(110vw,-53%,0) rotate(-1deg)',opacity:0,offset:1}
+    ],hareStart,hareEnd,5600,'cubic-bezier(.34,.02,.27,.99)');
+    makeLoop($('hare-art'),[
+      {transform:'scaleX(-1) translateY(0) rotate(-1deg)'},
+      {transform:'scaleX(-1) translateY(-10px) rotate(1.2deg)'},
+      {transform:'scaleX(-1) translateY(1px) rotate(-.6deg)'}
+    ],hareStart,hareEnd,310,'ease-in-out');
+    document.querySelectorAll('.hare-dust i').forEach((el,i)=>makeLoop(el,[
+      {transform:'translate3d(0,0,0) scale(.5)',opacity:.35},
+      {transform:`translate3d(${-34-i*12}px,${-10+i*4}px,0) scale(1.4)`,opacity:0}
+    ],hareStart,hareEnd,850+i*120,'ease-out'));
+
+    const dancerStart=94,dancerEnd=128;
+    makeLoop($('dancer-motion'),[
+      {transform:'translate3d(-16px,4px,0) rotate(-3deg)'},
+      {transform:'translate3d(6px,-10px,0) rotate(1.7deg)'},
+      {transform:'translate3d(18px,3px,0) rotate(3.5deg)'},
+      {transform:'translate3d(-6px,-7px,0) rotate(-1.8deg)'},
+      {transform:'translate3d(-16px,4px,0) rotate(-3deg)'}
+    ],dancerStart,dancerEnd,5200,'cubic-bezier(.42,0,.3,1)');
+    makeLoop($('dress-back'),[
+      {transform:'rotate(-3deg) scaleX(.96)'},
+      {transform:'rotate(5deg) scaleX(1.09)'},
+      {transform:'rotate(-2deg) scaleX(.98)'}
+    ],dancerStart,dancerEnd,2550,'ease-in-out');
+    makeLoop($('dress-front'),[
+      {transform:'rotate(2deg) scaleX(1.02)'},
+      {transform:'rotate(-5deg) scaleX(.93)'},
+      {transform:'rotate(3deg) scaleX(1.04)'}
+    ],dancerStart,dancerEnd,2550,'ease-in-out');
+    makeLoop($('dancer-torso'),[
+      {transform:'rotate(-1.5deg) translateY(0)'},
+      {transform:'rotate(2deg) translateY(-7px)'},
+      {transform:'rotate(-1deg) translateY(0)'}
+    ],dancerStart,dancerEnd,2550,'ease-in-out');
+    makeLoop($('arm-left'),[
+      {transform:'rotate(11deg)'},{transform:'rotate(-15deg)'},{transform:'rotate(11deg)'}
+    ],dancerStart,dancerEnd,2550,'ease-in-out');
+    makeLoop($('arm-right'),[
+      {transform:'rotate(-12deg)'},{transform:'rotate(16deg)'},{transform:'rotate(-12deg)'}
+    ],dancerStart,dancerEnd,2550,'ease-in-out');
+
+    const birdStart=165.5,birdEnd=MASTER_DURATION;
+    makeLoop($('bird-motion'),[
+      {transform:'translate3d(-42vw,10vh,0) rotate(-6deg)',opacity:0,offset:0},
+      {transform:'translate3d(-18vw,1vh,0) rotate(-2deg)',opacity:1,offset:.12},
+      {transform:'translate3d(28vw,-9vh,0) rotate(3deg)',opacity:1,offset:.52},
+      {transform:'translate3d(72vw,-2vh,0) rotate(-1deg)',opacity:1,offset:.82},
+      {transform:'translate3d(112vw,-13vh,0) rotate(5deg)',opacity:0,offset:1}
+    ],birdStart,birdEnd,7600,'cubic-bezier(.31,.02,.21,.99)');
+    makeLoop($('wing-front'),[
+      {transform:'rotate(12deg)'},{transform:'rotate(-34deg)'},{transform:'rotate(13deg)'}
+    ],birdStart,birdEnd,620,'ease-in-out');
+    makeLoop($('wing-back'),[
+      {transform:'rotate(-9deg)'},{transform:'rotate(31deg)'},{transform:'rotate(-10deg)'}
+    ],birdStart,birdEnd,620,'ease-in-out');
   }
 
-  function captionIndexAt(t) {
-    let idx = -1;
-    for (let i=0;i<CAPTIONS.length;i++) {
-      if (CAPTIONS[i].t <= t) idx = i;
-      else break;
+  function updateAnimations(t){
+    for(const item of scrubbers){
+      const active=t>=item.start-.9 && t<=item.end+.9;
+      item.el.classList.toggle('is-visible',active);
+      if(active) item.anim.currentTime=clamp((t-item.start)/(item.end-item.start))*((item.end-item.start)*1000);
     }
+    for(const item of loops){
+      if(t>=item.start && t<=item.end){
+        const local=(t-item.start)*1000;
+        item.anim.currentTime=local % item.duration;
+      }
+    }
+  }
+
+  function virtualTime(){ return virtualPaused ? virtualPausedAt : (performance.now()-virtualStartedAt)/1000; }
+  function timelineTime(){
+    const raw=audioDrivesTimeline && !audio.paused ? Number(audio.currentTime||0) : virtualTime();
+    return clamp(raw+offset,0,MASTER_DURATION);
+  }
+
+  function captionIndexAt(t){
+    let idx=-1;
+    for(let i=0;i<CAPTIONS.length;i++){ if(CAPTIONS[i].t<=t) idx=i; else break; }
     return idx;
   }
 
-  function setScene(scene) {
-    if (scene === activeScene) return;
-    activeScene = scene;
-    document.querySelectorAll('.scene').forEach(el => el.classList.toggle('is-active', el.dataset.scene === scene));
-  }
-
-  function setCaption(idx) {
-    if (idx === activeCaption) return;
-    activeCaption = idx;
-    const cue = CAPTIONS[idx];
-    const next = CAPTIONS[idx + 1];
+  function setCaption(idx){
+    if(idx===activeCaption) return;
+    activeCaption=idx;
+    const cue=CAPTIONS[idx], next=CAPTIONS[idx+1];
     currentEl.classList.remove('is-changing');
     void currentEl.offsetWidth;
-    currentEl.textContent = cue ? cue.text : '';
+    currentEl.textContent=cue?cue.text:'';
     currentEl.classList.add('is-changing');
-    nextEl.textContent = next ? next.text : '';
+    nextEl.textContent=next?next.text:'';
   }
 
-  function mouthValue(t, scene) {
-    if (scene !== 'cheshire') return 1;
-    let energy = 0;
-    if (analyser && analyserData) {
-      analyser.getByteTimeDomainData(analyserData);
-      let sum = 0;
-      for (let i=0;i<analyserData.length;i++) {
-        const v = (analyserData[i] - 128) / 128;
-        sum += v * v;
-      }
-      energy = Math.sqrt(sum / analyserData.length);
-    }
-    const fallback = 0.5 + 0.5 * Math.abs(Math.sin(t * 9.2) * Math.sin(t * 2.15));
-    const drive = Math.max(fallback * .36, Math.min(1, energy * 4.8));
-    return 1 + drive * .28;
-  }
-
-  function paint() {
-    const rawVirtual = virtualTime();
-    if (!resting && !audioDrivesTimeline && rawVirtual >= MASTER_DURATION && !virtualEndHandled) {
-      virtualEndHandled = true;
-      enterRest();
-    }
-
-    const t = adjustedTime();
-    const sec = sectionAt(t);
-    setScene(resting ? 'rest' : sec.scene);
-    iconEl.textContent = sec.icon || '✦';
-
-    if (!resting) setCaption(captionIndexAt(t));
-    else {
-      currentEl.textContent = '';
-      nextEl.textContent = '';
-    }
-
-    document.documentElement.style.setProperty('--mouth-open', mouthValue(t, sec.scene).toFixed(3));
-
-    if (DEBUG) {
-      debugTime.textContent = t.toFixed(2);
-      debugScene.textContent = resting ? 'rest' : sec.scene;
-      debugOffset.textContent = offset.toFixed(2);
-      debugSeek.value = String(Math.min(MASTER_DURATION, Math.max(0, PREVIEW ? t - offset : audio.currentTime || 0)));
-    }
-    raf = requestAnimationFrame(paint);
-  }
-
-  function setOffset(delta) {
-    offset = Math.max(-10, Math.min(10, offset + delta));
-    localStorage.setItem('nihilguh_harpy_offset', String(offset));
-    if (DEBUG) debugOffset.textContent = offset.toFixed(2);
-  }
-
-  function setupAnalyser() {
-    if (analyser || PREVIEW || !userGestureUnlocked) return;
-    try {
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const source = audioContext.createMediaElementSource(audio);
-      analyser = audioContext.createAnalyser();
-      analyser.fftSize = 256;
-      analyser.smoothingTimeConstant = .74;
-      analyserData = new Uint8Array(analyser.fftSize);
+  function setupAnalyser(){
+    if(analyser || !audioReady) return;
+    try{
+      audioContext=new (window.AudioContext||window.webkitAudioContext)();
+      const source=audioContext.createMediaElementSource(audio);
+      analyser=audioContext.createAnalyser();
+      analyser.fftSize=256;
+      analyser.smoothingTimeConstant=.68;
+      analyserData=new Uint8Array(analyser.fftSize);
       source.connect(analyser);
       analyser.connect(audioContext.destination);
-    } catch (_) {
-      analyser = null;
-    }
+      analyserSourceConnected=true;
+    }catch(_){ analyser=null; }
   }
 
-  function showGate(title,copy,canPlay=true) {
-    gateTitle.textContent = title;
-    gateCopy.textContent = copy;
-    gatePlay.hidden = !canPlay;
-    gate.hidden = false;
-    gate.classList.add('is-compact');
-  }
-
-  async function beginAudio(fromGesture=false) {
-    if (PREVIEW) {
-      gate.hidden = true;
-      return;
-    }
-    if (!audioReady || !audio.src) {
-      showGate(
-        'Áudio ainda não configurado',
-        'Escolha um MP3 do seu PC para testar agora, ou use ?audio=URL quando hospedar a faixa.',
-        false
-      );
-      audioStatus.textContent = 'ÁUDIO NÃO CONFIGURADO';
-      return;
-    }
-
-    if (fromGesture) userGestureUnlocked = true;
-
-    try {
-      const visualTime = Math.max(0, Math.min(MASTER_DURATION - .1, virtualTime()));
-      if (Math.abs(Number(audio.currentTime || 0) - visualTime) > .35) {
-        try { audio.currentTime = visualTime; } catch (_) {}
+  function vocalEnergy(t){
+    if(analyser && analyserData){
+      analyser.getByteTimeDomainData(analyserData);
+      let sum=0;
+      for(let i=0;i<analyserData.length;i++){
+        const v=(analyserData[i]-128)/128;
+        sum+=v*v;
       }
+      return clamp(Math.sqrt(sum/analyserData.length)*5.4);
+    }
+    const syllable=Math.abs(Math.sin(t*8.6))*Math.abs(Math.sin(t*2.13+.7));
+    return .18+syllable*.62;
+  }
+
+  function updateCheshire(t,scene){
+    const eyes=$('cheshire-eyes'),mouth=$('cheshire-mouth');
+    if(!eyes||!mouth) return;
+    if(scene!=='cheshire'){
+      eyes.style.transform='translate3d(0,0,0)';
+      mouth.style.transform='scaleY(1)';
+      return;
+    }
+    const local=t-(SECTIONS.find(s=>s.scene==='cheshire'&&t>=s.start&&t<s.end)?.start||0);
+    const look=Math.sin(local*.46)*12;
+    const blink=(local%5.8)>5.55 ? .08 : 1;
+    eyes.style.transform=`translate3d(${look}px,${Math.cos(local*.37)*3}px,0) scaleY(${blink})`;
+    const e=vocalEnergy(t);
+    mouth.style.transform=`translate3d(0,${Math.sin(t*1.6)*3}px,0) scaleY(${1+e*.24})`;
+  }
+
+  function syncFilm(t){
+    if(!film || film.readyState<1) return;
+    if(film.paused){
+      film.play().catch(()=>{});
+    }
+    if(Number.isFinite(film.duration) && film.duration>0){
+      const target=t%film.duration;
+      if(Math.abs(film.currentTime-target)>.85){
+        try{film.currentTime=target;}catch(_){}
+      }
+    }
+  }
+
+  function showGate(title,copy,canPlay=true){
+    gateTitle.textContent=title;
+    gateCopy.textContent=copy;
+    gatePlay.hidden=!canPlay;
+    gate.hidden=false;
+  }
+
+  async function beginAudio(fromGesture=false){
+    if(!audioReady||!audio.src) return;
+    try{
+      const visual=clamp(virtualTime(),0,MASTER_DURATION-.1);
+      if(Math.abs((audio.currentTime||0)-visual)>.35) audio.currentTime=visual;
       await audio.play();
-      audioDrivesTimeline = true;
-      gate.hidden = true;
-      audioStatus.textContent = 'HARPY HARE · AO VIVO';
-
-      if (userGestureUnlocked) {
+      audioDrivesTimeline=true;
+      gate.hidden=true;
+      audioStatus.textContent='HARPY HARE · ÁUDIO';
+      if(fromGesture){
         setupAnalyser();
-        if (audioContext?.state === 'suspended') {
-          try { await audioContext.resume(); } catch (_) {}
-        }
+        if(audioContext?.state==='suspended') await audioContext.resume().catch(()=>{});
       }
-    } catch (_) {
-      showGate(
-        '▶ iniciar abertura',
-        'O navegador bloqueou o autoplay com áudio. Clique uma vez para liberar.',
-        true
-      );
-      audioStatus.textContent = 'CLIQUE PARA INICIAR';
+    }catch(_){
+      showGate('▶ liberar áudio','O navegador bloqueou o som. A animação continua sincronizada sem ele.',true);
+      audioStatus.textContent='ANIMAÇÃO · ÁUDIO BLOQUEADO';
     }
   }
 
-  function enterRest() {
-    if (resting) return;
-    resting = true;
+  async function configureAudio(){
+    if(PREVIEW){ audioStatus.textContent='PREVIEW · SEM ÁUDIO'; return; }
+    const candidate=EXPLICIT_AUDIO_SRC||DEFAULT_AUDIO_SRC;
+    try{
+      const response=await fetch(candidate,{method:'HEAD',cache:'no-store'});
+      if(!response.ok) throw new Error('missing');
+      audio.src=candidate;
+      audioReady=true;
+      audio.addEventListener('canplay',()=>beginAudio(false),{once:true});
+      audio.addEventListener('ended',enterRest);
+      audio.load();
+    }catch(_){
+      showGate('Animação rodando sem áudio','Escolha o MP3 para testar o lip-sync. A abertura não para sem ele.',false);
+      audioStatus.textContent='ANIMAÇÃO · SEM ÁUDIO';
+    }
+  }
+
+  function enterRest(){
+    if(resting) return;
+    resting=true;
+    audioDrivesTimeline=false;
     broadcast.classList.add('is-fading');
-    setTimeout(() => {
+    setTimeout(()=>{
       broadcast.classList.remove('is-fading');
       broadcast.classList.add('is-resting');
-      setScene('rest');
-    }, 1900);
-
+      sceneElements.forEach(el=>el.classList.remove('is-visible'));
+      sceneElements.get('rest')?.classList.add('is-visible');
+    },1900);
     clearTimeout(restTimer);
-    restTimer = setTimeout(async () => {
-      resting = false;
+    restTimer=setTimeout(async()=>{
+      resting=false;
       broadcast.classList.remove('is-resting');
       broadcast.classList.add('is-entering');
-      setTimeout(() => broadcast.classList.remove('is-entering'), 2300);
-      activeCaption = -1;
-      activeScene = '';
-      virtualStartedAt = performance.now();
-      virtualPausedAt = 0;
-      virtualPaused = false;
-      virtualEndHandled = false;
-      audioDrivesTimeline = false;
-      try { audio.currentTime = 0; } catch (_) {}
-      if (audioReady) await beginAudio(false);
-    }, REST_MS);
+      setTimeout(()=>broadcast.classList.remove('is-entering'),2100);
+      virtualStartedAt=performance.now();
+      virtualPausedAt=0;
+      virtualPaused=false;
+      virtualEndHandled=false;
+      activeCaption=-1;
+      activeScene='';
+      try{audio.currentTime=0}catch(_){}
+      if(audioReady) await beginAudio(false);
+    },REST_MS);
   }
 
-  function previewSeek(value) {
-    const v = Math.max(0, Math.min(MASTER_DURATION, Number(value) || 0));
-    previewPausedAt = v;
-    previewStartedAt = performance.now() - v * 1000;
-    activeCaption = -1;
-    activeScene = '';
+  function seekVirtual(v){
+    const value=clamp(Number(v)||0,0,MASTER_DURATION);
+    virtualStartedAt=performance.now()-value*1000;
+    virtualPausedAt=value;
+    virtualEndHandled=false;
+    if(audioDrivesTimeline){try{audio.currentTime=value}catch(_){}}
+    activeCaption=-1;
   }
 
-  async function configureAudioSource() {
-    if (PREVIEW) {
-      audioStatus.textContent = 'MODO PREVIEW · SEM ÁUDIO';
-      return;
+  function setOffset(delta){
+    offset=clamp(offset+delta,-10,10);
+    localStorage.setItem('nihilguh_harpy_offset',String(offset));
+  }
+
+  function paint(){
+    const raw=virtualTime();
+    if(!resting&&!audioDrivesTimeline&&raw>=MASTER_DURATION&&!virtualEndHandled){
+      virtualEndHandled=true;enterRest();
     }
-
-    audio.addEventListener('ended', enterRest);
-
-    if (EXPLICIT_AUDIO_SRC) {
-      audioSource = EXPLICIT_AUDIO_SRC;
-      audio.src = audioSource;
-      audioReady = true;
-      audio.addEventListener('canplay',() => beginAudio(false),{once:true});
-      audio.addEventListener('error',() => {
-        audioReady = false;
-        audioDrivesTimeline = false;
-        showGate('Animação rodando sem áudio','A URL de áudio não respondeu. A animação continua normalmente.',false);
-        audioStatus.textContent = 'ANIMAÇÃO · SEM ÁUDIO';
-      },{once:true});
-      audio.load();
-      return;
+    const t=timelineTime();
+    const sec=sectionAt(t);
+    activeScene=resting?'rest':sec.scene;
+    iconEl.textContent=sec.icon||'✦';
+    if(!resting){
+      updateAnimations(t);
+      updateCheshire(t,sec.scene);
+      setCaption(captionIndexAt(t));
+      syncFilm(t);
+    }else{
+      currentEl.textContent='';nextEl.textContent='';
     }
-
-    // Probe the same-origin default path with fetch first. A missing file no
-    // longer gets assigned to <audio>, avoiding the noisy media 404.
-    try {
-      const response = await fetch(DEFAULT_AUDIO_SRC,{method:'HEAD',cache:'no-store'});
-      if (response.ok) {
-        audioSource = DEFAULT_AUDIO_SRC;
-        audio.src = audioSource;
-        audioReady = true;
-        audio.addEventListener('canplay',() => beginAudio(false),{once:true});
-        audio.load();
-        return;
-      }
-    } catch (_) {}
-
-    showGate(
-      'Animação rodando sem áudio',
-      'A página continua normalmente. Se quiser testar a música, escolha o MP3 do seu PC.',
-      false
-    );
-    audioStatus.textContent = 'ANIMAÇÃO · SEM ÁUDIO';
+    if(DEBUG){
+      debugTime.textContent=t.toFixed(2);
+      debugScene.textContent=activeScene;
+      debugOffset.textContent=offset.toFixed(2);
+      debugSeek.value=String(t);
+    }
+    requestAnimationFrame(paint);
   }
 
-  gatePlay.addEventListener('click',() => beginAudio(true));
+  gatePlay.addEventListener('click',()=>{
+    setupAnalyser();
+    beginAudio(true);
+  });
 
-  localAudioFile.addEventListener('change',async e => {
-    const file=e.target.files && e.target.files[0];
+  localAudioFile.addEventListener('change',e=>{
+    const file=e.target.files?.[0];
     if(!file) return;
     if(localObjectUrl) URL.revokeObjectURL(localObjectUrl);
     localObjectUrl=URL.createObjectURL(file);
-    audioSource=localObjectUrl;
-    audio.src=audioSource;
+    audio.src=localObjectUrl;
     audioReady=true;
-    userGestureUnlocked=true;
-    audio.load();
-    audio.addEventListener('canplay',async () => {
-      try { await beginAudio(true); } catch (_) {}
+    audio.addEventListener('canplay',()=>{
+      setupAnalyser();
+      beginAudio(true);
     },{once:true});
+    audio.addEventListener('ended',enterRest,{once:false});
+    audio.load();
   });
 
-  if (DEBUG) {
-    debugPanel.hidden = false;
-    debugSeek.addEventListener('input', e => {
-      const v = Number(e.target.value);
-      if (PREVIEW) previewSeek(v);
-      else {
-        if (audioDrivesTimeline) {
-          try { audio.currentTime = v; } catch (_) {}
-        } else {
-          virtualStartedAt = performance.now() - v * 1000;
-          virtualPausedAt = v;
-        }
-        activeCaption = -1; activeScene = '';
-      }
-    });
-    debugPanel.addEventListener('click', e => {
-      const action = e.target.closest('button')?.dataset.debug;
-      if (action === 'minus') setOffset(-.1);
-      if (action === 'plus') setOffset(.1);
-      if (action === 'restart') {
-        if (PREVIEW) previewSeek(0);
-        else { audio.currentTime = 0; beginAudio(); }
-      }
+  if(DEBUG){
+    debugPanel.hidden=false;
+    debugSeek.max=String(MASTER_DURATION);
+    debugSeek.addEventListener('input',e=>seekVirtual(e.target.value));
+    debugPanel.addEventListener('click',e=>{
+      const action=e.target.closest('button')?.dataset.debug;
+      if(action==='minus')setOffset(-.1);
+      if(action==='plus')setOffset(.1);
+      if(action==='restart'){seekVirtual(0);if(audioReady)beginAudio(false)}
     });
   }
 
-  addEventListener('keydown', e => {
-    if (e.key === '[') setOffset(e.shiftKey ? -1 : -.1);
-    if (e.key === ']') setOffset(e.shiftKey ? 1 : .1);
-    if (e.key === 'ArrowLeft') {
+  addEventListener('keydown',e=>{
+    if(e.key==='[')setOffset(e.shiftKey?-1:-.1);
+    if(e.key===']')setOffset(e.shiftKey?1:.1);
+    if(e.key==='ArrowLeft'){e.preventDefault();seekVirtual(timelineTime()-offset-1)}
+    if(e.key==='ArrowRight'){e.preventDefault();seekVirtual(timelineTime()-offset+1)}
+    if(e.code==='Space'&&DEBUG){
       e.preventDefault();
-      if (PREVIEW) previewSeek(adjustedTime() - offset - 1);
-      else if (audioDrivesTimeline) audio.currentTime = Math.max(0, audio.currentTime - 1);
-      else virtualStartedAt += 1000;
-    }
-    if (e.key === 'ArrowRight') {
-      e.preventDefault();
-      if (PREVIEW) previewSeek(adjustedTime() - offset + 1);
-      else if (audioDrivesTimeline) audio.currentTime = Math.min(MASTER_DURATION, audio.currentTime + 1);
-      else virtualStartedAt -= 1000;
-    }
-    if (e.code === 'Space' && DEBUG) {
-      e.preventDefault();
-      if (PREVIEW) {
-        previewPaused = !previewPaused;
-        if (previewPaused) previewPausedAt = adjustedTime() - offset;
-        else previewStartedAt = performance.now() - previewPausedAt * 1000;
-      } else {
-        audio.paused ? beginAudio() : audio.pause();
-      }
+      if(audioDrivesTimeline&&!audio.paused){audio.pause();audioDrivesTimeline=false;virtualStartedAt=performance.now()-audio.currentTime*1000}
+      else if(audioReady)beginAudio(true);
+      else{virtualPaused=!virtualPaused;if(virtualPaused)virtualPausedAt=virtualTime();else virtualStartedAt=performance.now()-virtualPausedAt*1000}
     }
   });
 
-  if (PREVIEW) {
-    gate.hidden = true;
-    previewStartedAt = performance.now();
-  } else {
-    virtualStartedAt = performance.now();
-    configureAudioSource();
-  }
-
+  setupSceneAnimations();
+  sceneElements.get('intro')?.classList.add('is-visible');
+  film.play().catch(()=>{});
+  virtualStartedAt=performance.now();
+  configureAudio();
   paint();
 })();
