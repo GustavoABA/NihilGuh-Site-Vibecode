@@ -8,32 +8,53 @@
   const AUDIO_SRC = params.get('audio') || '../assets/audio/harpy-hare.mp3?v=2';
 
   const SECTIONS = [
-    {start:0,end:14,scene:'intro',icon:'✦'},
-    {start:14,end:38,scene:'cheshire',icon:'☾'},
-    {start:38,end:70,scene:'hare',icon:'➶'},
-    {start:70,end:94,scene:'cheshire',icon:'☾'},
-    {start:94,end:128,scene:'dancer',icon:'♠'},
-    {start:128,end:165.5,scene:'cheshire',icon:'☾'},
-    {start:165.5,end:DURATION,scene:'bird',icon:'⌁'}
+    {start:0,end:30.74,scene:'intro',icon:'✦'},
+    {start:30.74,end:45.28,scene:'cheshire',icon:'☾'},
+    {start:45.28,end:60.44,scene:'hare',icon:'➶'},
+    {start:60.44,end:74.88,scene:'cheshire',icon:'☾'},
+    {start:74.88,end:89.96,scene:'dancer',icon:'♠'},
+    {start:89.96,end:163.72,scene:'cheshire',icon:'☾'},
+    {start:163.72,end:DURATION,scene:'bird',icon:'⌁'}
   ];
 
   const CAPTIONS = [
-    {t:14.0,text:'Lebre Harpia'},{t:16.2,text:'Onde você enterrou todos os seus filhos?'},{t:20.8,text:'Me conte, digo eu'},
-    {t:25.0,text:'Lebre Harpia'},{t:27.2,text:'Onde você enterrou todos os seus filhos?'},{t:32.0,text:'Me conte, digo eu'},
-    {t:38.0,text:'Todas as flechas que você roubou'},{t:42.8,text:'Partidas ao meio, agora queimadas e quebradas'},
-    {t:47.7,text:'Assim como seu coração que estava tão ansioso para se esconder'},{t:53.4,text:'Você não pode mantê-los todos enjaulados'},
-    {t:58.1,text:'Eles vão lutar e fugir'},{t:62.5,text:'Mãe, me conte, digo eu'},{t:67.0,text:'(La-la-la, la-la-la, la-la-la)'},
-    {t:70.0,text:'Lebre Harpia'},{t:72.2,text:'Onde você enterrou todos os seus filhos?'},{t:76.8,text:'Me conte, digo eu'},
-    {t:81.0,text:'Lebre Harpia'},{t:83.2,text:'Onde você enterrou todos os seus filhos?'},{t:88.0,text:'Me conte, digo eu'},
-    {t:94.0,text:'Paredes de floresta e tetos estrelados'},{t:98.8,text:'Cortinas áridas que você está tecendo'},
-    {t:103.8,text:'Assim como as histórias que você mantém dentro da sua cabeça'},{t:109.5,text:'Ela não pode mantê-los todos seguros'},
-    {t:114.0,text:'Eles vão morrer e ter medo'},{t:118.5,text:'Mãe, me conte, digo eu'},{t:123.0,text:'(Mãe, me conte, digo eu)'},
-    {t:128.0,text:'Lebre Harpia'},{t:130.0,text:'Onde você enterrou todos os seus filhos?'},{t:133.7,text:'Me conte, digo eu'},
-    {t:137.0,text:'Lebre Harpia'},{t:139.0,text:'Onde você enterrou todos os seus filhos?'},{t:142.8,text:'Me conte, digo eu'},
-    {t:146.0,text:'Lebre Harpia'},{t:148.0,text:'Onde você enterrou todos os seus filhos?'},{t:151.8,text:'Me conte, digo eu'},
-    {t:155.0,text:'Lebre Harpia'},{t:157.0,text:'Onde você enterrou todos os seus filhos?'},{t:160.7,text:'Me conte, digo eu (me conte, digo eu)'},
-    {t:165.5,text:'Ela não pode mantê-los todos enjaulados'},{t:169.0,text:'Eles estarão distantes e voarão para longe'},
-    {t:172.7,text:'Mãe, me diga que você vai ficar'},{t:176.0,text:'Nós estaremos distantes e voaremos para longe'}
+    {t:30.74,text:'Lebre Harpia — Onde você enterrou todos os seus filhos?'},
+    {t:34.65,text:'Me conte, digo eu'},
+    {t:38.21,text:'Lebre Harpia — Onde você enterrou todos os seus filhos?'},
+    {t:42.06,text:'Me conte, digo eu'},
+
+    {t:45.28,text:'Todas as flechas que você roubou'},
+    {t:47.06,text:'Partidas ao meio, agora queimadas e quebradas'},
+    {t:49.09,text:'Assim como seu coração que estava tão ansioso para se esconder'},
+    {t:52.67,text:'Você não pode mantê-los todos enjaulados'},
+    {t:54.55,text:'Eles vão lutar e fugir'},
+    {t:56.48,text:'Mãe, me conte, digo eu'},
+
+    {t:60.44,text:'Lebre Harpia — Onde você enterrou todos os seus filhos?'},
+    {t:64.22,text:'Me conte, digo eu'},
+    {t:67.82,text:'Lebre Harpia — Onde você enterrou todos os seus filhos?'},
+    {t:71.58,text:'Me conte, digo eu'},
+
+    {t:74.88,text:'Paredes de floresta e tetos estrelados'},
+    {t:76.75,text:'Cortinas áridas que você está tecendo'},
+    {t:78.56,text:'Assim como as histórias que você mantém dentro da sua cabeça'},
+    {t:82.15,text:'Ela não pode mantê-los todos seguros'},
+    {t:84.14,text:'Eles vão morrer e ter medo'},
+    {t:85.90,text:'Mãe, me conte, digo eu'},
+
+    {t:89.96,text:'Lebre Harpia — Onde você enterrou todos os seus filhos?'},
+    {t:93.71,text:'Me conte, digo eu'},
+    {t:97.47,text:'Lebre Harpia — Onde você enterrou todos os seus filhos?'},
+    {t:101.13,text:'Me conte, digo eu'},
+    {t:119.68,text:'Lebre Harpia — Onde você enterrou todos os seus filhos?'},
+    {t:123.31,text:'Me conte, digo eu'},
+    {t:126.94,text:'Lebre Harpia — Onde você enterrou todos os seus filhos?'},
+    {t:130.62,text:'Me conte, digo eu (me conte, digo eu)'},
+
+    {t:163.72,text:'Ela não pode mantê-los todos enjaulados'},
+    {t:167.16,text:'Eles estarão distantes e voarão para longe'},
+    {t:170.86,text:'Mãe, me diga que você vai ficar'},
+    {t:174.55,text:'Nós estaremos distantes e voaremos para longe'}
   ];
 
   const $ = id => document.getElementById(id);
@@ -78,6 +99,20 @@
   function virtualTime(){ return (performance.now()-virtualStart)/1000; }
   function timeNow(){ return audioActive&&!audio.paused ? audio.currentTime : Math.min(DURATION,virtualTime()); }
 
+  function vocalActivity(t){
+    for(let i=0;i<CAPTIONS.length;i++){
+      const start=CAPTIONS[i].t;
+      const next=i<CAPTIONS.length-1?CAPTIONS[i+1].t:DURATION;
+      const duration=Math.min(4.25,Math.max(1.35,next-start-.12));
+      if(t>=start && t<=start+duration){
+        const p=(t-start)/duration;
+        const edge=Math.min(1,p/.08,(1-p)/.10);
+        return Math.max(0,Math.min(1,edge));
+      }
+    }
+    return 0;
+  }
+
   function updateCheshire(t,section){
     if(section.scene!=='cheshire') return;
     const local=t-section.start;
@@ -89,10 +124,11 @@
     const lookY=Math.cos(local*.39)*3;
     gsap.set(eyes,{x:lookX,y:lookY,scaleY:blink,transformOrigin:'50% 50%'});
 
+    const voice=vocalActivity(t);
     const syllable=Math.pow(Math.abs(Math.sin(t*8.8)),1.5);
     const phrase=Math.abs(Math.sin(t*2.17+.35));
-    const open=.96+(syllable*.11+phrase*.035);
-    gsap.set(mouth,{y:Math.sin(t*1.4)*2.4,scaleY:open,transformOrigin:'50% 8%'});
+    const open=.985+voice*(syllable*.105+phrase*.03);
+    gsap.set(mouth,{y:Math.sin(t*1.4)*1.8,scaleY:open,transformOrigin:'50% 8%'});
   }
 
   function updateHare(t,section){
@@ -157,7 +193,7 @@
     const cue=CAPTIONS[i],next=CAPTIONS[i+1];
     gsap.killTweensOf(currentEl);
     currentEl.textContent=cue?cue.text:'';
-    nextEl.textContent=next?next.text:'';
+    nextEl.textContent=(cue&&next)?next.text:'';
     gsap.fromTo(currentEl,{opacity:0,y:10,filter:'blur(4px)'},{opacity:1,y:0,filter:'blur(0px)',duration:.38,ease:'power2.out'});
   }
 
