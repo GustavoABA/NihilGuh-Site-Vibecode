@@ -57,46 +57,73 @@ body{font-family:Inter,system-ui,sans-serif}
 
 .cheshire-aura{
   position:absolute;
-  width:72%;
-  height:58%;
+  width:78%;
+  height:64%;
   border-radius:50%;
   background:
-    radial-gradient(ellipse at center,rgba(185,168,218,.10),transparent 56%),
-    radial-gradient(ellipse at center,rgba(255,255,255,.025),transparent 74%);
-  filter:blur(20px);
+    radial-gradient(ellipse at 50% 46%,rgba(185,168,218,.10),transparent 48%),
+    radial-gradient(ellipse at 50% 58%,rgba(255,255,255,.025),transparent 70%);
+  filter:blur(24px);
 }
 .cheshire-svg{
-  width:min(930px,82%);
+  width:min(980px,86%);
   height:auto;
   overflow:visible;
 }
+.face-shadow{
+  opacity:.92;
+}
+.face-haze{
+  fill:#17151a;
+  opacity:.28;
+  filter:blur(18px);
+}
+.haze-left,.haze-right{
+  opacity:.20;
+}
+
+.eye-wrap{
+  transform-box:fill-box;
+  transform-origin:center;
+}
 .eye-shape{
   fill:url(#eyeIvory);
-  stroke:#bea9e6;
+  stroke:#c7b5ed;
   stroke-width:3.2;
   stroke-linejoin:round;
-  filter:drop-shadow(0 0 9px rgba(184,162,226,.28));
+  filter:drop-shadow(0 0 11px rgba(194,172,235,.30));
 }
 .eyelid{
   fill:none;
-  stroke:#8e7cae;
-  stroke-width:4.1;
+  stroke:#8d78b0;
+  stroke-width:5;
   stroke-linecap:round;
-  opacity:.82;
+  opacity:.88;
+}
+.lower-lid{
+  fill:none;
+  stroke:#655a78;
+  stroke-width:2.2;
+  stroke-linecap:round;
+  opacity:.34;
+}
+.iris{
+  fill:url(#irisGlow);
+  opacity:.48;
 }
 .pupil-wrap{
   transform-box:fill-box;
   transform-origin:center;
 }
 .pupil{
-  fill:#17151a;
+  fill:#0e0d10;
 }
 .pupil-core{
-  fill:#030303;
+  fill:#010101;
 }
 .glint{
-  fill:#fefdf8;
-  opacity:.95;
+  fill:#fffef8;
+  opacity:.96;
 }
 .cheshire-eyes,
 .cheshire-mouth{
@@ -105,47 +132,64 @@ body{font-family:Inter,system-ui,sans-serif}
   will-change:transform;
 }
 .cheshire-mouth{
-  filter:drop-shadow(0 0 14px rgba(181,157,225,.17));
+  filter:drop-shadow(0 0 16px rgba(182,157,226,.15));
 }
 .grin-shadow{
   fill:none;
-  stroke:rgba(180,158,224,.16);
-  stroke-width:18;
+  stroke:rgba(196,178,235,.12);
+  stroke-width:24;
   stroke-linecap:round;
-  filter:blur(5px);
+  filter:blur(7px);
 }
 .mouth-cavity{
+  fill:#000;
+}
+.teeth-band{
+  fill:url(#teethIvory);
+  stroke:none;
+}
+.mouth-gap{
   fill:#020202;
+  opacity:.96;
 }
-.teeth path{
-  fill:url(#toothIvory);
-  stroke:#11100f;
-  stroke-width:2.4;
-  stroke-linejoin:round;
+.tooth-separators path{
+  fill:none;
+  stroke:#171513;
+  stroke-width:3.1;
+  stroke-linecap:round;
+  opacity:.92;
 }
-.lower-teeth path{
-  fill:#ded7c8;
+.lower-separators path{
+  stroke-width:2.6;
+  opacity:.80;
 }
 .lip{
   fill:none;
-  stroke:#c7b4ed;
+  stroke:#cbb9ef;
   stroke-linecap:round;
   stroke-linejoin:round;
 }
 .lip-top{
-  stroke-width:7.2;
-  filter:drop-shadow(0 0 8px rgba(199,180,237,.36));
+  stroke-width:7.6;
+  filter:drop-shadow(0 0 9px rgba(203,185,239,.34));
 }
 .lip-bottom{
-  stroke-width:4.4;
+  stroke-width:4.5;
   opacity:.90;
 }
-.smile-corner{
+.smile-corner,
+.cheek-wisp{
   fill:none;
-  stroke:#c7b4ed;
-  stroke-width:4.2;
+  stroke:#b9a4df;
   stroke-linecap:round;
-  opacity:.78;
+}
+.smile-corner{
+  stroke-width:4.5;
+  opacity:.82;
+}
+.cheek-wisp{
+  stroke-width:2.4;
+  opacity:.18;
 }
 .hare-lines{position:absolute;inset:0;overflow:hidden}
 .hare-lines i{position:absolute;left:-10%;width:120%;height:1px;background:linear-gradient(90deg,transparent,rgba(32,29,23,.22),transparent)}
