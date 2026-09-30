@@ -113,6 +113,14 @@
     return p*p*(3-2*p);
   }
   function sectionAt(t){ return SECTIONS.find(s=>t>=s.start&&t<s.end) || SECTIONS[SECTIONS.length-1]; }
+
+  function windowAlpha(t,start,end,fade=.22){
+    if(t<start-fade || t>end+fade) return 0;
+    if(t<start) return smoothstep(start-fade,start,t);
+    if(t>end) return 1-smoothstep(end,end+fade,t);
+    return 1;
+  }
+
   function virtualTime(){ return (performance.now()-virtualStart)/1000; }
   function timeNow(){ return audioActive&&!audio.paused ? audio.currentTime : Math.min(DURATION,virtualTime()); }
 
@@ -422,6 +430,194 @@
     });
   }
 
+  function updateLyricVisuals(t,section){
+    const W=theater.clientWidth;
+    const H=theater.clientHeight;
+
+    const chorusWindows=[
+      [30.74,34.65],[38.21,42.06],
+      [60.44,64.22],[67.82,71.58],
+      [89.96,93.71],[97.47,101.13],
+      [119.68,123.31],[126.94,130.62]
+    ];
+    let rootA=0;
+    for(const pair of chorusWindows){
+      rootA=Math.max(rootA,windowAlpha(t,pair[0],pair[1],.28));
+    }
+    const roots=$('chorus-roots');
+    if(roots){
+      gsap.set(roots,{opacity:rootA});
+      roots.querySelectorAll('i').forEach((el,i)=>{
+        gsap.set(el,{
+          scaleY:.45+rootA*.55,
+          y:(1-rootA)*42,
+          x:Math.sin(t*.72+i*.9)*3.2,
+          opacity:.20+rootA*(.18+i*.018),
+          transformOrigin:'50% 100%'
+        });
+      });
+    }
+
+    const stolenA=windowAlpha(t,45.28,47.06,.18);
+    const stolen=$('stolen-arrows');
+    if(stolen){
+      stolen.querySelectorAll('span').forEach((el,i)=>{
+        const dir=i<2?-1:1;
+        const phase=(t-45.28)*2.1+i*.7;
+        gsap.set(el,{
+          opacity:stolenA*(.58+i*.06),
+          x:dir*(1-stolenA)*(45+i*9)+Math.sin(phase)*8,
+          y:Math.cos(phase*.8)*9,
+          rotation:(i-2)*11+Math.sin(phase)*7,
+          scale:.82+stolenA*.22
+        });
+      });
+    }
+
+    const brokenA=windowAlpha(t,47.06,49.09,.14);
+    const brokenP=clamp01((t-47.06)/(49.09-47.06));
+    const fragments=$('arrow-fragments');
+    if(fragments){
+      fragments.querySelectorAll('i').forEach((el,i)=>{
+        const dir=i%2===0?-1:1;
+        const lane=Math.floor(i/2)-1;
+        gsap.set(el,{
+          opacity:brokenA*(1-brokenP*.22),
+          x:dir*brokenP*(42+i*9),
+          y:lane*brokenP*30+Math.sin((t-47.06)*7+i)*7,
+          rotation:dir*(18+brokenP*(32+i*4)),
+          scaleX:.82+brokenP*.18
+        });
+      });
+    }
+
+    const heartA=windowAlpha(t,49.09,52.67,.18);
+    const heartP=clamp01((t-49.09)/(52.67-49.09));
+    const heart=$('hidden-heart');
+    if(heart){
+      gsap.set(heart,{opacity:heartA});
+      const heartIcon=heart.querySelector('span');
+      if(heartIcon){
+        gsap.set(heartIcon,{
+          scale:1.18-heartP*.52,
+          y:heartP*H*.075,
+          opacity:heartA*(1-smoothstep(.72,1,heartP)*.55),
+          rotation:Math.sin(t*2.3)*2.1
+        });
+      }
+    }
+
+    const cageClose=windowAlpha(t,52.67,54.55,.14);
+    const cageBreak=clamp01((t-54.55)/(56.48-54.55));
+    const hareCage=$('hare-cage');
+    if(hareCage){
+      const cageOpacity=Math.max(cageClose,windowAlpha(t,54.55,56.48,.12));
+      gsap.set(hareCage,{opacity:cageOpacity*(1-cageBreak*.72)});
+      hareCage.querySelectorAll('b').forEach((el,i)=>{
+        const side=i<3?-1:1;
+        gsap.set(el,{
+          y:(1-cageClose)*-H*.22,
+          x:side*cageBreak*(26+i*7),
+          rotation:side*cageBreak*(7+i*2),
+          opacity:1-cageBreak*.45
+        });
+      });
+      const top=hareCage.querySelector('.cage-top');
+      const bottom=hareCage.querySelector('.cage-bottom');
+      if(top) gsap.set(top,{y:-cageBreak*25,rotation:-cageBreak*3});
+      if(bottom) gsap.set(bottom,{y:cageBreak*25,rotation:cageBreak*3});
+    }
+
+    const starsA=windowAlpha(t,74.88,78.56,.22);
+    const stars=$('star-ceiling');
+    if(stars){
+      stars.querySelectorAll('span').forEach((el,i)=>{
+        const twinkle=.55+.45*Math.sin(t*(1.8+i*.15)+i*1.3);
+        gsap.set(el,{
+          opacity:starsA*(.35+.45*twinkle),
+          scale:.84+twinkle*.32,
+          y:Math.sin(t*.7+i)*4
+        });
+      });
+    }
+
+    const curtainA=windowAlpha(t,76.75,82.15,.20);
+    const curtainP=clamp01((t-76.75)/(82.15-76.75));
+    const curtains=$('curtain-weave');
+    if(curtains){
+      curtains.querySelectorAll('i').forEach((el,i)=>{
+        const left=i<2;
+        const offset=(1-curtainP)*(left?-W*.18:W*.18);
+        gsap.set(el,{
+          opacity:curtainA*(.38+i*.08),
+          x:offset,
+          skewY:Math.sin(t*1.25+i)*2.5
+        });
+      });
+    }
+
+    const pagesA=windowAlpha(t,78.56,84.14,.18);
+    const pagesP=clamp01((t-78.56)/(84.14-78.56));
+    const pages=$('story-pages');
+    if(pages){
+      pages.querySelectorAll('span').forEach((el,i)=>{
+        const ang=pagesP*Math.PI*(1.3+i*.24)+i*2.05;
+        const radius=26+i*14+pagesP*20;
+        gsap.set(el,{
+          opacity:pagesA*(.42+i*.08),
+          x:Math.cos(ang)*radius,
+          y:Math.sin(ang)*radius*.62-pagesP*18,
+          rotation:ang*30,
+          scale:.82+Math.sin(ang)*.10
+        });
+      });
+    }
+
+    const dangerA=windowAlpha(t,82.15,85.90,.20);
+    if(scenes.dancer){
+      gsap.set(scenes.dancer,{
+        filter:'brightness('+(1-dangerA*.22)+') contrast('+(1+dangerA*.10)+')'
+      });
+    }
+
+    const birdCageA=windowAlpha(t,163.72,170.86,.22);
+    const openP=clamp01((t-167.16)/(170.86-167.16));
+    const birdCage=$('bird-cage');
+    if(birdCage){
+      gsap.set(birdCage,{opacity:birdCageA*(1-openP*.78)});
+      birdCage.querySelectorAll('b').forEach((el,i)=>{
+        const side=i<3?-1:1;
+        gsap.set(el,{
+          x:side*openP*(32+i*10),
+          rotation:side*openP*(6+i*2),
+          opacity:1-openP*.48
+        });
+      });
+      const crown=birdCage.querySelector('em');
+      if(crown) gsap.set(crown,{y:-openP*30,scaleX:1+openP*.16,opacity:1-openP*.55});
+    }
+
+    const farA=windowAlpha(t,167.16,DURATION,.24);
+    const farP=clamp01((t-167.16)/(DURATION-167.16));
+    const distant=$('distant-birds');
+    if(distant){
+      distant.querySelectorAll('span').forEach((el,i)=>{
+        const speed=.16+i*.055;
+        gsap.set(el,{
+          opacity:farA*(.54-i*.07)*(1-farP*.38),
+          x:farP*W*(speed+.10),
+          y:-farP*H*(.08+i*.035)+Math.sin(t*1.2+i)*5,
+          scale:1-farP*(.28+i*.06),
+          rotation:Math.sin(t*.7+i)*4
+        });
+      });
+    }
+
+    if(section.scene!=='dancer' && scenes.dancer){
+      gsap.set(scenes.dancer,{filter:'none'});
+    }
+  }
+
   function captionAt(t){
     let i=-1;
     for(let n=0;n<CAPTIONS.length;n++){ if(CAPTIONS[n].t<=t)i=n; else break; }
@@ -458,6 +654,7 @@
     updateHare(t,section);
     updateDancer(t,section);
     updateBird(t,section);
+    updateLyricVisuals(t,section);
 
     if(DEBUG){
       debugTime.textContent=t.toFixed(2);
