@@ -1,37 +1,4 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#050505">
-  <link rel="icon" type="image/webp" href="../assets/avatar-nihilguh.webp">
-  <title>NihilGuh — Iniciando a Live</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="starting.css?v=6">
-</head>
-<body>
-  <main class="broadcast" id="broadcast">
-    <div class="page-noise" aria-hidden="true"></div>
-
-    <header class="broadcast-head">
-      <span class="live-mark"><i></i> NIHILGUH // WONDERLAND</span>
-      <span class="tiny-mark">A LIVE VAI COMEÇAR</span>
-    </header>
-
-    <section class="theater" id="theater" aria-label="Abertura ilustrada">
-      <video
-        class="reference-film"
-        id="reference-film"
-        src="../assets/video/harpy-hare-reference.mp4"
-        muted
-        loop
-        playsinline
-        preload="metadata"
-        aria-hidden="true"></video>
-
-      <div class="paper-wash" aria-hidden="true"></div>
+<div class="paper-wash" aria-hidden="true"></div>
       <div class="edge-vignette" aria-hidden="true"></div>
 
       <div class="scene scene-intro" data-scene="intro">
@@ -58,7 +25,7 @@
               <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
             <clipPath id="cheshireMouthClip">
-              <path d="M289 323 Q500 452 711 323 Q500 402 289 323Z"/>
+              <path d="M286 326 Q500 476 714 326 Q500 414 286 326Z"/>
             </clipPath>
           </defs>
 
@@ -72,13 +39,13 @@
           </g>
 
           <g class="cheshire-mouth" id="cheshire-mouth" filter="url(#cheshireGlow)">
-            <path class="mouth-cavity" d="M270 309 Q500 493 730 309 Q500 411 270 309Z"/>
+            <path class="mouth-cavity" d="M270 312 Q500 490 730 312 Q500 414 270 312Z"/>
             <g class="teeth-layer" clip-path="url(#cheshireMouthClip)">
-              <path class="teeth-fill" d="M287 318 Q500 451 713 318 Q500 412 287 318Z"/>
-              <path class="tooth-lines" d="M319 330 L350 390 L382 348 L417 416 L452 362 L500 438 L548 362 L583 416 L618 348 L650 390 L681 330"/>
+              <path class="teeth-fill" d="M288 330 Q500 462 712 330 Q500 420 288 330Z"/>
+              <path class="tooth-lines" d="M322 345 L353 397 L385 360 L419 420 L455 374 L500 444 L545 374 L581 420 L615 360 L647 397 L678 345"/>
             </g>
-            <path class="smile-lip top-lip" d="M265 309 Q500 397 735 309"/>
-            <path class="smile-lip bottom-lip" d="M270 309 Q500 493 730 309"/>
+            <path class="smile-lip top-lip" d="M265 312 Q500 401 735 312"/>
+            <path class="smile-lip bottom-lip" d="M270 312 Q500 490 730 312"/>
           </g>
         </svg>
         <div class="cheshire-rune rune-a">◜</div>
@@ -233,6 +200,6 @@
     <audio id="harpy-audio" preload="auto" playsinline></audio>
   </main>
 
-  <script src="starting.js?v=6"></script>
+  <script src="starting.js?v=7"></script>
 </body>
 </html>
