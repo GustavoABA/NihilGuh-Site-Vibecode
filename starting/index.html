@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="starting.css?v=18">
+  <link rel="stylesheet" href="starting.css?v=19">
 </head>
 <body>
   <main class="broadcast" id="broadcast">
@@ -34,6 +34,9 @@
 
       <div class="scene scene-cheshire" data-scene="cheshire">
         <div class="cheshire-aura" aria-hidden="true"></div>
+        <div class="lyric-layer chorus-roots" id="chorus-roots" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i>
+        </div>
         <svg class="cheshire-svg" viewBox="0 0 1000 560" aria-label="Olhos e sorriso do Gato de Cheshire">
           <defs>
             <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
@@ -205,6 +208,24 @@
 
       <div class="scene scene-hare" data-scene="hare">
         <div class="hare-lines" aria-hidden="true"><i></i><i></i><i></i></div>
+
+        <div class="lyric-layer stolen-arrows" id="stolen-arrows" aria-hidden="true">
+          <span>➶</span><span>➶</span><span>➶</span><span>➶</span><span>➶</span>
+        </div>
+
+        <div class="lyric-layer arrow-fragments" id="arrow-fragments" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+
+        <div class="lyric-layer hidden-heart" id="hidden-heart" aria-hidden="true">
+          <span>♥</span>
+        </div>
+
+        <div class="lyric-layer cage-visual" id="hare-cage" aria-hidden="true">
+          <b></b><b></b><b></b><b></b><b></b><b></b>
+          <em class="cage-top"></em>
+          <em class="cage-bottom"></em>
+        </div>
         <div id="hare-motion" class="hare-motion">
           <div class="hare-shadow"></div>
           <svg id="hare-art" class="hare-art" viewBox="0 0 560 310" aria-label="Lebre correndo com flechas">
@@ -234,6 +255,18 @@
           <i></i><i></i><i></i>
           <b>✦</b><b>✧</b><b>✦</b>
         </div>
+
+        <div class="lyric-layer star-ceiling" id="star-ceiling" aria-hidden="true">
+          <span>✦</span><span>✧</span><span>✦</span><span>·</span><span>✧</span><span>✦</span>
+        </div>
+
+        <div class="lyric-layer curtain-weave" id="curtain-weave" aria-hidden="true">
+          <i></i><i></i><i></i><i></i>
+        </div>
+
+        <div class="lyric-layer story-pages" id="story-pages" aria-hidden="true">
+          <span>◱</span><span>◰</span><span>◱</span>
+        </div>
         <div id="dancer-motion" class="dancer-motion">
           <svg id="dancer-art" class="dancer-art" viewBox="0 0 420 620" aria-label="Garota-gato dançando">
             <g id="dress-back" class="dress-back"><path d="M136 294 Q210 253 284 294 L354 506 Q210 578 66 506Z"/></g>
@@ -259,6 +292,15 @@
 
       <div class="scene scene-bird" data-scene="bird">
         <div class="bird-stars" aria-hidden="true">·　✦　　　·　　　✧　　·</div>
+
+        <div class="lyric-layer bird-cage" id="bird-cage" aria-hidden="true">
+          <b></b><b></b><b></b><b></b><b></b><b></b>
+          <em></em>
+        </div>
+
+        <div class="lyric-layer distant-birds" id="distant-birds" aria-hidden="true">
+          <span>⌁</span><span>⌁</span><span>⌁</span><span>⌁</span>
+        </div>
         <div id="bird-motion" class="bird-motion">
           <svg class="bird-art" viewBox="0 0 500 320" aria-label="Pássaro voando">
             <path class="bird-tail" d="M170 190 L76 166 L142 208 L94 244 L190 220Z"/>
@@ -296,6 +338,6 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-  <script src="starting.js?v=18"></script>
+  <script src="starting.js?v=19"></script>
 </body>
 </html>
