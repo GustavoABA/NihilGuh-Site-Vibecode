@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07131b">
+  <title>NihilGuh — Canoa // Finalização</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+:root{
+  --ink:#0b1820;
+  --ink-2:#19323c;
+  --sea:#12313d;
+  --paper:#e9e2d2;
+  --cream:#f7efd9;
+  --amber:#e7b75f;
+  --amber-soft:#f3d89c;
+  --night:#07131b;
+  --stage-w:1600;
+  --stage-h:900;
+}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;background:#020609;overflow:hidden}
+body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavior:none}
+.broadcast{position:relative;width:100vw;height:100vh;height:100dvh;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 40%,#0b1921 0,#03080b 68%,#010304 100%);isolation:isolate}
+.stage{position:relative;width:min(100vw,calc(100dvh * 16 / 9));height:min(100dvh,calc(100vw * 9 / 16));aspect-ratio:16/9;overflow:hidden;background:var(--night);box-shadow:0 0 0 1px rgba(255,255,255,.04),0 40px 140px rgba(0,0,0,.72);contain:layout paint style}
+.art{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:hidden}
+.grain{position:fixed;inset:-35%;z-index:50;pointer-events:none;opacity:.05;mix-blend-mode:soft-light;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.vignette{position:fixed;inset:0;z-index:48;pointer-events:none;background:radial-gradient(ellipse at 50% 46%,transparent 42%,rgba(0,0,0,.16) 70%,rgba(0,0,0,.42) 100%)}
+.corner{position:absolute;z-index:42;font-size:clamp(.46rem,.58vw,.68rem);font-weight:900;letter-spacing:.22em;color:rgba(245,238,218,.54);text-transform:uppercase;pointer-events:none}
+.corner-a{left:2.8%;top:3.4%}.corner-b{right:2.8%;top:3.4%}
+.section-label{position:absolute;z-index:41;left:50%;bottom:4.4%;transform:translateX(-50%);min-width:18%;text-align:center;pointer-events:none;color:rgba(245,238,218,.76);font:700 italic clamp(.78rem,1.15vw,1.18rem) "Cormorant Garamond",serif;letter-spacing:.11em;text-transform:uppercase;text-shadow:0 1px 15px rgba(0,0,0,.45)}
+.section-label span{display:inline-block;will-change:transform,opacity}
+.stars circle{fill:#f4ead1;opacity:.85}
+#map-world path{fill:none;stroke:#c7bd9f;stroke-width:2;stroke-linecap:round;stroke-dasharray:4 12;opacity:.34}
+.route-shadow{fill:none;stroke:#000;stroke-width:14;opacity:.12;filter:blur(7px)}
+.route-line{fill:none;stroke:#17242a;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1}
+#route-dots circle{fill:#1c2a2f;stroke:#ded2b5;stroke-width:3}
+#memory-cards rect{fill:#e9e2d2;stroke:#182329;stroke-width:4;filter:drop-shadow(0 8px 8px rgba(3,7,9,.2))}
+#memory-cards path,#memory-cards circle{fill:none;stroke:#36484d;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+#pencil rect{fill:#d6c690;stroke:#162229;stroke-width:4}#pencil path:first-of-type{fill:#d7b489;stroke:#162229;stroke-width:4}#pencil path:last-of-type{fill:#9d6464;stroke:#162229;stroke-width:4}
+#pen rect{fill:#17272f;stroke:#0a1216;stroke-width:4}#pen path{fill:#c1a873;stroke:#0a1216;stroke-width:4}
+#ink-script{fill:none;stroke:#10242e;stroke-width:8;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
+#ink-splashes circle{fill:#10242e}
+.breath-ring{fill:none;stroke:#e4c985;stroke-width:3;opacity:.5}.br2{stroke-width:2;opacity:.32}.br3{stroke-width:1.5;opacity:.22}
+#heart{fill:#e8b760;stroke:#f4d897;stroke-width:3;filter:drop-shadow(0 0 18px rgba(232,183,96,.5))}
+#past-shards rect{fill:#d7cdb5;stroke:#1a282e;stroke-width:3;opacity:.74}
+#horizon-islands path{fill:#152832;opacity:.82}
+#storm-back path:nth-child(2){fill:none;stroke:#6d7880;stroke-width:14;stroke-linecap:round;opacity:.32;filter:blur(4px)}
+.wave{will-change:transform}.wave path{stroke:none}.wave.far path{fill:#285261;opacity:.9}.wave.mid path{fill:#173d4b}.wave.front path{fill:#0c2732}
+.foam path{fill:none;stroke:#dce2d9;stroke-width:4;stroke-linecap:round;opacity:.22}
+#wake path{fill:none;stroke:#e7eadf;stroke-width:5;stroke-linecap:round;opacity:.34}
+#canoe-shadow{fill:#020a0e;opacity:.24;filter:blur(8px)}
+#canoe{stroke:#17120f;stroke-width:7;stroke-linejoin:round}.canoe-rim{fill:none;stroke:#d5b079;stroke-width:7;stroke-linecap:round;opacity:.68}.canoe-rim.inner{stroke-width:3;opacity:.4}
+#traveler .head,#traveler .body{fill:#15232a;stroke:#071015;stroke-width:5}.limb{fill:none;stroke:#15232a;stroke-width:18;stroke-linecap:round}
+#tattoos path,#tattoos circle{fill:none;stroke:#d9c99d;stroke-width:4;stroke-linecap:round;opacity:.7}
+#scars path{fill:none;stroke:#8e4f48;stroke-width:6;stroke-linecap:round}#healed path{fill:none;stroke:#e6bb62;stroke-width:5;stroke-linecap:round;filter:drop-shadow(0 0 6px rgba(230,187,98,.42))}
+#paddle rect,#paddle path{fill:#7d593b;stroke:#1d1611;stroke-width:5}
+.lantern-aura{opacity:.78}.tiny-home{fill:#16242a;stroke:#e5bf71;stroke-width:4}.tiny-window{fill:#ffe9a6;filter:drop-shadow(0 0 8px rgba(255,223,137,.9))}.tiny-roof{fill:none;stroke:#e5bf71;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+#home-shield{fill:none;stroke:#efd99f;stroke-width:3;opacity:.32;stroke-dasharray:8 13}
+#darkness path{fill:#020508;opacity:.9}
+.faith-ring{fill:none;stroke:#e6c879;stroke-width:3}.faith-ring.outer{stroke-dasharray:8 13;opacity:.5}.faith-ring.mid{stroke-width:2;opacity:.42}.faith-ring.inner{stroke-width:4;opacity:.72}.faith-needle{fill:#e2c474;stroke:#f4e0a5;stroke-width:2}.faith-needle.south{opacity:.55}.faith-cross{fill:none;stroke:#d9c58d;stroke-width:1.5;opacity:.35}.faith-core{fill:#f4dfa0;filter:drop-shadow(0 0 18px rgba(240,208,123,.7))}
+#storm-shards path{fill:none;stroke:#88939a;stroke-width:13;stroke-linecap:round;stroke-linejoin:round;opacity:.6}
+#birds path{fill:none;stroke:#1b3039;stroke-width:6;stroke-linecap:round}
+#end-mark circle{fill:#f0ce85;filter:drop-shadow(0 0 8px rgba(240,206,133,.7))}
+.paper-notes{position:absolute;inset:0;z-index:30;pointer-events:none}.note{position:absolute;color:rgba(23,32,34,.58);font:700 italic clamp(.78rem,1.05vw,1.18rem) "Cormorant Garamond",serif;letter-spacing:.16em;opacity:0;will-change:transform,opacity}.n1{left:18%;top:29%;transform:rotate(-8deg)}.n2{right:18%;top:31%;transform:rotate(6deg)}.n3{left:50%;top:20%;transform:translateX(-50%)}.n4{left:9%;bottom:17%;color:rgba(235,224,193,.44)}.n5{right:11%;top:26%;color:rgba(235,224,193,.46)}.n6{left:50%;top:14%;transform:translateX(-50%);color:rgba(245,223,157,.66)}.n7{right:12%;bottom:21%;color:rgba(244,222,161,.62)}
+.start-gate{position:absolute;inset:0;z-index:100;display:grid;place-content:center;justify-items:center;gap:9px;background:radial-gradient(circle at 50% 46%,rgba(18,39,49,.68),rgba(3,8,11,.96));cursor:pointer;text-align:center;transition:opacity .55s ease,visibility .55s ease}.start-gate.hidden{opacity:0;visibility:hidden;pointer-events:none}.gate-mark{font:600 clamp(3rem,7vw,7rem) "Cormorant Garamond",serif;color:#e9cd89;line-height:.65;animation:floatMark 2.5s ease-in-out infinite}.start-gate strong{font-size:clamp(.8rem,1.1vw,1.12rem);letter-spacing:.24em}.start-gate small{font:600 italic clamp(.68rem,.88vw,.92rem) "Cormorant Garamond",serif;letter-spacing:.06em;color:rgba(247,239,217,.55)}
+.yt-audio{position:absolute;width:2px;height:2px;left:-10px;top:-10px;overflow:hidden;opacity:0;pointer-events:none}#html-audio{display:none}
+@keyframes floatMark{50%{transform:translateY(-7px) rotate(-2deg)}}
+@media (max-aspect-ratio:1/1){.corner{font-size:.46rem}.section-label{bottom:3.5%}}
+@media (prefers-reduced-motion:reduce){.gate-mark{animation:none}}
+
+  </style>
+</head>
+<body>
+  <main class="broadcast" id="broadcast">
+    <div class="grain" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+
+    <section class="stage" id="stage" aria-label="Animação de finalização inspirada em Canoa">
+      <svg class="art" viewBox="0 0 1600 900" role="img" aria-label="Uma canoa atravessa um mar desenhado a tinta até encontrar um horizonte iluminado">
+        <defs>
+          <linearGradient id="skyGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop id="skyTop" offset="0%" stop-color="#07131b"/>
+            <stop id="skyMid" offset="58%" stop-color="#17303a"/>
+            <stop id="skyLow" offset="100%" stop-color="#d5b67d"/>
+          </linearGradient>
+          <linearGradient id="seaGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1f4654"/>
+            <stop offset="100%" stop-color="#07151d"/>
+          </linearGradient>
+          <linearGradient id="boatGradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#8c623f"/>
+            <stop offset="100%" stop-color="#34251c"/>
+          </linearGradient>
+          <radialGradient id="lanternGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#fff4c1" stop-opacity=".98"/>
+            <stop offset="38%" stop-color="#efbd63" stop-opacity=".58"/>
+            <stop offset="100%" stop-color="#efbd63" stop-opacity="0"/>
+          </radialGradient>
+          <filter id="softGlow" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="7" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="roughen" x="-10%" y="-10%" width="120%" height="120%">
+            <feTurbulence type="fractalNoise" baseFrequency=".014" numOctaves="2" seed="8" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2"/>
+          </filter>
+          <clipPath id="seaClip"><rect x="0" y="475" width="1600" height="425"/></clipPath>
+          <clipPath id="travelerClip"><path d="M747 448 C745 411 759 375 796 360 C832 345 866 359 881 392 C897 428 888 463 872 494 L741 494Z"/></clipPath>
+        </defs>
+
+        <rect id="sky" width="1600" height="900" fill="url(#skyGradient)"/>
+        <circle id="sun-halo" cx="1240" cy="370" r="235" fill="url(#lanternGlow)" opacity="0"/>
+        <circle id="sun" cx="1240" cy="370" r="45" fill="#f1c779" opacity="0" filter="url(#softGlow)"/>
+
+        <g id="stars" class="stars" opacity=".7">
+          <circle cx="130" cy="110" r="2"/><circle cx="240" cy="205" r="1.4"/><circle cx="380" cy="98" r="1.7"/>
+          <circle cx="535" cy="170" r="2.2"/><circle cx="690" cy="92" r="1.3"/><circle cx="840" cy="180" r="1.6"/>
+          <circle cx="1040" cy="105" r="2.1"/><circle cx="1180" cy="190" r="1.5"/><circle cx="1430" cy="125" r="2"/>
+          <circle cx="1510" cy="245" r="1.2"/><circle cx="915" cy="55" r="1.4"/><circle cx="60" cy="260" r="1.6"/>
+        </g>
+
+        <g id="map-world" opacity="0" filter="url(#roughen)">
+          <path d="M80 300 C210 225 310 255 405 206 C515 151 585 188 650 251 C732 330 825 250 912 265 C1010 282 1060 355 1147 338 C1285 310 1348 225 1535 260"/>
+          <path d="M162 365 C282 345 300 402 430 390 C565 377 632 323 730 347 C848 376 920 425 1064 391 C1190 361 1310 408 1450 371"/>
+          <path d="M260 202 C298 284 268 356 315 427 M540 170 C498 254 532 335 489 423 M1100 242 C1137 309 1096 373 1144 438"/>
+        </g>
+
+        <g id="route-scene" opacity="0">
+          <path class="route-shadow" d="M105 615 C260 470 365 640 485 520 C620 385 733 540 865 430 C1003 314 1150 410 1300 322 C1407 260 1493 302 1550 238"/>
+          <path id="route-line" class="route-line" pathLength="1" d="M105 615 C260 470 365 640 485 520 C620 385 733 540 865 430 C1003 314 1150 410 1300 322 C1407 260 1493 302 1550 238"/>
+          <g id="route-dots">
+            <circle cx="105" cy="615" r="8"/><circle cx="485" cy="520" r="7"/><circle cx="865" cy="430" r="7"/><circle cx="1300" cy="322" r="7"/>
+          </g>
+          <g id="memory-cards">
+            <g transform="translate(250 270) rotate(-7)"><rect width="190" height="130" rx="4"/><path d="M20 95 L70 54 L104 79 L142 42 L170 95"/><circle cx="58" cy="37" r="13"/></g>
+            <g transform="translate(715 230) rotate(5)"><rect width="170" height="118" rx="4"/><path d="M18 88 Q64 42 100 72 T153 62"/><circle cx="55" cy="37" r="11"/></g>
+            <g transform="translate(1120 185) rotate(-4)"><rect width="185" height="126" rx="4"/><path d="M16 94 L55 62 L88 76 L126 39 L168 94"/><circle cx="122" cy="34" r="12"/></g>
+          </g>
+        </g>
+
+        <g id="writing-scene" opacity="0">
+          <g id="pencil" transform="translate(250 350) rotate(-18)">
+            <rect x="0" y="-14" width="245" height="28" rx="8"/><path d="M245 -14 L295 0 L245 14Z"/><path d="M0 -14 L-35 0 L0 14Z"/>
+          </g>
+          <g id="pen" transform="translate(280 460) rotate(10)">
+            <rect x="0" y="-12" width="260" height="24" rx="10"/><path d="M260 -12 L315 0 L260 12Z"/><path d="M285 -6 L330 0 L285 6Z"/>
+          </g>
+          <path id="ink-script" pathLength="1" d="M545 470 C632 423 676 493 753 448 C831 402 891 468 957 433 C1028 395 1083 425 1164 387 C1242 350 1304 381 1392 338"/>
+          <g id="ink-splashes"><circle cx="570" cy="482" r="5"/><circle cx="935" cy="444" r="4"/><circle cx="1183" cy="391" r="6"/><circle cx="1395" cy="336" r="3"/></g>
+        </g>
+
+        <g id="breath-scene" opacity="0">
+          <circle class="breath-ring br1" cx="800" cy="430" r="95"/>
+          <circle class="breath-ring br2" cx="800" cy="430" r="142"/>
+          <circle class="breath-ring br3" cx="800" cy="430" r="196"/>
+          <path id="heart" d="M800 469 C746 427 717 393 737 360 C756 329 796 342 800 371 C805 342 846 329 864 360 C885 394 855 429 800 469Z"/>
+          <g id="past-shards">
+            <rect x="455" y="310" width="80" height="58" rx="3"/><rect x="1060" y="300" width="70" height="52" rx="3"/>
+            <rect x="1190" y="430" width="88" height="62" rx="3"/><rect x="325" y="445" width="73" height="55" rx="3"/>
+          </g>
+        </g>
+
+        <g id="horizon-islands" opacity="0">
+          <path d="M0 486 Q88 442 186 480 Q262 426 355 480 Q436 452 520 486Z"/>
+          <path d="M1090 485 Q1174 430 1268 480 Q1353 438 1434 480 Q1510 448 1600 486Z"/>
+        </g>
+
+        <rect y="475" width="1600" height="425" fill="url(#seaGradient)"/>
+
+        <g id="storm-back" opacity="0">
+          <path d="M0 0 H1600 V380 C1440 325 1322 350 1194 314 C1024 266 888 315 730 270 C542 218 362 302 190 252 C118 232 56 220 0 235Z" fill="#02070b"/>
+          <path d="M118 170 C240 112 330 126 440 172 M995 132 C1122 84 1250 106 1368 171"/>
+        </g>
+
+        <g id="water" clip-path="url(#seaClip)">
+          <g id="wave-far" class="wave far">
+            <path d="M-180 560 C-75 515 15 610 120 560 S315 515 420 560 S615 610 720 560 S915 515 1020 560 S1215 610 1320 560 S1515 515 1720 560 L1720 900 L-180 900Z"/>
+          </g>
+          <g id="wave-mid" class="wave mid">
+            <path d="M-220 650 C-110 580 -5 715 110 650 S330 585 445 650 S665 715 780 650 S1000 585 1115 650 S1335 715 1450 650 S1645 590 1810 650 L1810 900 L-220 900Z"/>
+          </g>
+          <g id="wave-front" class="wave front">
+            <path d="M-260 758 C-125 665 -15 825 125 755 S395 680 535 755 S805 825 945 755 S1215 680 1355 755 S1625 825 1830 748 L1830 900 L-260 900Z"/>
+          </g>
+          <g id="foam" class="foam">
+            <path d="M-80 642 C50 608 145 682 272 645 S492 612 620 647 S842 684 970 646 S1192 612 1320 647 S1492 680 1680 637"/>
+            <path d="M-110 755 C40 708 140 810 288 757 S540 710 688 759 S940 810 1088 757 S1340 710 1488 758 S1660 795 1760 756"/>
+          </g>
+        </g>
+
+        <g id="wake" opacity="0"><path d="M570 665 C430 675 340 716 246 748 M585 690 C448 718 385 765 312 810"/></g>
+
+        <g id="canoe-wrap" opacity="0" transform="translate(800 610)">
+          <g id="canoe-bob">
+            <ellipse id="canoe-shadow" cx="0" cy="83" rx="260" ry="34"/>
+            <path id="canoe" d="M-310 18 Q-190 108 2 112 Q194 108 316 18 Q205 55 0 56 Q-208 55 -310 18Z" fill="url(#boatGradient)"/>
+            <path class="canoe-rim" d="M-306 18 Q-198 48 0 49 Q200 48 312 18"/>
+            <path class="canoe-rim inner" d="M-250 38 Q-145 70 0 70 Q148 70 257 37"/>
+            <g id="traveler" transform="translate(-18 -126)">
+              <circle class="head" cx="0" cy="0" r="42"/>
+              <path class="body" d="M-26 42 Q0 21 29 44 L50 154 L-54 154Z"/>
+              <path id="arm" class="limb" d="M22 76 Q82 112 105 157"/>
+              <path class="limb" d="M-20 77 Q-55 118 -79 156"/>
+              <g id="tattoos" clip-path="url(#travelerClip)" transform="translate(-800 -430)">
+                <path d="M769 405 l26 25 l-18 28 l34 22"/><path d="M837 390 q-28 28 -4 57 t-6 48"/><circle cx="785" cy="448" r="7"/><circle cx="842" cy="420" r="6"/>
+              </g>
+              <g id="scars" opacity="0">
+                <path d="M-24 76 l18 15 l-15 17 l20 18"/><path d="M19 91 l-15 20 l19 17 l-17 20"/>
+              </g>
+              <g id="healed" opacity="0">
+                <path d="M-24 76 l18 15 l-15 17 l20 18"/><path d="M19 91 l-15 20 l19 17 l-17 20"/>
+              </g>
+            </g>
+            <g id="paddle" transform="translate(88 -92) rotate(28)"><rect x="-8" y="-55" width="16" height="275" rx="8"/><path d="M0 220 C-28 247 -34 305 0 334 C35 305 28 247 0 220Z"/></g>
+            <g id="home-lantern" transform="translate(-135 -66)">
+              <circle class="lantern-aura" r="92" fill="url(#lanternGlow)"/>
+              <path class="tiny-home" d="M-34 12 V-28 L0-56 L34-28 V12Z"/>
+              <rect class="tiny-window" x="-10" y="-15" width="20" height="24" rx="2"/>
+              <path class="tiny-roof" d="M-45 -23 L0-64 L45-23"/>
+            </g>
+            <ellipse id="home-shield" cx="-135" cy="-25" rx="112" ry="96"/>
+          </g>
+        </g>
+
+        <g id="darkness" opacity="0">
+          <path id="dark-left" d="M0 80 C185 140 190 312 338 370 C445 414 466 520 380 900 H0Z"/>
+          <path id="dark-right" d="M1600 72 C1402 132 1395 306 1268 365 C1160 417 1138 520 1215 900 H1600Z"/>
+        </g>
+
+        <g id="faith-sigil" opacity="0" transform="translate(800 366)">
+          <circle class="faith-ring outer" r="170"/><circle class="faith-ring mid" r="128"/><circle class="faith-ring inner" r="73"/>
+          <path class="faith-needle" d="M0 -145 L30 -12 L0 32 L-30 -12Z"/>
+          <path class="faith-needle south" d="M0 145 L22 20 L0 -20 L-22 20Z"/>
+          <path class="faith-cross" d="M-140 0 H140 M0 -140 V140"/>
+          <circle class="faith-core" r="16"/>
+        </g>
+
+        <g id="storm-shards" opacity="0">
+          <path d="M84 408 l92 42 l-78 38"/><path d="M1515 384 l-108 55 l88 44"/><path d="M135 570 l96 28 l-84 49"/><path d="M1470 557 l-96 36 l76 43"/>
+        </g>
+
+        <g id="birds" opacity="0">
+          <path d="M1128 242 q23-22 46 0 q23-22 46 0"/><path d="M1286 198 q18-17 36 0 q18-17 36 0"/><path d="M1398 278 q15-13 30 0 q15-13 30 0"/>
+        </g>
+
+        <g id="end-mark" opacity="0">
+          <circle cx="800" cy="447" r="2.8"/><circle cx="812" cy="447" r="1.8"/><circle cx="789" cy="447" r="1.4"/>
+        </g>
+      </svg>
+
+      <div class="paper-notes" id="paper-notes" aria-hidden="true">
+        <span class="note n1">MEMÓRIA</span>
+        <span class="note n2">CAMINHO</span>
+        <span class="note n3">PAZ</span>
+        <span class="note n4">CORRENTEZA</span>
+        <span class="note n5">LIÇÃO</span>
+        <span class="note n6">FÉ</span>
+        <span class="note n7">MARÉ BAIXA</span>
+      </div>
+
+      <div class="section-label" id="section-label"><span>UMA ÚLTIMA TRAVESSIA</span></div>
+      <div class="corner corner-a">NIHILGUH // FINALIZAÇÃO</div>
+      <div class="corner corner-b">CANOA</div>
+
+      <div class="start-gate" id="start-gate" role="button" tabindex="0" aria-label="Iniciar animação">
+        <div class="gate-mark">⌁</div>
+        <strong>INICIAR TRAVESSIA</strong>
+        <small>clique para liberar o áudio no navegador</small>
+      </div>
+
+      <div id="yt-audio" class="yt-audio" aria-hidden="true"></div>
+      <audio id="html-audio" preload="auto" playsinline></audio>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+(() => {
+  'use strict';
+
+  const DURATION = 185.411;
+  const ACTIVE_END = 181.05;
+  const YOUTUBE_ID = 'fULQ3gmyP88';
+  const params = new URLSearchParams(location.search);
+  const loopMode = params.get('loop') === '1';
+  const auto = params.get('autoplay') !== '0';
+  const localAudioSrc = params.get('audio');
+  const useLocalAudio = Boolean(localAudioSrc);
+
+  const MARKS = {
+    introEnd: 5.34,
+    memoryEnd: 16.16,
+    firstTurn: 26.0,
+    pre1: 36.29,
+    chorus1: 52.55,
+    interludeEnd: 60.91,
+    verse2End: 74.19,
+    pre2End: 91.39,
+    chorus2End: 107.62,
+    faithEnd: 122.39,
+    calmEnd: 141.08,
+    final1: 149.15,
+    final2: 157.20,
+    final3: 165.25,
+    final4: 174.05,
+    fadeEnd: 181.05
+  };
+
+  const $ = id => document.getElementById(id);
+  const stage = $('stage');
+  const gate = $('start-gate');
+  const label = $('section-label').querySelector('span');
+  const htmlAudio = $('html-audio');
+
+  const el = {
+    skyTop: $('skyTop'), skyMid: $('skyMid'), skyLow: $('skyLow'), stars: $('stars'),
+    sun: $('sun'), sunHalo: $('sun-halo'), map: $('map-world'), route: $('route-scene'), routeLine: $('route-line'),
+    memories: $('memory-cards'), writing: $('writing-scene'), pencil: $('pencil'), pen: $('pen'), script: $('ink-script'),
+    breath: $('breath-scene'), heart: $('heart'), shards: $('past-shards'), islands: $('horizon-islands'), storm: $('storm-back'),
+    waterFar: $('wave-far'), waterMid: $('wave-mid'), waterFront: $('wave-front'), foam: $('foam'), wake: $('wake'),
+    canoeWrap: $('canoe-wrap'), canoeBob: $('canoe-bob'), paddle: $('paddle'), traveler: $('traveler'), tattoos: $('tattoos'),
+    scars: $('scars'), healed: $('healed'), lantern: $('home-lantern'), shield: $('home-shield'), darkness: $('darkness'),
+    darkLeft: $('dark-left'), darkRight: $('dark-right'), faith: $('faith-sigil'), stormShards: $('storm-shards'), birds: $('birds'),
+    endMark: $('end-mark'), notes: [...document.querySelectorAll('.note')]
+  };
+
+  let player = null;
+  let ytReady = false;
+  let ytPlaying = false;
+  let started = false;
+  let pendingStart = auto;
+  let ended = false;
+  let virtualStart = performance.now();
+  let lastLabel = '';
+  let holdStart = 0;
+
+  const clamp01 = v => Math.max(0, Math.min(1, v));
+  const mix = (a,b,p) => a + (b-a)*clamp01(p);
+  const smoothstep = (a,b,v) => {
+    const p = clamp01((v-a)/(b-a));
+    return p*p*(3-2*p);
+  };
+  const win = (t,a,b,fade=.35) => {
+    if (t < a-fade || t > b+fade) return 0;
+    if (t < a) return smoothstep(a-fade,a,t);
+    if (t > b) return 1-smoothstep(b,b+fade,t);
+    return 1;
+  };
+  const pulse = (t,speed=1,phase=0) => .5 + .5*Math.sin(t*speed+phase);
+  const set = (target, vars) => target && gsap.set(target, vars);
+
+  function sectionInfo(t){
+    if(t < MARKS.introEnd) return ['UMA ÚLTIMA TRAVESSIA', 0];
+    if(t < MARKS.memoryEnd) return ['MEMÓRIA', 1];
+    if(t < MARKS.pre1) return ['O QUE FICA PARA TRÁS', 2];
+    if(t < MARKS.chorus1) return ['CORRENTEZA', 3];
+    if(t < MARKS.interludeEnd) return ['ENTRE MARÉS', 4];
+    if(t < MARKS.verse2End) return ['O MUNDO COMO CASA', 5];
+    if(t < MARKS.pre2End) return ['CICATRIZ → LIÇÃO', 6];
+    if(t < MARKS.chorus2End) return ['CORRENTEZA', 7];
+    if(t < MARKS.faithEnd) return ['FÉ', 8];
+    if(t < MARKS.calmEnd) return ['DEVAGAR', 9];
+    if(t < MARKS.fadeEnd) return ['HORIZONTE', 10];
+    return ['', 11];
+  }
+
+  function updateLabel(t){
+    const [text] = sectionInfo(t);
+    if(text === lastLabel) return;
+    lastLabel = text;
+    gsap.to(label,{opacity:0,y:7,duration:.22,onComplete:()=>{
+      label.textContent=text;
+      gsap.fromTo(label,{opacity:0,y:-7},{opacity:text?1:0,y:0,duration:.48,ease:'power2.out'});
+    }});
+  }
+
+  function renderSky(t){
+    const dawn = smoothstep(MARKS.faithEnd, MARKS.fadeEnd, t);
+    const deepDawn = smoothstep(MARKS.calmEnd, MARKS.fadeEnd, t);
+    const darkness = win(t, MARKS.interludeEnd, MARKS.pre2End, 2.0);
+
+    const top = `rgb(${Math.round(mix(7,30,dawn))},${Math.round(mix(19,57,dawn))},${Math.round(mix(27,65,dawn))})`;
+    const mid = `rgb(${Math.round(mix(23,92,dawn))},${Math.round(mix(48,112,dawn))},${Math.round(mix(58,119,dawn))})`;
+    const low = `rgb(${Math.round(mix(93,221,deepDawn))},${Math.round(mix(97,173,deepDawn))},${Math.round(mix(91,103,deepDawn))})`;
+    el.skyTop.setAttribute('stop-color',top); el.skyMid.setAttribute('stop-color',mid); el.skyLow.setAttribute('stop-color',low);
+
+    set(el.stars,{opacity:(1-dawn)*(.48+.22*pulse(t,.6))*(1-darkness*.2)});
+    set(el.sun,{opacity:deepDawn*.86, y:(1-deepDawn)*70, scale:.72+deepDawn*.28, transformOrigin:'50% 50%'});
+    set(el.sunHalo,{opacity:deepDawn*.45,scale:.72+deepDawn*.34,transformOrigin:'50% 50%'});
+  }
+
+  function renderIntroAndMemory(t){
+    const mapA = win(t,1.2,MARKS.memoryEnd,.8);
+    const routeA = win(t,MARKS.introEnd,MARKS.memoryEnd,.7);
+    const p = clamp01((t-MARKS.introEnd)/(MARKS.memoryEnd-MARKS.introEnd));
+    set(el.map,{opacity:mapA*.72,x:Math.sin(t*.18)*12,y:Math.cos(t*.15)*7,scale:1.01+p*.025,transformOrigin:'50% 50%'});
+    set(el.route,{opacity:routeA});
+    if(el.routeLine) el.routeLine.style.strokeDashoffset=String(1-smoothstep(0,.86,p));
+    set(el.memories,{opacity:routeA*smoothstep(.18,.45,p),y:-smoothstep(.22,1,p)*16});
+    [...el.memories.children].forEach((card,i)=>{
+      set(card,{y:Math.sin(t*.55+i)*7,x:Math.cos(t*.34+i*1.7)*5,rotation:Math.sin(t*.23+i)*1.8,transformOrigin:'50% 50%'});
+    });
+
+    const noteA=routeA*smoothstep(.25,.48,p);
+    set(el.notes[0],{opacity:noteA*.82,y:Math.sin(t*.4)*3});
+    set(el.notes[1],{opacity:noteA*.58,y:Math.cos(t*.37)*3});
+  }
+
+  function renderWriting(t){
+    const a = win(t,MARKS.memoryEnd,MARKS.pre1,.65);
+    const p = clamp01((t-MARKS.memoryEnd)/(MARKS.pre1-MARKS.memoryEnd));
+    set(el.writing,{opacity:a});
+    const pencilOut=smoothstep(.06,.34,p);
+    set(el.pencil,{opacity:a*(1-pencilOut),x:pencilOut*125,y:-pencilOut*38,rotation:-18+pencilOut*15,transformOrigin:'50% 50%'});
+    const penIn=smoothstep(.22,.40,p);
+    set(el.pen,{opacity:a*penIn,x:(1-penIn)*-80+Math.sin(t*.7)*3,y:Math.sin(t*1.1)*2,rotation:10+Math.sin(t*.45)*1.2,transformOrigin:'50% 50%'});
+    if(el.script) el.script.style.strokeDashoffset=String(1-smoothstep(.34,.82,p));
+    set(el.notes[2],{opacity:a*smoothstep(.48,.64,p)*.72,scale:.96+.04*pulse(t,.8),transformOrigin:'50% 50%'});
+
+    const breathA=win(t,MARKS.firstTurn-2.5,MARKS.pre1,.5);
+    set(el.breath,{opacity:breathA});
+    const local=Math.max(0,t-(MARKS.firstTurn-2.5));
+    document.querySelectorAll('.breath-ring').forEach((ring,i)=>{
+      const q=(local*.16+i*.22)%1;
+      set(ring,{scale:.72+q*.62,opacity:breathA*(1-q)*(.34-i*.05),transformOrigin:'50% 50%'});
+    });
+    set(el.heart,{scale:.96+.08*pulse(t,3.2),transformOrigin:'50% 55%'});
+    const discard=smoothstep(MARKS.firstTurn+3.0,MARKS.pre1-.4,t);
+    [...el.shards.children].forEach((s,i)=>{
+      const dir=i%2?-1:1;
+      set(s,{x:dir*discard*(160+i*34),y:discard*(90+i*17)+Math.sin(t*1.7+i)*8,rotation:dir*discard*(28+i*7),opacity:breathA*(1-discard*.75)});
+    });
+  }
+
+  function renderCanoe(t){
+    const canoeA=smoothstep(MARKS.pre1-1.1,MARKS.pre1+.7,t);
+    const endFade=1-smoothstep(MARKS.final4+3.5,MARKS.fadeEnd,t);
+    const opacity=canoeA*Math.max(.10,endFade);
+    set(el.canoeWrap,{opacity});
+
+    let waveAmp=1;
+    if(t<MARKS.pre1) waveAmp=.35;
+    if(t>=MARKS.pre1&&t<MARKS.chorus1) waveAmp=1.05;
+    else if(t<MARKS.interludeEnd) waveAmp=.70;
+    else if(t<MARKS.verse2End) waveAmp=.78;
+    else if(t<MARKS.pre2End) waveAmp=.92;
+    else if(t<MARKS.chorus2End) waveAmp=1.12;
+    else if(t<MARKS.faithEnd) waveAmp=1.26;
+    else if(t<MARKS.calmEnd) waveAmp=mix(1.0,.42,smoothstep(MARKS.faithEnd,MARKS.calmEnd,t));
+    else waveAmp=mix(.72,.22,smoothstep(MARKS.calmEnd,MARKS.fadeEnd,t));
+
+    const bob=Math.sin(t*2.55)*9*waveAmp;
+    const roll=Math.sin(t*1.38)*2.2*waveAmp;
+    const finalTravel=smoothstep(MARKS.calmEnd,MARKS.fadeEnd,t);
+    const scale=1-finalTravel*.70;
+    const x=finalTravel*430;
+    const y=-finalTravel*170;
+    set(el.canoeWrap,{opacity,x,y,scale,transformOrigin:'50% 55%'});
+    set(el.canoeBob,{y:bob,rotation:roll,transformOrigin:'50% 70%'});
+    set(el.paddle,{rotation:28+Math.sin(t*2.05)*18*(1-finalTravel*.7),transformOrigin:'0% 0%'});
+    set(el.traveler,{rotation:-roll*.18,y:Math.sin(t*.95)*2,transformOrigin:'50% 100%'});
+
+    const protect=(t>=MARKS.pre1 ? .36 : .18)+.08*pulse(t,1.3);
+    set(el.shield,{opacity:protect,scale:.97+.035*pulse(t,1.15),rotation:t*3.2,transformOrigin:'50% 50%'});
+    set(el.lantern,{scale:1+.035*pulse(t,2.1),transformOrigin:'50% 50%'});
+    set(el.wake,{opacity:canoeA*(.25+waveAmp*.25)*(1-finalTravel),x:-finalTravel*200});
+
+    const waveSpeed=24;
+    set(el.waterFar,{x:-((t*waveSpeed*.36)%210),y:Math.sin(t*.72)*8*waveAmp});
+    set(el.waterMid,{x:-((t*waveSpeed*.64)%230),y:Math.sin(t*.88+1)*13*waveAmp});
+    set(el.waterFront,{x:-((t*waveSpeed)%270),y:Math.sin(t*1.03+2)*17*waveAmp});
+    set(el.foam,{x:-((t*30)%250),y:Math.sin(t*.93)*7*waveAmp,opacity:.18+.20*waveAmp});
+  }
+
+  function renderChorus(t){
+    const c1=win(t,MARKS.pre1,MARKS.chorus1,.35);
+    const c2=win(t,MARKS.pre2End,MARKS.chorus2End,.35);
+    const final=win(t,MARKS.calmEnd,MARKS.fadeEnd,.45);
+    const c=Math.max(c1,c2,final);
+    set(el.notes[3],{opacity:c*.72,x:Math.sin(t*.42)*5});
+    const surge=c*(1-smoothstep(MARKS.faithEnd,MARKS.calmEnd,t)*.6);
+    set(stage,{filter:`contrast(${1+surge*.08}) saturate(${.94+surge*.13})`});
+  }
+
+  function renderInterlude(t){
+    const a=win(t,MARKS.chorus1,MARKS.interludeEnd,.55);
+    set(el.islands,{opacity:a*.78,x:-smoothstep(MARKS.chorus1,MARKS.interludeEnd,t)*90});
+  }
+
+  function renderVerse2(t){
+    const verseA=win(t,MARKS.interludeEnd,MARKS.pre2End,.7);
+    const darkIn=smoothstep(MARKS.interludeEnd+2.0,MARKS.verse2End,t);
+    const heal=smoothstep(MARKS.verse2End-2.0,MARKS.pre2End-1.0,t);
+    set(el.darkness,{opacity:verseA*darkIn*(1-heal*.52)});
+    set(el.darkLeft,{x:-120+darkIn*120-heal*80});
+    set(el.darkRight,{x:120-darkIn*120+heal*80});
+    set(el.storm,{opacity:verseA*darkIn*.62,y:-12+Math.sin(t*.22)*8});
+    set(el.scars,{opacity:verseA*(1-heal)});
+    set(el.healed,{opacity:verseA*heal});
+    set(el.notes[4],{opacity:verseA*heal*.82,y:-heal*5});
+    set(el.map,{opacity:verseA*(.25+.25*(1-darkIn)),x:-smoothstep(MARKS.interludeEnd,MARKS.verse2End,t)*70});
+  }
+
+  function renderFaith(t){
+    const a=win(t,MARKS.chorus2End,MARKS.faithEnd,.45);
+    const p=clamp01((t-MARKS.chorus2End)/(MARKS.faithEnd-MARKS.chorus2End));
+    set(el.faith,{opacity:a,scale:.72+smoothstep(0,.32,p)*.34,rotation:-12+p*36+Math.sin(t*.42)*2,transformOrigin:'50% 50%'});
+    set(el.stormShards,{opacity:a*(1-smoothstep(.68,1,p))});
+    [...el.stormShards.children].forEach((shard,i)=>{
+      const q=(p*1.25-i*.075);
+      const hit=clamp01(q);
+      const side=i%2?-1:1;
+      set(shard,{x:side*(1-hit)*170,opacity:a*(1-smoothstep(.55,1,hit)),scale:.9+hit*.12});
+    });
+    set(el.notes[5],{opacity:a*.88,scale:.96+.05*pulse(t,1.1),transformOrigin:'50% 50%'});
+    set(el.darkness,{opacity:a*(1-p)*.32});
+  }
+
+  function renderCalm(t){
+    const a=win(t,MARKS.faithEnd,MARKS.calmEnd,.5);
+    const p=clamp01((t-MARKS.faithEnd)/(MARKS.calmEnd-MARKS.faithEnd));
+    set(el.faith,{opacity:Math.max(Number(el.faith.style.opacity)||0,a*(1-p)*.72)});
+    set(el.notes[6],{opacity:a*smoothstep(.18,.50,p)*.86,y:-p*8});
+    set(el.birds,{opacity:a*smoothstep(.50,.92,p)*.34});
+    set(el.islands,{opacity:a*.26,y:p*9});
+  }
+
+  function renderFinal(t){
+    const p=clamp01((t-MARKS.calmEnd)/(MARKS.fadeEnd-MARKS.calmEnd));
+    const a=win(t,MARKS.calmEnd,MARKS.fadeEnd,.4);
+    const brighten=smoothstep(.04,.78,p);
+    set(el.birds,{opacity:a*brighten*.72,x:p*95,y:-p*40});
+    [...el.birds.children].forEach((bird,i)=>set(bird,{y:Math.sin(t*(1.2+i*.08)+i)*5,scale:1-i*.15}));
+    set(el.endMark,{opacity:smoothstep(.82,.97,p),scale:.8+p*.5,transformOrigin:'50% 50%'});
+    set(el.notes[3],{opacity:a*(1-p)*.36});
+    set(el.notes[6],{opacity:a*(1-p)*.44});
+  }
+
+  function renderHold(clock){
+    const micro=clock*0.001;
+    set(el.waterFar,{x:-((micro*12)%210),y:Math.sin(micro*.42)*3});
+    set(el.waterMid,{x:-((micro*18)%230),y:Math.sin(micro*.55+1)*4});
+    set(el.waterFront,{x:-((micro*24)%270),y:Math.sin(micro*.66+2)*5});
+    set(el.foam,{x:-((micro*20)%250),opacity:.12});
+    set(el.sunHalo,{opacity:.42+.05*Math.sin(micro*.55),scale:1.02+.02*Math.sin(micro*.43),transformOrigin:'50% 50%'});
+    set(el.endMark,{opacity:.92+.08*Math.sin(micro*.8)});
+  }
+
+  function render(t){
+    updateLabel(t);
+    renderSky(t);
+    renderIntroAndMemory(t);
+    renderWriting(t);
+    renderCanoe(t);
+    renderChorus(t);
+    renderInterlude(t);
+    renderVerse2(t);
+    renderFaith(t);
+    renderCalm(t);
+    renderFinal(t);
+  }
+
+  function virtualTime(){ return (performance.now()-virtualStart)/1000; }
+  function currentTime(){
+    if(useLocalAudio && !htmlAudio.paused && Number.isFinite(htmlAudio.currentTime)) return htmlAudio.currentTime;
+    if(ytReady && ytPlaying && player && typeof player.getCurrentTime==='function'){
+      const n=player.getCurrentTime(); if(Number.isFinite(n)) return n;
+    }
+    return Math.min(DURATION,virtualTime());
+  }
+
+  function restart(){
+    ended=false; holdStart=0; virtualStart=performance.now();
+    if(useLocalAudio){ htmlAudio.currentTime=0; htmlAudio.play().catch(()=>{}); }
+    else if(player && ytReady){ try{ player.seekTo(0,true); player.playVideo(); }catch(_){} }
+  }
+
+  function finish(){
+    if(ended) return;
+    ended=true; holdStart=performance.now();
+    render(ACTIVE_END);
+    if(loopMode){ setTimeout(restart,7000); }
+  }
+
+  function tick(){
+    if(!started){ requestAnimationFrame(tick); return; }
+    const t=currentTime();
+    if(!ended){
+      render(Math.min(t,ACTIVE_END));
+      if(t>=ACTIVE_END || (useLocalAudio && htmlAudio.ended)) finish();
+    }else{
+      renderHold(performance.now()-holdStart);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function activate(){
+    if(started) return;
+    started=true; ended=false; virtualStart=performance.now(); gate.classList.add('hidden');
+  }
+
+  function begin(){
+    if(started) return;
+    pendingStart=true;
+    if(useLocalAudio){
+      htmlAudio.src=localAudioSrc;
+      htmlAudio.currentTime=0;
+      const attempt=htmlAudio.play();
+      if(attempt && typeof attempt.then==='function'){
+        attempt.then(activate).catch(()=>{ pendingStart=false; gate.classList.remove('hidden'); });
+      }else activate();
+    }else if(player && ytReady){
+      try{ player.seekTo(0,true); player.unMute(); player.setVolume(100); player.playVideo(); }catch(_){}
+    }
+  }
+
+  gate.addEventListener('click',begin);
+  gate.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); begin(); }});
+  htmlAudio.addEventListener('ended',finish);
+  htmlAudio.addEventListener('error',()=>{ if(useLocalAudio) console.warn('Áudio local não pôde ser carregado.'); });
+
+  window.onYouTubeIframeAPIReady = () => {
+    if(useLocalAudio || !window.YT) return;
+    player = new YT.Player('yt-audio',{
+      width:'2',height:'2',videoId:params.get('video')||YOUTUBE_ID,
+      playerVars:{autoplay:auto?1:0,controls:0,disablekb:1,fs:0,iv_load_policy:3,playsinline:1,rel:0},
+      events:{
+        onReady:ev=>{
+          ytReady=true;
+          if(pendingStart){
+            try{ ev.target.setVolume(100); ev.target.playVideo(); }catch(_){}
+          }
+        },
+        onStateChange:ev=>{
+          if(!window.YT) return;
+          ytPlaying = ev.data===YT.PlayerState.PLAYING;
+          if(ytPlaying){ activate(); pendingStart=false; }
+          if(ev.data===YT.PlayerState.ENDED) finish();
+        },
+        onError:()=>{ ytReady=false; ytPlaying=false; }
+      }
+    });
+  };
+
+  // If the API happened to load before this script, initialize it immediately.
+  if(window.YT && window.YT.Player) window.onYouTubeIframeAPIReady();
+
+  if(auto && useLocalAudio){ begin(); }
+  render(0);
+  requestAnimationFrame(tick);
+})();
+
+  </script>
+</body>
+</html>
