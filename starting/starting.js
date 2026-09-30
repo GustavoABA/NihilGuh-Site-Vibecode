@@ -41,7 +41,6 @@
 
   const $ = id => document.getElementById(id);
   const audio = $('harpy-audio');
-  const film = $('reference-film');
   const broadcast = $('broadcast');
   const gate = $('start-gate');
   const gateTitle = $('start-gate-title');
@@ -129,34 +128,34 @@
       {transform:'translate3d(18px,3px,0) rotate(3.5deg)'},
       {transform:'translate3d(-6px,-7px,0) rotate(-1.8deg)'},
       {transform:'translate3d(-16px,4px,0) rotate(-3deg)'}
-    ],dancerStart,dancerEnd,2350,'cubic-bezier(.42,0,.3,1)');
+    ],dancerStart,dancerEnd,1050,'cubic-bezier(.42,0,.25,1)');
     makeLoop($('dress-back'),[
       {transform:'rotate(-3deg) scaleX(.96)'},
       {transform:'rotate(5deg) scaleX(1.09)'},
       {transform:'rotate(-2deg) scaleX(.98)'}
-    ],dancerStart,dancerEnd,1180,'ease-in-out');
+    ],dancerStart,dancerEnd,680,'ease-in-out');
     makeLoop($('dress-front'),[
       {transform:'rotate(2deg) scaleX(1.02)'},
       {transform:'rotate(-5deg) scaleX(.93)'},
       {transform:'rotate(3deg) scaleX(1.04)'}
-    ],dancerStart,dancerEnd,1180,'ease-in-out');
+    ],dancerStart,dancerEnd,680,'ease-in-out');
     makeLoop($('dancer-torso'),[
       {transform:'rotate(-1.5deg) translateY(0)'},
       {transform:'rotate(2deg) translateY(-7px)'},
       {transform:'rotate(-1deg) translateY(0)'}
-    ],dancerStart,dancerEnd,1180,'ease-in-out');
+    ],dancerStart,dancerEnd,680,'ease-in-out');
     makeLoop($('arm-left'),[
-      {transform:'rotate(11deg)'},{transform:'rotate(-15deg)'},{transform:'rotate(11deg)'}
-    ],dancerStart,dancerEnd,1180,'ease-in-out');
+      {transform:'rotate(14deg)'},{transform:'rotate(-20deg)'},{transform:'rotate(14deg)'}
+    ],dancerStart,dancerEnd,560,'ease-in-out');
     makeLoop($('arm-right'),[
-      {transform:'rotate(-12deg)'},{transform:'rotate(16deg)'},{transform:'rotate(-12deg)'}
-    ],dancerStart,dancerEnd,1180,'ease-in-out');
+      {transform:'rotate(-15deg)'},{transform:'rotate(21deg)'},{transform:'rotate(-15deg)'}
+    ],dancerStart,dancerEnd,560,'ease-in-out');
     makeLoop($('dancer-art'),[
       {transform:'rotateY(-7deg) rotateZ(-1.5deg) scale(1)'},
       {transform:'rotateY(12deg) rotateZ(2deg) scale(1.025)'},
       {transform:'rotateY(-10deg) rotateZ(-2deg) scale(.995)'},
       {transform:'rotateY(-7deg) rotateZ(-1.5deg) scale(1)'}
-    ],dancerStart,dancerEnd,1850,'cubic-bezier(.45,.05,.2,1)');
+    ],dancerStart,dancerEnd,920,'cubic-bezier(.45,.05,.2,1)');
 
     const birdStart=165.5,birdEnd=MASTER_DURATION;
     makeLoop($('bird-motion'),[
@@ -270,19 +269,6 @@
     mouth.style.transform=`translate3d(0,${Math.sin(t*1.6)*3}px,0) scaleY(${1+e*.24})`;
   }
 
-  function syncFilm(t){
-    if(!film || film.readyState<1) return;
-    if(film.paused){
-      film.play().catch(()=>{});
-    }
-    if(Number.isFinite(film.duration) && film.duration>0){
-      const target=t%film.duration;
-      if(Math.abs(film.currentTime-target)>.85){
-        try{film.currentTime=target;}catch(_){}
-      }
-    }
-  }
-
   function showGate(title,copy,canPlay=true){
     gateTitle.textContent=title;
     gateCopy.textContent=copy;
@@ -382,7 +368,6 @@
       updateAnimations(t,sec);
       updateCheshire(t,sec.scene);
       setCaption(captionIndexAt(t));
-      syncFilm(t);
     }else{
       currentEl.textContent='';nextEl.textContent='';
     }
@@ -450,7 +435,6 @@
 
   setupSceneAnimations();
   sceneElements.get('intro')?.classList.add('is-visible');
-  film.play().catch(()=>{});
   virtualStartedAt=performance.now();
   configureAudio();
   paint();
