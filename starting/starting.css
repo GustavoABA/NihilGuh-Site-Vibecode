@@ -128,10 +128,33 @@ button,input{font:inherit}
 
 .start-gate{
   position:absolute;inset:0;z-index:50;
-  display:grid;place-content:center;gap:8px;text-align:center;
-  border:0;background:rgba(0,0,0,.88);color:#fff;cursor:pointer;
+  display:grid;place-items:center;text-align:center;
+  background:rgba(0,0,0,.90);color:#fff;
 }
-.start-gate strong{font-size:1.2rem}.start-gate span{font-size:.78rem;color:#888}
+.start-gate[hidden]{display:none!important}
+.start-gate-box{
+  width:min(520px,calc(100vw - 40px));
+  display:grid;gap:10px;
+  padding:26px;
+  border:1px solid rgba(255,255,255,.16);
+  background:#070707;
+  box-shadow:0 22px 70px rgba(0,0,0,.72);
+}
+.start-gate strong{font-size:1.2rem}
+.start-gate-box>span{font-size:.78rem;line-height:1.55;color:#888}
+.start-gate-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.start-gate-actions button,.start-gate-file,.start-gate-actions a{
+  min-height:44px;
+  display:flex;align-items:center;justify-content:center;
+  padding:0 12px;
+  border:1px solid #363636;
+  background:#111;color:#eee;
+  text-decoration:none;font-size:.78rem;font-weight:800;
+  cursor:pointer;
+}
+.start-gate-actions button:hover,.start-gate-file:hover,.start-gate-actions a:hover{background:#1b1b1b;border-color:#666}
+.start-gate-file input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.start-gate-actions a{grid-column:1/-1;color:#aaa}
 .debug-panel{
   position:absolute;z-index:80;top:18px;right:18px;width:240px;
   padding:14px;border:1px solid #444;background:rgba(0,0,0,.88);
