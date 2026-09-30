@@ -81,12 +81,22 @@
   let audioSource = '';
   let localObjectUrl = '';
   let userGestureUnlocked = false;
+  let audioDrivesTimeline = false;
+  let virtualStartedAt = performance.now();
+  let virtualPausedAt = 0;
+  let virtualPaused = false;
+  let virtualEndHandled = false;
+
+  function virtualTime() {
+    if (PREVIEW) return previewPaused ? previewPausedAt : (performance.now() - previewStartedAt) / 1000;
+    return virtualPaused ? virtualPausedAt : (performance.now() - virtualStartedAt) / 1000;
+  }
 
   function adjustedTime() {
-    const raw = PREVIEW
-      ? (previewPaused ? previewPausedAt : ((performance.now() - previewStartedAt) / 1000) % MASTER_DURATION)
-      : Number(audio.currentTime || 0);
-    return Math.max(0, raw + offset);
+    const raw = audioDrivesTimeline && !audio.paused
+      ? Number(audio.currentTime || 0)
+      : virtualTime();
+    return Math.max(0, Math.min(MASTER_DURATION, raw + offset));
   }
 
   function sectionAt(t) {
@@ -138,6 +148,12 @@
   }
 
   function paint() {
+    const rawVirtual = virtualTime();
+    if (!resting && !audioDrivesTimeline && rawVirtual >= MASTER_DURATION && !virtualEndHandled) {
+      virtualEndHandled = true;
+      enterRest();
+    }
+
     const t = adjustedTime();
     const sec = sectionAt(t);
     setScene(resting ? 'rest' : sec.scene);
@@ -187,6 +203,7 @@
     gateCopy.textContent = copy;
     gatePlay.hidden = !canPlay;
     gate.hidden = false;
+    gate.classList.add('is-compact');
   }
 
   async function beginAudio(fromGesture=false) {
@@ -207,7 +224,12 @@
     if (fromGesture) userGestureUnlocked = true;
 
     try {
+      const visualTime = Math.max(0, Math.min(MASTER_DURATION - .1, virtualTime()));
+      if (Math.abs(Number(audio.currentTime || 0) - visualTime) > .35) {
+        try { audio.currentTime = visualTime; } catch (_) {}
+      }
       await audio.play();
+      audioDrivesTimeline = true;
       gate.hidden = true;
       audioStatus.textContent = 'HARPY HARE · AO VIVO';
 
@@ -245,8 +267,13 @@
       setTimeout(() => broadcast.classList.remove('is-entering'), 2300);
       activeCaption = -1;
       activeScene = '';
-      audio.currentTime = 0;
-      await beginAudio();
+      virtualStartedAt = performance.now();
+      virtualPausedAt = 0;
+      virtualPaused = false;
+      virtualEndHandled = false;
+      audioDrivesTimeline = false;
+      try { audio.currentTime = 0; } catch (_) {}
+      if (audioReady) await beginAudio(false);
     }, REST_MS);
   }
 
@@ -271,6 +298,12 @@
       audio.src = audioSource;
       audioReady = true;
       audio.addEventListener('canplay',() => beginAudio(false),{once:true});
+      audio.addEventListener('error',() => {
+        audioReady = false;
+        audioDrivesTimeline = false;
+        showGate('Animação rodando sem áudio','A URL de áudio não respondeu. A animação continua normalmente.',false);
+        audioStatus.textContent = 'ANIMAÇÃO · SEM ÁUDIO';
+      },{once:true});
       audio.load();
       return;
     }
@@ -290,11 +323,11 @@
     } catch (_) {}
 
     showGate(
-      'Áudio ainda não configurado',
-      'Escolha um MP3 do seu PC para testar agora. Para o OBS, hospede a faixa e use ?audio=URL.',
+      'Animação rodando sem áudio',
+      'A página continua normalmente. Se quiser testar a música, escolha o MP3 do seu PC.',
       false
     );
-    audioStatus.textContent = 'ÁUDIO NÃO CONFIGURADO';
+    audioStatus.textContent = 'ANIMAÇÃO · SEM ÁUDIO';
   }
 
   gatePlay.addEventListener('click',() => beginAudio(true));
@@ -309,9 +342,9 @@
     audioReady=true;
     userGestureUnlocked=true;
     audio.load();
-    try {
-      await beginAudio(true);
-    } catch (_) {}
+    audio.addEventListener('canplay',async () => {
+      try { await beginAudio(true); } catch (_) {}
+    },{once:true});
   });
 
   if (DEBUG) {
@@ -320,7 +353,12 @@
       const v = Number(e.target.value);
       if (PREVIEW) previewSeek(v);
       else {
-        audio.currentTime = v;
+        if (audioDrivesTimeline) {
+          try { audio.currentTime = v; } catch (_) {}
+        } else {
+          virtualStartedAt = performance.now() - v * 1000;
+          virtualPausedAt = v;
+        }
         activeCaption = -1; activeScene = '';
       }
     });
@@ -341,12 +379,14 @@
     if (e.key === 'ArrowLeft') {
       e.preventDefault();
       if (PREVIEW) previewSeek(adjustedTime() - offset - 1);
-      else audio.currentTime = Math.max(0, audio.currentTime - 1);
+      else if (audioDrivesTimeline) audio.currentTime = Math.max(0, audio.currentTime - 1);
+      else virtualStartedAt += 1000;
     }
     if (e.key === 'ArrowRight') {
       e.preventDefault();
       if (PREVIEW) previewSeek(adjustedTime() - offset + 1);
-      else audio.currentTime = Math.min(MASTER_DURATION, audio.currentTime + 1);
+      else if (audioDrivesTimeline) audio.currentTime = Math.min(MASTER_DURATION, audio.currentTime + 1);
+      else virtualStartedAt -= 1000;
     }
     if (e.code === 'Space' && DEBUG) {
       e.preventDefault();
@@ -364,6 +404,7 @@
     gate.hidden = true;
     previewStartedAt = performance.now();
   } else {
+    virtualStartedAt = performance.now();
     configureAudioSource();
   }
 
