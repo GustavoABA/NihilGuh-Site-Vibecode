@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="starting.css?v=19">
+  <link rel="stylesheet" href="starting.css?v=20">
 </head>
 <body>
   <main class="broadcast" id="broadcast">
@@ -20,6 +20,7 @@
       <span>A LIVE VAI COMEÇAR</span>
     </header>
 
+    <div class="stage-stack">
     <section class="theater" id="theater" aria-label="Abertura ilustrada">
       <div class="stage-paper" aria-hidden="true"></div>
 
@@ -267,6 +268,11 @@
         <div class="lyric-layer story-pages" id="story-pages" aria-hidden="true">
           <span>◱</span><span>◰</span><span>◱</span>
         </div>
+
+        <div class="dance-fire" id="dance-fire" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+
         <div id="dancer-motion" class="dancer-motion">
           <svg id="dancer-art" class="dancer-art" viewBox="0 0 420 620" aria-label="Garota-gato dançando">
             <g id="dress-back" class="dress-back"><path d="M136 294 Q210 253 284 294 L354 506 Q210 578 66 506Z"/></g>
@@ -321,23 +327,17 @@
         <div id="subtitle-next" class="subtitle-next"></div>
       </div>
     </section>
+    </div>
 
     <footer class="broadcast-foot">
       <span>UMA HISTÓRIA ANTES DO CAOS</span>
       <span id="audio-status">HARPY HARE</span>
     </footer>
 
-    <aside id="debug-panel" class="debug-panel" hidden>
-      <strong>SYNC</strong>
-      <span><b id="debug-time">0.00</b>s</span>
-      <span id="debug-scene">intro</span>
-      <input id="debug-seek" type="range" min="0" max="179.6" step=".01" value="0">
-    </aside>
-
     <audio id="harpy-audio" src="../assets/audio/harpy-hare.mp3?v=2" preload="auto" autoplay playsinline></audio>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-  <script src="starting.js?v=19"></script>
+  <script src="starting.js?v=20"></script>
 </body>
 </html>
