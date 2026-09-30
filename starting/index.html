@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="starting.css?v=20">
+  <link rel="stylesheet" href="starting.css?v=21">
 </head>
 <body>
   <main class="broadcast" id="broadcast">
@@ -318,6 +318,48 @@
       </div>
 
       <div class="scene scene-rest" data-scene="rest"><span>✦</span></div>
+
+      <div class="hound-tunnel" id="hound-tunnel" aria-hidden="true">
+        <div class="hound-blackout"></div>
+
+        <svg class="hound-jaw hound-jaw-top" viewBox="0 0 1000 300" preserveAspectRatio="none">
+          <path class="hound-muzzle" d="M0 0H1000V122C900 126 838 155 770 178C682 207 594 220 500 220C406 220 318 207 230 178C162 155 100 126 0 122Z"/>
+          <path class="hound-gum" d="M0 120C106 124 173 164 254 190C335 216 416 229 500 229C584 229 665 216 746 190C827 164 894 124 1000 120V180C900 190 832 222 752 244C670 267 585 278 500 278C415 278 330 267 248 244C168 222 100 190 0 180Z"/>
+          <g class="hound-teeth">
+            <path d="M132 160L180 178L150 244Z"/>
+            <path d="M230 190L273 203L250 252Z"/>
+            <path d="M322 214L360 222L340 262Z"/>
+            <path d="M410 226L445 231L428 268Z"/>
+            <path d="M590 226L555 231L572 268Z"/>
+            <path d="M678 214L640 222L660 262Z"/>
+            <path d="M770 190L727 203L750 252Z"/>
+            <path d="M868 160L820 178L850 244Z"/>
+          </g>
+          <path class="hound-nose" d="M425 25Q500-8 575 25L548 82Q500 104 452 82Z"/>
+        </svg>
+
+        <svg class="hound-jaw hound-jaw-bottom" viewBox="0 0 1000 300" preserveAspectRatio="none">
+          <path class="hound-muzzle" d="M0 300H1000V178C900 174 838 145 770 122C682 93 594 80 500 80C406 80 318 93 230 122C162 145 100 174 0 178Z"/>
+          <path class="hound-gum" d="M0 180C106 176 173 136 254 110C335 84 416 71 500 71C584 71 665 84 746 110C827 136 894 176 1000 180V120C900 110 832 78 752 56C670 33 585 22 500 22C415 22 330 33 248 56C168 78 100 110 0 120Z"/>
+          <g class="hound-teeth">
+            <path d="M150 56L180 122L132 140Z"/>
+            <path d="M250 48L273 97L230 110Z"/>
+            <path d="M340 38L360 78L322 86Z"/>
+            <path d="M428 32L445 69L410 74Z"/>
+            <path d="M572 32L555 69L590 74Z"/>
+            <path d="M660 38L640 78L678 86Z"/>
+            <path d="M750 48L727 97L770 110Z"/>
+            <path d="M850 56L820 122L868 140Z"/>
+          </g>
+        </svg>
+
+        <div class="hound-tunnel-core" id="hound-tunnel-core">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+
+        <div class="hound-endlight" id="hound-endlight"></div>
+        <div class="hound-whiteout" id="hound-whiteout"></div>
+      </div>
     </section>
 
     <section class="subtitle-area" aria-live="polite">
@@ -338,6 +380,6 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-  <script src="starting.js?v=20"></script>
+  <script src="starting.js?v=21"></script>
 </body>
 </html>
