@@ -153,20 +153,31 @@
     const mouth=$('cheshire-mouth');
     const blinkPhase=local%5.3;
     const blink=blinkPhase>5.08?Math.max(.08,1-(blinkPhase-5.08)*7):1;
-    const lookX=Math.sin(local*.55)*11;
-    const lookY=Math.cos(local*.39)*3;
-    gsap.set(eyes,{x:lookX,y:lookY,scaleY:blink,transformOrigin:'50% 50%'});
+    const lookX=Math.sin(local*.46)*9;
+    const lookY=Math.cos(local*.31)*2.4;
+    const tilt=Math.sin(local*.22)*.9;
+    gsap.set(eyes,{
+      x:lookX,
+      y:lookY,
+      rotation:tilt,
+      scaleY:blink,
+      transformOrigin:'50% 50%'
+    });
+    gsap.set('.pupil-left',{rotation:-2.4+Math.sin(local*.4)*1.2});
+    gsap.set('.pupil-right',{rotation:2.4-Math.sin(local*.4)*1.2});
 
     const voice=vocalActivity(t);
-    const syllable=Math.pow(Math.abs(Math.sin(t*8.6)),1.45);
+    const syllable=Math.pow(Math.abs(Math.sin(t*8.6)),1.42);
     const phrase=Math.abs(Math.sin(t*2.0+.35));
-    const open=.99+voice*(syllable*.075+phrase*.02);
-    const widen=1+voice*phrase*.012;
+    const open=.995+voice*(syllable*.055+phrase*.014);
+    const widen=1+voice*phrase*.018;
+    const grinLift=Math.sin(t*.92)*1.15;
     gsap.set(mouth,{
-      y:Math.sin(t*1.15)*1.2,
+      y:grinLift,
       scaleY:open,
       scaleX:widen,
-      transformOrigin:'50% 10%'
+      rotation:Math.sin(local*.27)*.35,
+      transformOrigin:'50% 7%'
     });
   }
 
