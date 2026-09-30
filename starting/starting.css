@@ -55,46 +55,98 @@ body{font-family:Inter,system-ui,sans-serif}
 .intro-copy small{font-size:.64rem;font-weight:900;letter-spacing:.28em;text-transform:uppercase;color:#777264}
 .intro-copy strong{font:700 clamp(2.8rem,6vw,6rem) "Cormorant Garamond";letter-spacing:-.055em;line-height:.9}
 
-.cheshire-aura{position:absolute;width:68%;height:52%;border-radius:50%;background:radial-gradient(ellipse,rgba(185,168,218,.10),transparent 70%);filter:blur(18px)}
-.cheshire-svg{width:min(860px,75%);height:auto;overflow:visible}
-.eye-shape{
-  fill:#f1ede2;
-  stroke:#c5b4ea;
-  stroke-width:2.8;
-  filter:drop-shadow(0 0 8px rgba(197,180,234,.28));
+.cheshire-aura{
+  position:absolute;
+  width:72%;
+  height:58%;
+  border-radius:50%;
+  background:
+    radial-gradient(ellipse at center,rgba(185,168,218,.10),transparent 56%),
+    radial-gradient(ellipse at center,rgba(255,255,255,.025),transparent 74%);
+  filter:blur(20px);
 }
-.pupil{fill:#0c0b0a}.glint{fill:#fff}
-.cheshire-eyes,.cheshire-mouth{
+.cheshire-svg{
+  width:min(930px,82%);
+  height:auto;
+  overflow:visible;
+}
+.eye-shape{
+  fill:url(#eyeIvory);
+  stroke:#bea9e6;
+  stroke-width:3.2;
+  stroke-linejoin:round;
+  filter:drop-shadow(0 0 9px rgba(184,162,226,.28));
+}
+.eyelid{
+  fill:none;
+  stroke:#8e7cae;
+  stroke-width:4.1;
+  stroke-linecap:round;
+  opacity:.82;
+}
+.pupil-wrap{
+  transform-box:fill-box;
+  transform-origin:center;
+}
+.pupil{
+  fill:#17151a;
+}
+.pupil-core{
+  fill:#030303;
+}
+.glint{
+  fill:#fefdf8;
+  opacity:.95;
+}
+.cheshire-eyes,
+.cheshire-mouth{
   transform-box:fill-box;
   transform-origin:center;
   will-change:transform;
 }
 .cheshire-mouth{
-  filter:drop-shadow(0 0 12px rgba(190,170,235,.18));
+  filter:drop-shadow(0 0 14px rgba(181,157,225,.17));
+}
+.grin-shadow{
+  fill:none;
+  stroke:rgba(180,158,224,.16);
+  stroke-width:18;
+  stroke-linecap:round;
+  filter:blur(5px);
 }
 .mouth-cavity{
   fill:#020202;
 }
 .teeth path{
-  fill:#f3efe4;
-  stroke:#100f0d;
+  fill:url(#toothIvory);
+  stroke:#11100f;
   stroke-width:2.4;
   stroke-linejoin:round;
 }
+.lower-teeth path{
+  fill:#ded7c8;
+}
 .lip{
   fill:none;
-  stroke:#c5b4ea;
+  stroke:#c7b4ed;
   stroke-linecap:round;
+  stroke-linejoin:round;
 }
 .lip-top{
-  stroke-width:6.5;
-  filter:drop-shadow(0 0 7px rgba(197,180,234,.42));
+  stroke-width:7.2;
+  filter:drop-shadow(0 0 8px rgba(199,180,237,.36));
 }
 .lip-bottom{
-  stroke-width:4.2;
-  opacity:.95;
+  stroke-width:4.4;
+  opacity:.90;
 }
-
+.smile-corner{
+  fill:none;
+  stroke:#c7b4ed;
+  stroke-width:4.2;
+  stroke-linecap:round;
+  opacity:.78;
+}
 .hare-lines{position:absolute;inset:0;overflow:hidden}
 .hare-lines i{position:absolute;left:-10%;width:120%;height:1px;background:linear-gradient(90deg,transparent,rgba(32,29,23,.22),transparent)}
 .hare-lines i:nth-child(1){top:34%}.hare-lines i:nth-child(2){top:51%}.hare-lines i:nth-child(3){top:68%}
