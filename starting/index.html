@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="starting.css?v=15">
+  <link rel="stylesheet" href="starting.css?v=16">
 </head>
 <body>
   <main class="broadcast" id="broadcast">
@@ -66,6 +66,18 @@
                        C795 445 675 515 500 525
                        C325 515 205 445 150 302Z"/>
             </clipPath>
+
+            <clipPath id="eyeLeftClip">
+              <path d="M132 218
+                       C205 147 338 137 458 194
+                       C372 246 245 260 132 218Z"/>
+            </clipPath>
+
+            <clipPath id="eyeRightClip">
+              <path d="M542 194
+                       C662 137 795 147 868 218
+                       C755 260 628 246 542 194Z"/>
+            </clipPath>
           </defs>
 
           <g class="face-shadow" aria-hidden="true">
@@ -85,11 +97,13 @@
               <path class="lower-lid"
                 d="M160 223 C255 257 360 246 438 200"/>
 
-              <ellipse class="iris" cx="310" cy="202" rx="31" ry="55"/>
-              <g class="pupil-wrap pupil-left">
-                <ellipse class="pupil" cx="310" cy="202" rx="11" ry="48"/>
-                <ellipse class="pupil-core" cx="310" cy="202" rx="4.5" ry="38"/>
-                <ellipse class="glint" cx="315" cy="179" rx="5.5" ry="8.5"/>
+              <g class="eye-inner" clip-path="url(#eyeLeftClip)">
+                <ellipse class="iris" cx="310" cy="202" rx="31" ry="55"/>
+                <g class="pupil-wrap pupil-left">
+                  <ellipse class="pupil" cx="310" cy="202" rx="11" ry="48"/>
+                  <ellipse class="pupil-core" cx="310" cy="202" rx="4.5" ry="38"/>
+                  <ellipse class="glint" cx="315" cy="179" rx="5.5" ry="8.5"/>
+                </g>
               </g>
             </g>
 
@@ -103,11 +117,13 @@
               <path class="lower-lid"
                 d="M562 200 C640 246 745 257 840 223"/>
 
-              <ellipse class="iris" cx="690" cy="202" rx="31" ry="55"/>
-              <g class="pupil-wrap pupil-right">
-                <ellipse class="pupil" cx="690" cy="202" rx="11" ry="48"/>
-                <ellipse class="pupil-core" cx="690" cy="202" rx="4.5" ry="38"/>
-                <ellipse class="glint" cx="695" cy="179" rx="5.5" ry="8.5"/>
+              <g class="eye-inner" clip-path="url(#eyeRightClip)">
+                <ellipse class="iris" cx="690" cy="202" rx="31" ry="55"/>
+                <g class="pupil-wrap pupil-right">
+                  <ellipse class="pupil" cx="690" cy="202" rx="11" ry="48"/>
+                  <ellipse class="pupil-core" cx="690" cy="202" rx="4.5" ry="38"/>
+                  <ellipse class="glint" cx="695" cy="179" rx="5.5" ry="8.5"/>
+                </g>
               </g>
             </g>
           </g>
