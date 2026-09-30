@@ -75,7 +75,26 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
 @media (max-aspect-ratio:1/1){.corner{font-size:.46rem}.section-label{bottom:3.2%;width:92%}.subtitle-current{font-size:clamp(.92rem,3.7vw,1.55rem)}.subtitle-next{font-size:clamp(.48rem,1.65vw,.72rem)}}
 @media (prefers-reduced-motion:reduce){.gate-mark{animation:none}}
 
-  </style>
+  
+/* v4 — composição limpa / personagem remando */
+.paper-notes{display:none!important}
+#darkness{display:none!important}
+#memory-cards{opacity:.34}
+#faith-sigil{pointer-events:none}
+#traveler .body{fill:#17272f;stroke:#071015;stroke-width:5}
+#traveler .head{fill:#c8bda5;stroke:#071015;stroke-width:5}
+#traveler .hood{fill:#10212a;stroke:#071015;stroke-width:5;stroke-linejoin:round}
+#traveler .neck{fill:none;stroke:#c8bda5;stroke-width:12;stroke-linecap:round}
+#traveler .leg{fill:none;stroke:#14252e;stroke-width:22;stroke-linecap:round}
+#traveler .arm-line{fill:none;stroke:#14252e;stroke-width:17;stroke-linecap:round;stroke-linejoin:round}
+#traveler .hand{fill:#c8bda5;stroke:#071015;stroke-width:4}
+#traveler .shoulder{fill:#14252e}
+#paddle-rig,#traveler-torso,#arm-back,#arm-front,#paddle-splash{will-change:transform,opacity}
+#paddle-splash path{fill:none;stroke:#dce8e4;stroke-width:5;stroke-linecap:round;opacity:.72}
+#water-occlusion path{fill:#0a2430;opacity:.82}
+#harbor-home{will-change:transform,opacity}
+
+</style>
 </head>
 <body>
   <main class="broadcast" id="broadcast">
@@ -172,6 +191,14 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
           <path d="M1090 485 Q1174 430 1268 480 Q1353 438 1434 480 Q1510 448 1600 486Z"/>
         </g>
 
+        <g id="harbor-home" opacity="0" transform="translate(1288 396)">
+          <circle class="lantern-aura" r="94" fill="url(#lanternGlow)"/>
+          <path class="tiny-home" d="M-34 14 V-28 L0-58 L34-28 V14Z"/>
+          <rect class="tiny-window" x="-10" y="-15" width="20" height="25" rx="2"/>
+          <path class="tiny-roof" d="M-46 -24 L0-66 L46-24"/>
+          <ellipse id="home-shield" cx="0" cy="-20" rx="112" ry="96"/>
+        </g>
+
         <rect y="475" width="1600" height="425" fill="url(#seaGradient)"/>
 
         <g id="storm-back" opacity="0">
@@ -199,34 +226,60 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
 
         <g id="canoe-wrap" opacity="0" transform="translate(800 610)">
           <g id="canoe-travel"><g id="canoe-bob">
-            <ellipse id="canoe-shadow" cx="0" cy="83" rx="260" ry="34"/>
-            <path id="canoe" d="M-310 18 Q-190 108 2 112 Q194 108 316 18 Q205 55 0 56 Q-208 55 -310 18Z" fill="url(#boatGradient)"/>
-            <path class="canoe-rim" d="M-306 18 Q-198 48 0 49 Q200 48 312 18"/>
-            <path class="canoe-rim inner" d="M-250 38 Q-145 70 0 70 Q148 70 257 37"/>
-            <g transform="translate(-18 -126)"><g id="traveler">
-              <circle class="head" cx="0" cy="0" r="42"/>
-              <path class="body" d="M-26 42 Q0 21 29 44 L50 154 L-54 154Z"/>
-              <path id="arm" class="limb" d="M22 76 Q82 112 105 157"/>
-              <path class="limb" d="M-20 77 Q-55 118 -79 156"/>
-              <g id="tattoos" clip-path="url(#travelerClip)" transform="translate(-800 -430)">
-                <path d="M769 405 l26 25 l-18 28 l34 22"/><path d="M837 390 q-28 28 -4 57 t-6 48"/><circle cx="785" cy="448" r="7"/><circle cx="842" cy="420" r="6"/>
+            <ellipse id="canoe-shadow" cx="0" cy="88" rx="270" ry="34"/>
+            <path id="canoe" d="M-328 16 Q-198 112 0 118 Q201 112 330 16 Q215 53 0 56 Q-216 53 -328 16Z" fill="url(#boatGradient)"/>
+            <path class="canoe-rim" d="M-324 16 Q-205 47 0 50 Q206 47 326 16"/>
+            <path class="canoe-rim inner" d="M-267 38 Q-153 71 0 72 Q156 71 269 37"/>
+
+            <g id="traveler-seat" transform="translate(-52 -132)">
+              <g id="traveler">
+                <g id="traveler-torso">
+                  <path class="leg" d="M-25 126 Q18 151 74 142"/>
+                  <path class="leg" d="M-13 132 Q37 167 100 157"/>
+                  <path class="neck" d="M0 30 L3 48"/>
+                  <path class="body" d="M-43 48 Q-15 28 20 39 Q45 50 55 82 L62 126 Q27 144 -24 130 L-50 88Z"/>
+                  <circle class="head" cx="-2" cy="2" r="36"/>
+                  <path class="hood" d="M-39 0 Q-27 -47 -1 -51 Q31 -49 42 -4 Q22 -23 -2 -25 Q-24 -23 -39 0Z"/>
+                  <path class="hood" d="M-30 24 Q-4 42 30 23 Q23 55 -1 59 Q-23 56 -30 24Z"/>
+                  <g id="tattoos">
+                    <path d="M-20 70 q18 14 2 29 t11 25"/><path d="M18 60 q-15 17 2 31 t-5 29"/>
+                  </g>
+                  <g id="scars" opacity="0">
+                    <path d="M-22 72 l16 14 l-13 16 l18 17"/><path d="M17 74 l-13 18 l17 16 l-15 19"/>
+                  </g>
+                  <g id="healed" opacity="0">
+                    <path d="M-22 72 l16 14 l-13 16 l18 17"/><path d="M17 74 l-13 18 l17 16 l-15 19"/>
+                  </g>
+                </g>
+                <g id="arm-back">
+                  <circle class="shoulder" cx="-22" cy="62" r="12"/>
+                  <path class="arm-line" d="M-22 62 Q16 78 55 103"/>
+                  <circle class="hand" cx="57" cy="104" r="9"/>
+                </g>
+                <g id="arm-front">
+                  <circle class="shoulder" cx="30" cy="62" r="12"/>
+                  <path class="arm-line" d="M30 62 Q65 89 83 127"/>
+                  <circle class="hand" cx="84" cy="128" r="9"/>
+                </g>
               </g>
-              <g id="scars" opacity="0">
-                <path d="M-24 76 l18 15 l-15 17 l20 18"/><path d="M19 91 l-15 20 l19 17 l-17 20"/>
+            </g>
+
+            <g id="paddle-rig" transform="translate(84 -105) rotate(18)">
+              <g id="paddle">
+                <rect x="-7" y="-72" width="14" height="322" rx="7"/>
+                <path d="M0 245 C-32 272 -38 330 0 362 C39 330 32 272 0 245Z"/>
               </g>
-              <g id="healed" opacity="0">
-                <path d="M-24 76 l18 15 l-15 17 l20 18"/><path d="M19 91 l-15 20 l19 17 l-17 20"/>
-              </g>
-            </g></g>
-            <g transform="translate(88 -92) rotate(28)"><g id="paddle"><rect x="-8" y="-55" width="16" height="275" rx="8"/><path d="M0 220 C-28 247 -34 305 0 334 C35 305 28 247 0 220Z"/></g></g>
-            <g transform="translate(-135 -66)"><g id="home-lantern">
-              <circle class="lantern-aura" r="92" fill="url(#lanternGlow)"/>
-              <path class="tiny-home" d="M-34 12 V-28 L0-56 L34-28 V12Z"/>
-              <rect class="tiny-window" x="-10" y="-15" width="20" height="24" rx="2"/>
-              <path class="tiny-roof" d="M-45 -23 L0-64 L45-23"/>
-            </g></g>
-            <ellipse id="home-shield" cx="-135" cy="-25" rx="112" ry="96"/>
+            </g>
+            <g id="paddle-splash" opacity="0" transform="translate(205 160)">
+              <path d="M0 0 q22 -26 44 -3"/>
+              <path d="M16 10 q28 -22 56 2"/>
+              <path d="M38 20 q20 -12 42 6"/>
+            </g>
           </g></g>
+        </g>
+
+        <g id="water-occlusion" clip-path="url(#seaClip)">
+          <path d="M-80 716 C65 684 170 742 320 713 S575 687 720 716 S980 745 1125 714 S1380 687 1680 719 L1680 900 L-80 900Z"/>
         </g>
 
         <g id="darkness" opacity="0">
@@ -234,7 +287,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
           <path id="dark-right" d="M1600 72 C1402 132 1395 306 1268 365 C1160 417 1138 520 1215 900 H1600Z"/>
         </g>
 
-        <g id="faith-sigil" opacity="0" transform="translate(800 366)"><g id="faith-motion">
+        <g id="faith-sigil" opacity="0" transform="translate(1208 302)"><g id="faith-motion">
           <circle class="faith-ring outer" r="170"/><circle class="faith-ring mid" r="128"/><circle class="faith-ring inner" r="73"/>
           <path class="faith-needle" d="M0 -145 L30 -12 L0 32 L-30 -12Z"/>
           <path class="faith-needle south" d="M0 145 L22 20 L0 -20 L-22 20Z"/>
@@ -373,8 +426,9 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
     memories: $('memory-cards'), writing: $('writing-scene'), pencil: $('pencil'), pen: $('pen'), script: $('ink-script'),
     breath: $('breath-scene'), heart: $('heart'), shards: $('past-shards'), islands: $('horizon-islands'), storm: $('storm-back'),
     waterFar: $('wave-far'), waterMid: $('wave-mid'), waterFront: $('wave-front'), foam: $('foam'), wake: $('wake'),
-    canoeWrap: $('canoe-wrap'), canoeTravel: $('canoe-travel'), canoeBob: $('canoe-bob'), paddle: $('paddle'), traveler: $('traveler'), tattoos: $('tattoos'),
-    scars: $('scars'), healed: $('healed'), lantern: $('home-lantern'), shield: $('home-shield'), darkness: $('darkness'),
+    canoeWrap: $('canoe-wrap'), canoeTravel: $('canoe-travel'), canoeBob: $('canoe-bob'), paddle: $('paddle'), paddleRig: $('paddle-rig'), splash: $('paddle-splash'),
+    traveler: $('traveler'), travelerTorso: $('traveler-torso'), armBack: $('arm-back'), armFront: $('arm-front'), tattoos: $('tattoos'),
+    scars: $('scars'), healed: $('healed'), lantern: $('harbor-home'), shield: $('home-shield'), darkness: $('darkness'),
     darkLeft: $('dark-left'), darkRight: $('dark-right'), faith: $('faith-sigil'), faithMotion: $('faith-motion'), stormShards: $('storm-shards'), birds: $('birds'),
     endMark: $('end-mark'), notes: [...document.querySelectorAll('.note')]
   };
@@ -523,13 +577,19 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
     set(el.canoeWrap,{opacity});
     set(el.canoeTravel,{x,y,scale,transformOrigin:'50% 55%'});
     set(el.canoeBob,{y:bob,rotation:roll,transformOrigin:'50% 70%'});
-    set(el.paddle,{rotation:Math.sin(t*2.05)*18*(1-finalTravel*.7),transformOrigin:'0% 0%'});
-    set(el.traveler,{rotation:-roll*.18,y:Math.sin(t*.95)*2,transformOrigin:'50% 100%'});
 
-    const protect=(t>=MARKS.pre1 ? .36 : .18)+.08*pulse(t,1.3);
-    set(el.shield,{opacity:protect,scale:.97+.035*pulse(t,1.15),rotation:t*3.2,transformOrigin:'50% 50%'});
-    set(el.lantern,{scale:1+.035*pulse(t,2.1),transformOrigin:'50% 50%'});
-    set(el.wake,{opacity:canoeA*(.25+waveAmp*.25)*(1-finalTravel),x:-finalTravel*200});
+    const rowPhase=t*2.12;
+    const stroke=Math.sin(rowPhase);
+    const drive=Math.max(0,stroke);
+    const recover=Math.max(0,-stroke);
+    set(el.paddleRig,{rotation:-9+stroke*18*(1-finalTravel*.72),x:stroke*7,y:drive*7,transformOrigin:'50% 17%'});
+    set(el.traveler,{y:Math.sin(t*.95)*2,transformOrigin:'50% 100%'});
+    set(el.travelerTorso,{rotation:-4-drive*5+recover*2.2,x:drive*3,y:drive*2,transformOrigin:'15% 90%'});
+    set(el.armBack,{rotation:-stroke*5-drive*3,transformOrigin:'-22px 62px'});
+    set(el.armFront,{rotation:-stroke*8-drive*4,transformOrigin:'30px 62px'});
+    set(el.splash,{opacity:drive*(.18+.48*waveAmp)*(1-finalTravel),scale:.82+drive*.28,x:drive*10,y:-drive*5,transformOrigin:'0% 50%'});
+
+    set(el.wake,{opacity:canoeA*(.22+waveAmp*.20)*(1-finalTravel),x:-finalTravel*200});
 
     const waveSpeed=24;
     set(el.waterFar,{x:-((t*waveSpeed*.36)%210),y:Math.sin(t*.72)*8*waveAmp});
@@ -543,7 +603,9 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
     const c2=win(t,MARKS.pre2End,MARKS.chorus2End,.35);
     const final=win(t,MARKS.calmEnd,MARKS.fadeEnd,.45);
     const c=Math.max(c1,c2,final);
-    set(el.notes[3],{opacity:c*.72,x:Math.sin(t*.42)*5});
+    const protect=c*(.42+.08*pulse(t,1.3));
+    set(el.lantern,{opacity:c*.88,scale:.94+.055*pulse(t,1.65),y:-c*4,transformOrigin:'50% 50%'});
+    set(el.shield,{opacity:protect,scale:.96+.035*pulse(t,1.15),rotation:t*2.2,transformOrigin:'50% 50%'});
     const surge=c*(1-smoothstep(MARKS.faithEnd,MARKS.calmEnd,t)*.6);
     set(stage,{filter:`contrast(${1+surge*.08}) saturate(${.94+surge*.13})`});
   }
@@ -570,8 +632,8 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
   function renderFaith(t){
     const a=win(t,MARKS.chorus2End,MARKS.faithEnd,.45);
     const p=clamp01((t-MARKS.chorus2End)/(MARKS.faithEnd-MARKS.chorus2End));
-    set(el.faith,{opacity:a});
-    set(el.faithMotion,{scale:.72+smoothstep(0,.32,p)*.34,rotation:-12+p*36+Math.sin(t*.42)*2,transformOrigin:'50% 50%'});
+    set(el.faith,{opacity:a*.48});
+    set(el.faithMotion,{scale:.48+smoothstep(0,.32,p)*.16,rotation:-8+p*20+Math.sin(t*.42)*1.2,transformOrigin:'50% 50%'});
     set(el.stormShards,{opacity:a*(1-smoothstep(.68,1,p))});
     [...el.stormShards.children].forEach((shard,i)=>{
       const q=(p*1.25-i*.075);
@@ -579,15 +641,15 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
       const side=i%2?-1:1;
       set(shard,{x:side*(1-hit)*170,opacity:a*(1-smoothstep(.55,1,hit)),scale:.9+hit*.12});
     });
-    set(el.notes[5],{opacity:a*.88,scale:.96+.05*pulse(t,1.1),transformOrigin:'50% 50%'});
+    set(el.lantern,{opacity:Math.max(Number(el.lantern.style.opacity)||0,a*.42)});
     if(a>0.001) set(el.darkness,{opacity:a*(1-p)*.32});
   }
 
   function renderCalm(t){
     const a=win(t,MARKS.faithEnd,MARKS.calmEnd,.5);
     const p=clamp01((t-MARKS.faithEnd)/(MARKS.calmEnd-MARKS.faithEnd));
-    set(el.faith,{opacity:Math.max(Number(el.faith.style.opacity)||0,a*(1-p)*.72)});
-    set(el.notes[6],{opacity:a*smoothstep(.18,.50,p)*.86,y:-p*8});
+    set(el.faith,{opacity:Math.max(Number(el.faith.style.opacity)||0,a*(1-p)*.28)});
+    set(el.lantern,{opacity:a*(.38+.30*smoothstep(.18,.65,p)),scale:.96+.04*pulse(t,1.2),transformOrigin:'50% 50%'});
     set(el.birds,{opacity:a*smoothstep(.50,.92,p)*.34});
     set(el.islands,{opacity:a*.26,y:p*9});
   }
