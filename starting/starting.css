@@ -250,3 +250,44 @@ body{font-family:Inter,system-ui,sans-serif}
   .broadcast{grid-template-rows:54px minmax(0,1fr) 118px 34px;padding:0 16px}
   .theater{width:94vw}.broadcast-head{font-size:.56rem}.subtitle-area{width:90vw}
 }
+
+
+/* v17 motion polish */
+.theater::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:70;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse at center,transparent 52%,rgba(0,0,0,.15) 100%),
+    linear-gradient(180deg,rgba(255,255,255,.018),transparent 22%,transparent 78%,rgba(0,0,0,.055));
+}
+.scene,
+.cheshire-svg,
+.hare-motion,
+.hare-art,
+.dancer-motion,
+.dancer-art,
+.bird-motion,
+.bird-art,
+.face-shadow,
+.cheshire-aura{
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+.hare-motion,
+.dancer-motion,
+.bird-motion,
+.face-shadow,
+.cheshire-aura{
+  will-change:transform,opacity;
+}
+.face-shadow,
+.cheshire-aura{
+  transform-origin:50% 50%;
+}
+.subtitle-current,
+.subtitle-next{
+  will-change:transform,opacity;
+}
