@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="starting.css?v=8">
+  <link rel="stylesheet" href="starting.css?v=9">
 </head>
 <body>
   <main class="broadcast" id="broadcast">
@@ -64,8 +64,24 @@
           <g class="cheshire-mouth" id="cheshire-mouth" filter="url(#cheshireGlow)">
             <path class="mouth-cavity" d="M270 312 Q500 490 730 312 Q500 414 270 312Z"/>
             <g class="teeth-layer" clip-path="url(#cheshireMouthClip)">
-              <path class="teeth-fill" d="M288 330 Q500 462 712 330 Q500 420 288 330Z"/>
-              <path class="tooth-lines" d="M322 345 L353 397 L385 360 L419 420 L455 374 L500 444 L545 374 L581 420 L615 360 L647 397 L678 345"/>
+              <!-- dentes superiores: ficam dentro da cavidade, atrás do lábio -->
+              <path class="cheshire-tooth" d="M292 323 L332 339 L315 365 Z"/>
+              <path class="cheshire-tooth" d="M333 340 L376 357 L354 387 Z"/>
+              <path class="cheshire-tooth" d="M377 358 L423 379 L399 411 Z"/>
+              <path class="cheshire-tooth" d="M424 380 L473 397 L449 432 Z"/>
+              <path class="cheshire-tooth" d="M474 398 L526 398 L500 438 Z"/>
+              <path class="cheshire-tooth" d="M527 397 L576 380 L551 432 Z"/>
+              <path class="cheshire-tooth" d="M577 379 L623 358 L600 411 Z"/>
+              <path class="cheshire-tooth" d="M624 357 L667 340 L646 387 Z"/>
+              <path class="cheshire-tooth" d="M668 339 L708 323 L685 365 Z"/>
+
+              <!-- dentes inferiores: menores, apontando para cima -->
+              <path class="cheshire-tooth lower" d="M332 406 L366 431 L349 397 Z"/>
+              <path class="cheshire-tooth lower" d="M382 432 L419 453 L401 416 Z"/>
+              <path class="cheshire-tooth lower" d="M438 454 L478 469 L458 429 Z"/>
+              <path class="cheshire-tooth lower" d="M522 469 L562 454 L542 429 Z"/>
+              <path class="cheshire-tooth lower" d="M581 453 L618 432 L599 416 Z"/>
+              <path class="cheshire-tooth lower" d="M634 431 L668 406 L651 397 Z"/>
             </g>
             <path class="smile-lip top-lip" d="M265 312 Q500 401 735 312"/>
             <path class="smile-lip bottom-lip" d="M270 312 Q500 490 730 312"/>
@@ -223,6 +239,6 @@
     <audio id="harpy-audio" preload="auto" playsinline></audio>
   </main>
 
-  <script src="starting.js?v=8"></script>
+  <script src="starting.js?v=9"></script>
 </body>
 </html>
