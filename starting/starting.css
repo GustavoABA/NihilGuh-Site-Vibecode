@@ -296,3 +296,76 @@ button,input{font:inherit}
 }
 .dancer-motion{perspective:900px}
 .dancer-art{transform-origin:50% 58%;will-change:transform}
+
+
+/* v7 precision fixes from visual QA */
+.theater{
+  background:#090908!important;
+}
+.scene{
+  inset:0!important;
+}
+.scene::before,
+.scene::after,
+.theater::before,
+.theater::after{
+  display:none!important;
+  content:none!important;
+}
+.ornament,
+.ornament-top,
+.ornament-bottom{
+  display:none!important;
+}
+.paper-wash{
+  inset:0!important;
+}
+
+/* Cheshire: keep the complete face centered inside the stage */
+.scene-cheshire{
+  display:grid!important;
+  place-items:center!important;
+  overflow:hidden!important;
+}
+.cheshire-svg{
+  position:relative!important;
+  left:auto!important;
+  top:auto!important;
+  width:min(820px,72%)!important;
+  max-height:76%!important;
+  transform:none!important;
+  margin:0 auto!important;
+  overflow:visible!important;
+}
+.cheshire-mouth{
+  transform-box:fill-box;
+  transform-origin:50% 18%;
+}
+.teeth-layer{
+  transform:translateY(9px) scaleY(.88);
+  transform-origin:50% 0%;
+  pointer-events:none;
+}
+.tooth-lines{
+  stroke-width:4.5!important;
+}
+.top-lip{
+  stroke-width:6!important;
+}
+.bottom-lip{
+  stroke-width:4.5!important;
+}
+
+/* Hare travels left -> right and visually faces the direction of travel */
+.hare-art{
+  transform:scaleX(-1)!important;
+  transform-origin:50% 50%!important;
+}
+
+/* Faster dance with a little more visual energy */
+.dancer-motion{
+  width:min(390px,30vw)!important;
+}
+.dancer-art{
+  transform-origin:50% 58%!important;
+}
