@@ -148,36 +148,80 @@
 
   function updateCheshire(t,section){
     if(section.scene!=='cheshire') return;
+
     const local=t-section.start;
     const eyes=$('cheshire-eyes');
     const mouth=$('cheshire-mouth');
-    const blinkPhase=local%5.3;
-    const blink=blinkPhase>5.08?Math.max(.08,1-(blinkPhase-5.08)*7):1;
-    const lookX=Math.sin(local*.46)*9;
-    const lookY=Math.cos(local*.31)*2.4;
-    const tilt=Math.sin(local*.22)*.9;
+    const leftEye=$('eye-left-wrap');
+    const rightEye=$('eye-right-wrap');
+
+    // Irregular feline blink: the eyes do not squash in perfect unison.
+    const blinkPhase=local%5.65;
+    const blinkBase=blinkPhase>5.38
+      ? Math.max(.055,1-(blinkPhase-5.38)*8.4)
+      : 1;
+    const leftBlink=blinkBase;
+    const rightBlink=Math.min(1,blinkBase+.035);
+
+    const driftX=Math.sin(local*.36)*5.5;
+    const driftY=Math.cos(local*.27)*1.4;
+    const headTilt=Math.sin(local*.16)*.32;
+
     gsap.set(eyes,{
-      x:lookX,
-      y:lookY,
-      rotation:tilt,
-      scaleY:blink,
+      x:driftX,
+      y:driftY,
+      rotation:headTilt,
       transformOrigin:'50% 50%'
     });
-    gsap.set('.pupil-left',{rotation:-2.4+Math.sin(local*.4)*1.2});
-    gsap.set('.pupil-right',{rotation:2.4-Math.sin(local*.4)*1.2});
+
+    gsap.set(leftEye,{
+      scaleY:leftBlink,
+      rotation:-1.8+Math.sin(local*.21)*.55,
+      transformOrigin:'50% 50%'
+    });
+    gsap.set(rightEye,{
+      scaleY:rightBlink,
+      rotation:1.8-Math.sin(local*.21)*.55,
+      transformOrigin:'50% 50%'
+    });
+
+    const gaze=Math.sin(local*.32);
+    const gazeY=Math.cos(local*.24);
+    gsap.set('.pupil-left',{
+      x:gaze*7,
+      y:gazeY*1.5,
+      rotation:-3.1+gaze*.8
+    });
+    gsap.set('.pupil-right',{
+      x:gaze*7,
+      y:gazeY*1.5,
+      rotation:3.1-gaze*.8
+    });
 
     const voice=vocalActivity(t);
-    const syllable=Math.pow(Math.abs(Math.sin(t*8.6)),1.42);
-    const phrase=Math.abs(Math.sin(t*2.0+.35));
-    const open=.995+voice*(syllable*.055+phrase*.014);
-    const widen=1+voice*phrase*.018;
-    const grinLift=Math.sin(t*.92)*1.15;
+    const syllable=Math.pow(Math.abs(Math.sin(t*8.4)),1.38);
+    const phrase=Math.abs(Math.sin(t*1.92+.32));
+
+    // Keep the grin recognizable: singing expands it more sideways than vertically.
+    const open=.998+voice*(syllable*.030+phrase*.008);
+    const widen=1+voice*(phrase*.020+syllable*.006);
+    const floatY=Math.sin(t*.73)*.65;
+
     gsap.set(mouth,{
-      y:grinLift,
+      y:floatY,
       scaleY:open,
       scaleX:widen,
-      rotation:Math.sin(local*.27)*.35,
-      transformOrigin:'50% 7%'
+      rotation:Math.sin(local*.18)*.18,
+      transformOrigin:'50% 8%'
+    });
+
+    gsap.set('.cheek-left',{
+      x:-voice*phrase*3.5,
+      opacity:.14+voice*.06
+    });
+    gsap.set('.cheek-right',{
+      x:voice*phrase*3.5,
+      opacity:.14+voice*.06
     });
   }
 
