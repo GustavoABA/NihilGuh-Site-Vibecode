@@ -3,126 +3,190 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#050505">
   <link rel="icon" type="image/webp" href="../assets/avatar-nihilguh.webp">
   <title>NihilGuh — Iniciando a Live</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;650;750;850;900&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="starting.css?v=4">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="starting.css?v=5">
 </head>
 <body>
   <main class="broadcast" id="broadcast">
-    <div class="grain" aria-hidden="true"></div>
+    <div class="page-noise" aria-hidden="true"></div>
+
     <header class="broadcast-head">
-      <span class="live-mark"><i></i> NIHILGUH // MUNDO LOUCO</span>
-      <span class="tiny-mark">INICIANDO EM BREVE</span>
+      <span class="live-mark"><i></i> NIHILGUH // WONDERLAND</span>
+      <span class="tiny-mark">A LIVE VAI COMEÇAR</span>
     </header>
 
-    <section class="theater" id="theater" aria-label="Animação de abertura">
-      <div class="scene scene-intro is-active" data-scene="intro">
-        <div class="moon-ring"></div>
-        <div class="intro-stars" aria-hidden="true">✦　·　✧　·　✦</div>
+    <section class="theater" id="theater" aria-label="Abertura ilustrada">
+      <video
+        class="reference-film"
+        id="reference-film"
+        src="../assets/video/harpy-hare-reference.mp4"
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        aria-hidden="true"></video>
+
+      <div class="paper-wash" aria-hidden="true"></div>
+      <div class="ornament ornament-top" aria-hidden="true"></div>
+      <div class="ornament ornament-bottom" aria-hidden="true"></div>
+      <div class="edge-vignette" aria-hidden="true"></div>
+
+      <div class="scene scene-intro" data-scene="intro">
+        <div class="story-moon" aria-hidden="true">
+          <span>☾</span>
+          <i></i>
+        </div>
+        <div class="intro-stars" aria-hidden="true">
+          <b>✦</b><b>·</b><b>✧</b><b>·</b><b>✦</b>
+        </div>
         <div class="intro-copy">
-          <span>um conto antes do caos</span>
+          <small>um conto antes do caos</small>
           <strong>desça pela toca</strong>
         </div>
       </div>
 
       <div class="scene scene-cheshire" data-scene="cheshire">
-        <div class="cheshire-haze"></div>
-        <svg class="cheshire-svg" viewBox="0 0 960 540" role="img" aria-label="Olhos e sorriso do Gato de Cheshire">
+        <div class="cheshire-mist mist-a"></div>
+        <div class="cheshire-mist mist-b"></div>
+        <svg class="cheshire-svg" viewBox="0 0 1000 560" role="img" aria-label="Olhos e sorriso do Gato de Cheshire">
           <defs>
-            <filter id="ghostGlow" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="7" result="blur"/>
+            <filter id="cheshireGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="4.8" result="blur"/>
               <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
           </defs>
-          <g class="cheshire-eyes" filter="url(#ghostGlow)">
-            <path class="eye eye-left" d="M250 202 Q335 132 421 202 Q335 270 250 202Z"/>
-            <path class="eye eye-right" d="M539 202 Q625 132 710 202 Q625 270 539 202Z"/>
-            <ellipse class="pupil" cx="337" cy="202" rx="13" ry="39"/>
-            <ellipse class="pupil" cx="623" cy="202" rx="13" ry="39"/>
+
+          <g class="cheshire-eye-pair" id="cheshire-eyes" filter="url(#cheshireGlow)">
+            <path class="eye-shape" d="M205 205 Q315 118 427 205 Q315 287 205 205Z"/>
+            <path class="eye-shape" d="M573 205 Q685 118 795 205 Q685 287 573 205Z"/>
+            <ellipse class="cheshire-pupil pupil-left" cx="318" cy="205" rx="14" ry="47"/>
+            <ellipse class="cheshire-pupil pupil-right" cx="682" cy="205" rx="14" ry="47"/>
+            <circle class="eye-glint" cx="323" cy="184" r="5"/>
+            <circle class="eye-glint" cx="687" cy="184" r="5"/>
           </g>
-          <g class="cheshire-mouth" id="cheshire-mouth" filter="url(#ghostGlow)">
-            <path class="grin-fill" d="M296 300 Q480 438 664 300 Q480 374 296 300Z"/>
-            <path class="grin-line" d="M296 300 Q480 438 664 300"/>
-            <path class="grin-line upper" d="M296 300 Q480 374 664 300"/>
-            <g class="teeth">
-              <path d="M337 318 l25 49 l22-36 l28 59 l25-45 l31 62 l28-62 l25 45 l28-59 l22 36 l25-49"/>
+
+          <g class="cheshire-mouth" id="cheshire-mouth" filter="url(#cheshireGlow)">
+            <path class="smile-shell" d="M265 315 Q500 498 735 315 Q500 402 265 315Z"/>
+            <path class="smile-cut" d="M289 325 Q500 447 711 325 Q500 390 289 325Z"/>
+            <g class="tooth-lines">
+              <path d="M330 342 L359 393 L386 354 L419 421 L450 370 L499 443 L548 370 L581 421 L614 354 L641 393 L670 342"/>
             </g>
           </g>
         </svg>
-        <div class="whisper whisper-a">◜</div>
-        <div class="whisper whisper-b">◝</div>
+        <div class="cheshire-rune rune-a">◜</div>
+        <div class="cheshire-rune rune-b">◝</div>
       </div>
 
       <div class="scene scene-hare" data-scene="hare">
-        <div class="speed-lines"></div>
-        <svg class="hare-svg" viewBox="0 0 520 260" role="img" aria-label="Lebre fugindo com flechas">
-          <g class="hare-runner">
-            <path class="stroke" d="M167 125 C122 105 103 63 130 39 C147 27 162 58 165 88 C185 55 217 29 231 48 C247 70 224 103 210 113"/>
-            <ellipse class="fill" cx="230" cy="145" rx="90" ry="57"/>
-            <circle class="fill" cx="139" cy="132" r="46"/>
-            <circle class="eye-dot" cx="124" cy="122" r="5"/>
-            <path class="stroke" d="M177 168 Q131 210 73 193 M263 179 Q323 223 379 188 M294 137 Q352 107 400 131"/>
-            <circle class="tail" cx="316" cy="128" r="26"/>
-            <g class="arrows">
-              <path d="M96 146 L26 123 M96 146 L23 148 M96 146 L34 173"/>
-              <path d="M26 123 l14 -3 l-8 11 M23 148 l14 -7 l-5 13 M34 173 l14 -10 l-2 14"/>
+        <div class="hare-ground" aria-hidden="true"></div>
+        <div class="hare-speed speed-a" aria-hidden="true"></div>
+        <div class="hare-speed speed-b" aria-hidden="true"></div>
+
+        <div class="hare-motion" id="hare-motion">
+          <div class="hare-shadow"></div>
+          <svg class="hare-art" id="hare-art" viewBox="0 0 560 310" role="img" aria-label="Lebre correndo com flechas">
+            <g class="hare-body">
+              <path class="hare-ear back" d="M190 111 C161 75 150 25 176 19 C196 14 212 67 211 101"/>
+              <path class="hare-ear" d="M216 105 C226 58 264 17 283 34 C304 52 271 94 244 119"/>
+              <ellipse class="hare-torso" cx="310" cy="180" rx="111" ry="69"/>
+              <circle class="hare-head" cx="199" cy="160" r="58"/>
+              <path class="hare-muzzle" d="M147 168 Q121 182 149 194"/>
+              <circle class="hare-eye" cx="180" cy="144" r="7"/>
+              <circle class="hare-glint" cx="177" cy="141" r="2.4"/>
+              <path class="hare-backleg" d="M360 220 Q430 271 492 231"/>
+              <path class="hare-frontleg" d="M264 219 Q193 275 123 247"/>
+              <path class="hare-frontleg second" d="M304 226 Q241 292 177 275"/>
+              <circle class="hare-tail" cx="408" cy="153" r="31"/>
             </g>
-          </g>
-        </svg>
-        <div class="hare-trail">➶　➶　➶</div>
+            <g class="mouth-arrows">
+              <path d="M151 179 L68 147 M151 180 L59 180 M151 181 L73 214"/>
+              <path class="arrow-head" d="M68 147 l19 -3 l-11 15 M59 180 l18 -9 l-7 18 M73 214 l19 -12 l-5 19"/>
+            </g>
+          </svg>
+          <div class="hare-dust"><i></i><i></i><i></i></div>
+        </div>
       </div>
 
       <div class="scene scene-dancer" data-scene="dancer">
-        <div class="forest-frame" aria-hidden="true">
-          <span class="tree t1">♠</span><span class="tree t2">♠</span><span class="tree t3">♠</span>
-          <span class="star s1">✦</span><span class="star s2">✧</span><span class="star s3">✦</span>
+        <div class="forest-silhouette" aria-hidden="true">
+          <i class="tree tree-a"></i><i class="tree tree-b"></i><i class="tree tree-c"></i>
+          <span class="forest-star star-a">✦</span><span class="forest-star star-b">✧</span><span class="forest-star star-c">✦</span>
         </div>
-        <div class="dancer-wrap">
-          <svg class="dancer-svg" viewBox="0 0 320 520" role="img" aria-label="Garota-gato dançando com vestido inspirado em Alice">
-            <g class="dancer-body">
-              <path class="cat-ear" d="M112 90 L128 33 L159 82 M161 82 L195 32 L208 93"/>
-              <circle class="head" cx="160" cy="113" r="54"/>
-              <path class="hair" d="M108 109 Q160 47 214 107 Q206 63 160 58 Q119 61 108 109"/>
-              <path class="torso" d="M126 162 Q160 147 194 162 L205 253 L114 253 Z"/>
-              <path class="apron" d="M145 172 L176 172 L188 251 L132 251 Z"/>
-              <path class="arm" d="M125 179 Q64 200 53 154 M194 179 Q255 200 270 151"/>
-              <path class="skirt" d="M114 241 Q160 218 206 241 L269 421 Q160 473 51 421 Z"/>
-              <path class="apron skirt-apron" d="M139 253 L182 253 L213 408 Q160 432 107 408 Z"/>
-              <path class="leg" d="M124 418 L114 491 M197 418 L208 491"/>
-              <path class="shoe" d="M111 489 q-22 7 -31 21 h51 M208 489 q22 7 31 21 h-51"/>
+
+        <div class="dancer-motion" id="dancer-motion">
+          <svg class="dancer-art" viewBox="0 0 420 620" role="img" aria-label="Garota-gato dançando com vestido inspirado em Alice">
+            <g class="dancer-shadow"><ellipse cx="210" cy="568" rx="108" ry="18"/></g>
+
+            <g class="dress-back" id="dress-back">
+              <path d="M136 294 Q210 253 284 294 L354 506 Q210 578 66 506Z"/>
+            </g>
+
+            <g class="dancer-legs">
+              <path d="M169 481 L159 567"/><path d="M251 481 L263 567"/>
+              <path class="shoe" d="M159 561 q-35 8 -53 34 h77"/><path class="shoe" d="M263 561 q35 8 53 34 h-77"/>
+            </g>
+
+            <g class="dancer-torso" id="dancer-torso">
+              <path class="cat-ear" d="M145 151 L158 78 L199 137 M220 137 L265 78 L276 153"/>
+              <circle class="dancer-head" cx="210" cy="170" r="72"/>
+              <path class="dancer-hair" d="M138 172 Q210 73 286 169 Q280 105 211 96 Q150 104 138 172Z"/>
+              <path class="dancer-neck" d="M193 233 L193 263 L228 263 L228 233"/>
+              <path class="dancer-bodice" d="M158 258 Q210 233 262 258 L279 342 L141 342Z"/>
+              <path class="dancer-apron-top" d="M185 263 L236 263 L248 339 L172 339Z"/>
+            </g>
+
+            <g class="dancer-arm arm-left" id="arm-left">
+              <path d="M158 279 Q93 289 66 229"/>
+              <circle cx="65" cy="226" r="9"/>
+            </g>
+            <g class="dancer-arm arm-right" id="arm-right">
+              <path d="M262 279 Q332 287 357 223"/>
+              <circle cx="358" cy="220" r="9"/>
+            </g>
+
+            <g class="dress-front" id="dress-front">
+              <path class="skirt-line" d="M141 329 Q210 302 279 329 L329 493 Q210 548 91 493Z"/>
+              <path class="apron-skirt" d="M172 341 L248 341 L278 475 Q210 510 142 475Z"/>
+              <path class="hem" d="M101 480 Q210 530 319 480"/>
             </g>
           </svg>
-          <div class="dress-orbit"></div>
+          <div class="dance-orbit orbit-one"></div>
+          <div class="dance-orbit orbit-two"></div>
         </div>
       </div>
 
       <div class="scene scene-bird" data-scene="bird">
-        <div class="bird-sky" aria-hidden="true">·　✦　　　·　　　　　✧　　·</div>
-        <svg class="bird-svg" viewBox="0 0 420 260" role="img" aria-label="Pássaro voando">
-          <g class="bird-body">
-            <ellipse class="bird-fill" cx="217" cy="143" rx="75" ry="42"/>
-            <circle class="bird-fill" cx="290" cy="119" r="34"/>
-            <path class="bird-beak" d="M320 115 L372 128 L321 137Z"/>
-            <circle class="bird-eye" cx="299" cy="111" r="4"/>
-            <path class="wing wing-left" d="M216 141 Q143 49 76 82 Q127 151 210 168Z"/>
-            <path class="wing wing-right" d="M224 144 Q294 56 354 80 Q314 151 231 168Z"/>
-            <path class="bird-tail" d="M153 147 L85 132 L135 168 L92 191 L168 176Z"/>
-          </g>
-        </svg>
-        <div class="feathers">⌁　⌁　⌁</div>
+        <div class="bird-stars" aria-hidden="true">
+          <span>·</span><span>✦</span><span>·</span><span>✧</span><span>·</span>
+        </div>
+        <div class="bird-motion" id="bird-motion">
+          <svg class="bird-art" viewBox="0 0 500 320" role="img" aria-label="Pássaro voando">
+            <g class="bird-tail"><path d="M170 190 L76 166 L142 208 L94 244 L190 220Z"/></g>
+            <g class="bird-wing wing-back" id="wing-back"><path d="M238 181 Q147 52 69 92 Q125 194 229 216Z"/></g>
+            <g class="bird-body">
+              <ellipse cx="246" cy="192" rx="92" ry="53"/>
+              <circle cx="334" cy="160" r="43"/>
+              <path class="bird-beak" d="M371 157 L441 174 L372 187Z"/>
+              <circle class="bird-eye" cx="346" cy="150" r="5"/>
+            </g>
+            <g class="bird-wing wing-front" id="wing-front"><path d="M255 186 Q343 61 418 101 Q365 195 264 217Z"/></g>
+          </svg>
+        </div>
+        <div class="floating-feathers" aria-hidden="true"><i>⌁</i><i>⌁</i><i>⌁</i></div>
       </div>
 
       <div class="scene scene-rest" data-scene="rest">
-        <div class="rest-dot">✦</div>
+        <div class="rest-symbol">✦</div>
       </div>
     </section>
 
     <section class="subtitle-area" aria-live="polite">
-      <div class="subtitle-icon" id="subtitle-icon">♠</div>
+      <div class="subtitle-mark" id="subtitle-icon">☾</div>
       <div class="subtitle-copy">
         <div class="subtitle-current" id="subtitle-current"></div>
         <div class="subtitle-next" id="subtitle-next"></div>
@@ -130,21 +194,21 @@
     </section>
 
     <footer class="broadcast-foot">
-      <span>PRETO · BRANCO · WONDERLAND</span>
+      <span>UMA HISTÓRIA ANTES DO CAOS</span>
       <span id="audio-status">HARPY HARE</span>
     </footer>
 
     <section class="start-gate" id="start-gate" hidden>
       <div class="start-gate-box">
-        <strong id="start-gate-title">▶ iniciar abertura</strong>
-        <span id="start-gate-copy">O navegador bloqueou o autoplay com áudio.</span>
+        <strong id="start-gate-title">▶ liberar áudio</strong>
+        <span id="start-gate-copy">A animação continua mesmo sem som.</span>
         <div class="start-gate-actions">
           <button id="start-gate-play" type="button">▶ tocar com áudio</button>
           <label class="start-gate-file">
             <input id="local-audio-file" type="file" accept="audio/*">
-            <span>Escolher MP3 do PC</span>
+            <span>Escolher MP3</span>
           </label>
-          <a id="start-preview-link" href="?preview=1">Testar sem áudio</a>
+          <a id="start-preview-link" href="?preview=1">Preview silencioso</a>
         </div>
       </div>
     </section>
@@ -154,18 +218,18 @@
       <span>tempo <b id="debug-time">0.00</b>s</span>
       <span>cena <b id="debug-scene">intro</b></span>
       <span>offset <b id="debug-offset">0.00</b>s</span>
-      <input id="debug-seek" type="range" min="0" max="181" step="0.01" value="0">
+      <input id="debug-seek" type="range" min="0" max="180" step="0.01" value="0">
       <div>
         <button data-debug="minus">−0.1s</button>
         <button data-debug="plus">+0.1s</button>
         <button data-debug="restart">↺</button>
       </div>
-      <small>[ / ] ajustam offset · ← / → buscam 1s</small>
+      <small>[ / ] offset · ← / → seek · espaço play/pause</small>
     </aside>
 
     <audio id="harpy-audio" preload="auto" playsinline></audio>
   </main>
 
-  <script src="starting.js?v=4"></script>
+  <script src="starting.js?v=5"></script>
 </body>
 </html>
