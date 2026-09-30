@@ -4,7 +4,7 @@
   const MASTER_DURATION = 179.583;
   const REST_MS = 2 * 60 * 1000;
   const params = new URLSearchParams(location.search);
-  const DEFAULT_AUDIO_SRC = '../assets/audio/harpy-hare.mp3';
+  const DEFAULT_AUDIO_SRC = '../assets/audio/harpy-hare.mp3?v=1';
   const EXPLICIT_AUDIO_SRC = params.get('audio') || '';
   const DEBUG = params.has('debug');
   const PREVIEW = params.has('preview');
