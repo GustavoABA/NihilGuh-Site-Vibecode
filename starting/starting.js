@@ -63,7 +63,7 @@
     [94.45,97.28],
     [104.00,119.45],
     [124.10,126.72],
-    [134.50,163.45]
+    [134.50,147.10]
   ];
 
   const $ = id => document.getElementById(id);
@@ -107,6 +107,29 @@
   }
 
   buildHarePack();
+
+  function buildCageBunnies(){
+    const source=$('hare-art');
+    const cage=$('cage-bunnies');
+    if(!source || !cage || cage.children.length) return;
+
+    for(let i=0;i<5;i++){
+      const holder=document.createElement('div');
+      holder.className='cage-bunny cage-bunny-'+(i+1);
+
+      const clone=source.cloneNode(true);
+      clone.removeAttribute('id');
+      clone.classList.remove('hare-art');
+      clone.classList.add('cage-bunny-art');
+      clone.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
+      clone.querySelectorAll('.mouth-arrows').forEach(el=>el.remove());
+
+      holder.appendChild(clone);
+      cage.appendChild(holder);
+    }
+  }
+
+  buildCageBunnies();
 
   let captionIndex = -1;
   let audioActive = false;
@@ -227,90 +250,147 @@
     const rightEye=$('eye-right-wrap');
     const haze=document.querySelector('.face-shadow');
     const aura=document.querySelector('.cheshire-aura');
+    const cheshireSvg=document.querySelector('.cheshire-svg');
+    const spiralLeft=$('eye-spiral-left');
+    const spiralRight=$('eye-spiral-right');
 
-    // Organic blink: quick close, softer reopen, slightly offset eyes.
-    const blinkCycle=local%5.9;
+    // Every return to the Cheshire is darker than the last.
+    const darkness=smoothstep(30.74,163.72,t);
+    const unease=smoothstep(119.68,151.0,t);
+    const frenzy=smoothstep(147.10,163.25,t);
+    const panic=smoothstep(156.0,163.58,t);
+
+    const blinkCycle=local%Math.max(2.15,5.9-frenzy*3.15);
     let blink=1;
-    if(blinkCycle>5.56){
-      const q=(blinkCycle-5.56)/.34;
+    const blinkStart=Math.max(1.92,5.56-frenzy*3.05);
+    const blinkSpan=.34;
+    if(blinkCycle>blinkStart){
+      const q=(blinkCycle-blinkStart)/blinkSpan;
       blink=q<.42
         ? 1-ease('power3.in',q/.42)*.94
         : .06+ease('power3.out',(q-.42)/.58)*.94;
     }
 
-    const gazeWave=Math.sin(local*.31);
-    const gazeFine=Math.sin(local*1.17)*.55;
-    const lookX=gazeWave*5.4+gazeFine;
-    const lookY=Math.cos(local*.23)*1.2;
-    const headTilt=Math.sin(local*.15)*.28;
+    const fast=t*(4.6+panic*17);
+    const gazeWave=Math.sin(local*(.31+frenzy*.65));
+    const gazeFine=Math.sin(local*(1.17+frenzy*5.2))*(.55+frenzy*2.8);
+    const jitterX=panic*Math.sin(fast)*6.2;
+    const jitterY=panic*Math.cos(fast*1.31)*4.6;
+    const lookX=gazeWave*(5.4+frenzy*7.0)+gazeFine;
+    const lookY=Math.cos(local*(.23+frenzy*.8))*(1.2+frenzy*4.2);
+    const headTilt=Math.sin(local*(.15+frenzy*.7))*(.28+frenzy*2.3);
 
     gsap.set(eyes,{
-      x:Math.sin(local*.29)*2.8,
-      y:Math.cos(local*.21)*1.0,
-      rotation:headTilt,
+      x:Math.sin(local*.29)*2.8+jitterX,
+      y:Math.cos(local*.21)*1.0+jitterY,
+      rotation:headTilt+panic*Math.sin(fast*.83)*3.6,
+      scale:1-panic*.12,
       transformOrigin:'50% 50%'
     });
 
     gsap.set(leftEye,{
-      scaleY:blink,
-      rotation:-1.35+Math.sin(local*.18)*.32,
+      scaleY:blink*(1+frenzy*.025),
+      rotation:-1.35+Math.sin(local*(.18+frenzy*1.8))*(.32+frenzy*2.8),
       transformOrigin:'50% 50%'
     });
     gsap.set(rightEye,{
-      scaleY:Math.min(1,blink+.025),
-      rotation:1.35-Math.sin(local*.18)*.32,
+      scaleY:Math.min(1.06,blink+.025)*(1+frenzy*.025),
+      rotation:1.35-Math.sin(local*(.18+frenzy*1.9))*(.32+frenzy*2.8),
       transformOrigin:'50% 50%'
     });
 
     gsap.set('.pupil-left',{
       x:lookX,
       y:lookY,
-      rotation:-2.4+gazeWave*.45
+      rotation:-2.4+gazeWave*.45,
+      opacity:1-frenzy*.82
     });
     gsap.set('.pupil-right',{
       x:lookX,
       y:lookY,
-      rotation:2.4-gazeWave*.45
+      rotation:2.4-gazeWave*.45,
+      opacity:1-frenzy*.82
     });
 
-    const voice=vocalActivity(t);
-    const syllable=Math.pow(Math.abs(Math.sin(t*8.45)),1.45);
-    const phrase=.5+.5*Math.sin(t*1.93+.35);
+    if(spiralLeft){
+      gsap.set(spiralLeft,{
+        opacity:frenzy*(.45+panic*.55),
+        rotation:-local*(55+panic*230),
+        scale:.72+frenzy*.35+Math.sin(fast*.37)*panic*.08,
+        transformOrigin:'50% 50%'
+      });
+    }
+    if(spiralRight){
+      gsap.set(spiralRight,{
+        opacity:frenzy*(.45+panic*.55),
+        rotation:local*(61+panic*245),
+        scale:.72+frenzy*.35-Math.sin(fast*.41)*panic*.08,
+        transformOrigin:'50% 50%'
+      });
+    }
 
-    // Singing deforms the grin mostly sideways, keeping the iconic silhouette.
+    const voice=vocalActivity(t);
+    const syllable=Math.pow(Math.abs(Math.sin(t*(8.45+frenzy*6))),1.35);
+    const phrase=.5+.5*Math.sin(t*(1.93+frenzy*2.2)+.35);
+
     const open=.999+voice*(syllable*.022+phrase*.006);
     const widen=1+voice*(phrase*.018+syllable*.005);
-    const floatY=Math.sin(t*.71)*.55;
+    const mouthRush=1+frenzy*.20+panic*.23;
+    const mouthDrop=frenzy*11+panic*(10+Math.sin(fast)*5);
 
     gsap.set(mouth,{
-      y:floatY,
-      scaleY:open,
-      scaleX:widen,
-      rotation:Math.sin(local*.17)*.13,
+      x:panic*Math.sin(fast*1.19)*5.5,
+      y:Math.sin(t*.71)*.55+mouthDrop,
+      scaleY:open*(1+frenzy*.20+panic*.38),
+      scaleX:widen*mouthRush,
+      rotation:Math.sin(local*(.17+frenzy*2.6))*(.13+frenzy*1.5)+panic*Math.sin(fast)*2.4,
       transformOrigin:'50% 8%'
     });
 
     gsap.set('.cheek-left',{
-      x:-voice*phrase*2.6,
-      opacity:.12+voice*.055
+      x:-voice*phrase*2.6-panic*5,
+      opacity:.12+voice*.055+frenzy*.08
     });
     gsap.set('.cheek-right',{
-      x:voice*phrase*2.6,
-      opacity:.12+voice*.055
+      x:voice*phrase*2.6+panic*5,
+      opacity:.12+voice*.055+frenzy*.08
     });
 
     if(haze){
       gsap.set(haze,{
-        x:Math.sin(local*.14)*4,
-        y:Math.cos(local*.11)*3,
-        scale:1+Math.sin(local*.20)*.008,
-        opacity:.88+.06*Math.sin(local*.24)
+        x:Math.sin(local*.14)*4+jitterX*.35,
+        y:Math.cos(local*.11)*3+jitterY*.35,
+        scale:1-unease*.06-panic*.09,
+        opacity:.88+.06*Math.sin(local*.24)+darkness*.07
       });
     }
+
     if(aura){
       gsap.set(aura,{
-        scale:1+Math.sin(local*.22)*.018,
-        opacity:.82+.12*Math.sin(local*.19)
+        scale:1+Math.sin(local*.22)*.018+frenzy*.04,
+        opacity:.82-darkness*.38+panic*.10
+      });
+    }
+
+    if(cheshireSvg){
+      const brightness=1-darkness*.24-panic*.16;
+      const contrast=1+darkness*.24+panic*.34;
+      gsap.set(cheshireSvg,{
+        filter:'brightness('+brightness+') contrast('+contrast+')',
+        scale:1+panic*.035,
+        transformOrigin:'50% 56%'
+      });
+    }
+
+    if(scenes.cheshire){
+      const sceneShake=panic*2.8;
+      gsap.set(scenes.cheshire,{
+        x:Math.sin(fast*.91)*sceneShake,
+        y:Math.cos(fast*1.07)*sceneShake,
+        background:'radial-gradient(ellipse at center, rgb('+
+          Math.round(23-darkness*15)+','+
+          Math.round(22-darkness*15)+','+
+          Math.round(16-darkness*12)+') 0, #060505 60%, #010101 100%)'
       });
     }
   }
@@ -453,27 +533,78 @@
     });
   }
 
+  function setFinalCageOpen(alpha=1){
+    const cage=$('bird-cage');
+    if(!cage) return;
+
+    gsap.set(cage,{opacity:alpha});
+    cage.querySelectorAll('b').forEach((el,i)=>{
+      const side=i<3?-1:1;
+      const rank=i<3?(3-i):(i-2);
+      gsap.set(el,{
+        x:side*(34+rank*16),
+        rotation:side*(7+rank*3.2),
+        opacity:.62+.055*rank,
+        transformOrigin:'50% 92%'
+      });
+    });
+
+    const top=cage.querySelector('em');
+    if(top){
+      gsap.set(top,{
+        y:-24,
+        rotation:-5,
+        scaleX:1.10,
+        opacity:.62
+      });
+    }
+  }
+
+  function updateFinalWind(clock,alpha=1){
+    const grass=$('final-grass');
+    const ground=$('final-ground');
+
+    if(ground) gsap.set(ground,{opacity:alpha*.96});
+    if(!grass) return;
+
+    gsap.set(grass,{opacity:alpha});
+    grass.querySelectorAll('i').forEach((el,i)=>{
+      const gust=Math.sin(clock*(1.05+(i%5)*.055)+i*.62);
+      const flutter=Math.sin(clock*(2.2+(i%3)*.11)+i*.27);
+      gsap.set(el,{
+        rotation:gust*(5.5+(i%4)*1.2)+flutter*1.8,
+        scaleY:.96+.04*Math.sin(clock*.72+i),
+        transformOrigin:'50% 100%'
+      });
+    });
+  }
+
   function updateBird(t,section){
     if(section.scene!=='bird') return;
 
     const W=theater.clientWidth;
     const H=theater.clientHeight;
     const p=clamp01((t-section.start)/(section.end-section.start));
-    const travel=ease('sine.inOut',p);
+    const travel=ease('sine.inOut',clamp01(p/0.87));
 
-    const x=-W*.43+W*1.64*travel;
-    const arc=-Math.sin(p*Math.PI)*H*.22;
-    const drift=Math.sin(p*Math.PI*4)*H*.020;
-    const y=-H*.02+arc+drift;
+    // The cage is already open and empty before the bird crosses behind it.
+    setFinalCageOpen(windowAlpha(t,163.72,DURATION,.20));
 
-    const dy=-Math.cos(p*Math.PI)*.22+Math.cos(p*Math.PI*4)*.08;
-    const bank=Math.max(-9,Math.min(9,dy*35));
+    const x=-W*.50+W*1.78*travel;
+    const arc=-Math.sin(clamp01(p/.87)*Math.PI)*H*.20;
+    const drift=Math.sin(p*Math.PI*4)*H*.018;
+    const y=-H*.015+arc+drift;
+
+    const dy=-Math.cos(clamp01(p/.87)*Math.PI)*.20+Math.cos(p*Math.PI*4)*.07;
+    const bank=Math.max(-9,Math.min(9,dy*34));
+    const birdFade=1-smoothstep(.82,.96,p);
 
     gsap.set('#bird-motion',{
       x,
       y,
       rotation:bank,
-      scale:.88+Math.sin(p*Math.PI)*.16,
+      scale:.88+Math.sin(clamp01(p/.87)*Math.PI)*.15,
+      opacity:birdFade,
       transformOrigin:'50% 55%'
     });
 
@@ -488,6 +619,9 @@
       rotation:10+flap*(17+glide*7),
       transformOrigin:'80% 80%'
     });
+
+    const grassA=smoothstep(170.86,175.10,t);
+    updateFinalWind(t,grassA);
   }
 
   function updateLyricVisuals(t,section){
@@ -572,20 +706,44 @@
     const hareCage=$('hare-cage');
     if(hareCage){
       const cageOpacity=Math.max(cageClose,windowAlpha(t,54.55,56.48,.12));
-      gsap.set(hareCage,{opacity:cageOpacity*(1-cageBreak*.72)});
+      gsap.set(hareCage,{opacity:cageOpacity*(1-smoothstep(.90,1,cageBreak))});
+
       hareCage.querySelectorAll('b').forEach((el,i)=>{
         const side=i<3?-1:1;
         gsap.set(el,{
           y:(1-cageClose)*-H*.22,
-          x:side*cageBreak*(26+i*7),
-          rotation:side*cageBreak*(7+i*2),
-          opacity:1-cageBreak*.45
+          x:side*cageBreak*(30+i*8),
+          rotation:side*cageBreak*(8+i*2.4),
+          opacity:1-cageBreak*.62,
+          transformOrigin:'50% 88%'
         });
       });
+
       const top=hareCage.querySelector('.cage-top');
       const bottom=hareCage.querySelector('.cage-bottom');
-      if(top) gsap.set(top,{y:-cageBreak*25,rotation:-cageBreak*3});
-      if(bottom) gsap.set(bottom,{y:cageBreak*25,rotation:cageBreak*3});
+      if(top) gsap.set(top,{y:-cageBreak*31,rotation:-cageBreak*5,opacity:1-cageBreak*.58});
+      if(bottom) gsap.set(bottom,{y:cageBreak*31,rotation:cageBreak*5,opacity:1-cageBreak*.58});
+
+      const trapped=$('cage-bunnies');
+      if(trapped){
+        trapped.querySelectorAll('.cage-bunny').forEach((el,i)=>{
+          const scale=.34+i*.018;
+          const tremble=Math.sin(t*(4.2+i*.23)+i)*2.2;
+          const escapeEase=ease('power2.in',cageBreak);
+          const lane=(i-2)*H*.020;
+          const stagger=Math.max(0,clamp01((cageBreak-i*.055)/Math.max(.1,1-i*.055)));
+
+          gsap.set(el,{
+            x:stagger*W*(.48+i*.045)+tremble,
+            y:lane-Math.abs(Math.sin((t-54.55)*(7+i*.25)))*stagger*H*.055,
+            rotation:tremble*(.45+stagger*.65),
+            scaleX:-scale*(1+stagger*.10),
+            scaleY:scale*(1-Math.abs(Math.sin(t*7+i))*.025),
+            opacity:cageOpacity*(1-smoothstep(.80,1,stagger)),
+            transformOrigin:'50% 68%'
+          });
+        });
+      }
     }
 
     const starsA=windowAlpha(t,74.88,78.56,.22);
@@ -658,22 +816,8 @@
       });
     }
 
-    const birdCageA=windowAlpha(t,163.72,170.86,.22);
-    const openP=clamp01((t-167.16)/(170.86-167.16));
-    const birdCage=$('bird-cage');
-    if(birdCage){
-      gsap.set(birdCage,{opacity:birdCageA*(1-openP*.78)});
-      birdCage.querySelectorAll('b').forEach((el,i)=>{
-        const side=i<3?-1:1;
-        gsap.set(el,{
-          x:side*openP*(32+i*10),
-          rotation:side*openP*(6+i*2),
-          opacity:1-openP*.48
-        });
-      });
-      const crown=birdCage.querySelector('em');
-      if(crown) gsap.set(crown,{y:-openP*30,scaleX:1+openP*.16,opacity:1-openP*.55});
-    }
+    const birdCageA=windowAlpha(t,163.72,DURATION,.22);
+    setFinalCageOpen(birdCageA);
 
     const farA=windowAlpha(t,167.16,DURATION,.24);
     const farP=clamp01((t-167.16)/(DURATION-167.16));
@@ -833,7 +977,12 @@
   }
 
   function syncFrame(){
-    if(resting){ requestAnimationFrame(syncFrame); return; }
+    if(resting){
+      updateFinalWind(performance.now()/1000,1);
+      setFinalCageOpen(1);
+      requestAnimationFrame(syncFrame);
+      return;
+    }
     const t=Math.max(0,Math.min(DURATION,timeNow()));
     const section=sectionAt(t);
     master.time(t,false);
@@ -851,8 +1000,37 @@
     requestAnimationFrame(syncFrame);
   }
 
-  async function tryAutoplay(){
-    if(resting) return;
+  function resetForReplay(){
+    broadcast.classList.remove('resting','final-hold');
+
+    master.pause(0);
+    master.time(0,false);
+
+    gsap.set('.scene',{autoAlpha:0,scale:1.035,y:10,x:0,filter:'none'});
+    gsap.set('.scene-rest',{autoAlpha:0,scale:1,y:0});
+    gsap.set('.lyric-layer',{opacity:0});
+    gsap.set('.subtitle-area',{opacity:1});
+    gsap.set('#hound-tunnel',{autoAlpha:0});
+    gsap.set('.eye-spiral',{opacity:0,rotation:0,scale:1});
+    gsap.set('.pupil-left,.pupil-right',{opacity:1,x:0,y:0,rotation:0});
+    gsap.set('.cheshire-svg',{filter:'none',scale:1});
+    gsap.set('#cheshire-eyes,#cheshire-mouth',{clearProps:'transform'});
+    gsap.set('#bird-motion',{opacity:1});
+    gsap.set('#final-ground,#final-grass',{opacity:0});
+    gsap.set('#bird-cage',{opacity:0});
+    gsap.set('#cage-bunnies .cage-bunny',{opacity:0,clearProps:'transform'});
+    gsap.set('#hare-pack',{opacity:0});
+
+    captionIndex=-1;
+    currentEl.textContent='';
+    nextEl.textContent='';
+    iconEl.textContent='✦';
+
+    master.time(0,false);
+  }
+
+  async function tryAutoplay(force=false){
+    if(resting && !force) return false;
     clearTimeout(retryTimer);
     try{
       if(!audio.src) audio.src=AUDIO_SRC;
@@ -864,39 +1042,45 @@
       await audio.play();
       audioActive=true;
       statusEl.textContent='HARPY HARE';
+      return true;
     }catch(err){
       audioActive=false;
       statusEl.textContent='HARPY HARE · AUTOPLAY BLOQUEADO';
-      retryTimer=setTimeout(tryAutoplay,1400);
+      retryTimer=setTimeout(()=>tryAutoplay(force),1400);
+      return false;
     }
   }
 
   function enterRest(){
     if(resting) return;
+
     resting=true;
     audioActive=false;
     clearTimeout(retryTimer);
     try{audio.pause()}catch(_){}
-    gsap.to(broadcast,{opacity:0,duration:1.6,ease:'power2.inOut',onComplete:()=>{
-      broadcast.classList.add('resting');
-      gsap.set('.scene',{autoAlpha:0});
-      gsap.set('.scene-rest',{autoAlpha:1});
-      gsap.to(broadcast,{opacity:1,duration:1.2});
-    }});
+
+    broadcast.classList.add('final-hold');
+    currentEl.textContent='';
+    nextEl.textContent='';
+
+    gsap.set('.scene',{autoAlpha:0});
+    gsap.set(scenes.bird,{autoAlpha:1,scale:1,x:0,y:0,filter:'none'});
+    gsap.set('#bird-motion',{opacity:0});
+    setFinalCageOpen(1);
+    updateFinalWind(performance.now()/1000,1);
+
     clearTimeout(restTimer);
     restTimer=setTimeout(async()=>{
-      gsap.to(broadcast,{opacity:0,duration:1.2,onComplete:()=>{
-        broadcast.classList.remove('resting');
-        master.time(0,false);
-        captionIndex=-1;
-        currentEl.textContent='';
-        nextEl.textContent='';
-        virtualStart=performance.now();
-        try{audio.currentTime=0}catch(_){}
-        resting=false;
-        gsap.to(broadcast,{opacity:1,duration:1.6,ease:'power2.out'});
-        tryAutoplay();
-      }});
+      try{audio.currentTime=0}catch(_){}
+
+      const ok=await tryAutoplay(true);
+      if(!ok) return;
+
+      try{audio.currentTime=0}catch(_){}
+      resetForReplay();
+      virtualStart=performance.now();
+      resting=false;
+      audioActive=true;
     },REST_MS);
   }
 
