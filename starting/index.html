@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="starting.css?v=11">
+  <link rel="stylesheet" href="starting.css?v=13">
 </head>
 <body>
   <main class="broadcast" id="broadcast">
@@ -41,7 +41,7 @@
               <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
             <clipPath id="mouthClip">
-              <path d="M282 316 Q500 482 718 316 Q500 414 282 316Z"/>
+              <path d="M220 300 Q500 505 780 300 Q500 395 220 300Z"/>
             </clipPath>
           </defs>
 
@@ -55,25 +55,19 @@
           </g>
 
           <g id="cheshire-mouth" class="cheshire-mouth" filter="url(#softGlow)">
-            <path class="mouth-cavity" d="M282 316 Q500 482 718 316 Q500 414 282 316Z"/>
+            <path class="mouth-cavity" d="M220 300 Q500 505 780 300 Q500 395 220 300Z"/>
             <g class="teeth" clip-path="url(#mouthClip)">
-              <path d="M300 326 L340 342 L320 372Z"/>
-              <path d="M344 343 L390 362 L367 397Z"/>
-              <path d="M393 363 L444 384 L418 423Z"/>
-              <path d="M447 385 L500 401 L474 444Z"/>
-              <path d="M500 401 L553 385 L526 444Z"/>
-              <path d="M556 384 L607 363 L582 423Z"/>
-              <path d="M610 362 L656 343 L633 397Z"/>
-              <path d="M660 342 L700 326 L680 372Z"/>
-              <path class="lower" d="M350 411 L387 439 L368 399Z"/>
-              <path class="lower" d="M404 438 L448 460 L426 416Z"/>
-              <path class="lower" d="M456 459 L500 474 L478 430Z"/>
-              <path class="lower" d="M544 459 L500 474 L522 430Z"/>
-              <path class="lower" d="M596 438 L552 460 L574 416Z"/>
-              <path class="lower" d="M650 411 L613 439 L632 399Z"/>
+              <path d="M255 312 L305 334 L280 372Z"/>
+              <path d="M315 336 L372 360 L344 405Z"/>
+              <path d="M382 364 L445 390 L414 438Z"/>
+              <path d="M455 392 L500 410 L475 462Z"/>
+              <path d="M545 392 L500 410 L525 462Z"/>
+              <path d="M555 390 L618 364 L586 438Z"/>
+              <path d="M628 360 L685 336 L656 405Z"/>
+              <path d="M695 334 L745 312 L720 372Z"/>
             </g>
-            <path class="lip lip-top" d="M273 313 Q500 402 727 313"/>
-            <path class="lip lip-bottom" d="M282 316 Q500 482 718 316"/>
+            <path class="lip lip-top" d="M215 297 Q500 392 785 297"/>
+            <path class="lip lip-bottom" d="M220 300 Q500 505 780 300"/>
           </g>
         </svg>
       </div>
@@ -171,6 +165,6 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-  <script src="starting.js?v=12"></script>
+  <script src="starting.js?v=13"></script>
 </body>
 </html>
