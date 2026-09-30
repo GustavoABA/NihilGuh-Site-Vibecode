@@ -1,5 +1,5 @@
 name: Probe Harpy Hare sync
-# trigger 3
+# trigger 4
 
 on:
   workflow_dispatch:
@@ -40,6 +40,14 @@ jobs:
                 if stamps:
                   print("DURATION", duration)
                   print("ALL", ",".join(f"{x:.2f}" for x in stamps))
+                  for idx,line in enumerate(synced.splitlines()):
+                    m=re.match(r"\\[(\\d+):(\\d+(?:\\.\\d+)?)\\](.*)",line)
+                    if not m: continue
+                    body=m.group(3).strip()
+                    words=body.split()
+                    if words:
+                      ts=int(m.group(1))*60+float(m.group(2))
+                      print(f"META {ts:.2f} {len(words)} {words[0][:16]} {words[-1][:16]}")
                   print("COUNT",len(stamps))
                   raise SystemExit
             except SystemExit:
