@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="starting.css?v=14">
+  <link rel="stylesheet" href="starting.css?v=15">
 </head>
 <body>
   <main class="broadcast" id="broadcast">
@@ -36,114 +36,153 @@
         <div class="cheshire-aura" aria-hidden="true"></div>
         <svg class="cheshire-svg" viewBox="0 0 1000 560" aria-label="Olhos e sorriso do Gato de Cheshire">
           <defs>
-            <filter id="softGlow" x="-45%" y="-45%" width="190%" height="190%">
-              <feGaussianBlur stdDeviation="2.6" result="blur"/>
-              <feColorMatrix in="blur" type="matrix"
-                values="0.74 0 0 0 0.16
-                        0 0.66 0 0 0.12
-                        0 0 0.92 0 0.22
-                        0 0 0 0.9 0"/>
+            <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2.2" result="blur"/>
               <feMerge>
-                <feMergeNode/>
+                <feMergeNode in="blur"/>
                 <feMergeNode in="SourceGraphic"/>
               </feMerge>
             </filter>
 
             <linearGradient id="eyeIvory" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#fffdf4"/>
-              <stop offset="100%" stop-color="#d8d1c2"/>
+              <stop offset="0%" stop-color="#fffef8"/>
+              <stop offset="100%" stop-color="#d9d2c5"/>
             </linearGradient>
 
-            <linearGradient id="toothIvory" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="irisGlow" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#d8c8f3"/>
+              <stop offset="100%" stop-color="#8f78b5"/>
+            </linearGradient>
+
+            <linearGradient id="teethIvory" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#fffdf4"/>
-              <stop offset="100%" stop-color="#d7d0c1"/>
+              <stop offset="100%" stop-color="#d8d0bf"/>
             </linearGradient>
 
             <clipPath id="mouthClip">
-              <path d="M185 306
-                       C285 365 382 392 500 397
-                       C618 392 715 365 815 306
-                       C760 432 655 492 500 505
-                       C345 492 240 432 185 306Z"/>
+              <path d="M150 302
+                       C260 370 375 405 500 410
+                       C625 405 740 370 850 302
+                       C795 445 675 515 500 525
+                       C325 515 205 445 150 302Z"/>
             </clipPath>
           </defs>
 
+          <g class="face-shadow" aria-hidden="true">
+            <ellipse class="face-haze haze-main" cx="500" cy="300" rx="330" ry="205"/>
+            <ellipse class="face-haze haze-left" cx="290" cy="230" rx="150" ry="100"/>
+            <ellipse class="face-haze haze-right" cx="710" cy="230" rx="150" ry="100"/>
+          </g>
+
           <g id="cheshire-eyes" class="cheshire-eyes" filter="url(#softGlow)">
-            <path class="eye-shape eye-left"
-              d="M167 213
-                 C222 147 330 127 435 188
-                 C365 251 255 274 167 213Z"/>
-            <path class="eye-shape eye-right"
-              d="M565 188
-                 C670 127 778 147 833 213
-                 C745 274 635 251 565 188Z"/>
+            <g id="eye-left-wrap" class="eye-wrap eye-left-wrap">
+              <path class="eye-shape"
+                d="M132 218
+                   C205 147 338 137 458 194
+                   C372 246 245 260 132 218Z"/>
+              <path class="eyelid"
+                d="M144 211 C225 145 344 146 448 193"/>
+              <path class="lower-lid"
+                d="M160 223 C255 257 360 246 438 200"/>
 
-            <path class="eyelid eyelid-left"
-              d="M174 206 C244 143 343 140 426 187"/>
-            <path class="eyelid eyelid-right"
-              d="M574 187 C657 140 756 143 826 206"/>
-
-            <g class="pupil-wrap pupil-left">
-              <ellipse class="pupil" cx="317" cy="202" rx="15" ry="51"/>
-              <ellipse class="pupil-core" cx="317" cy="202" rx="6" ry="38"/>
-              <ellipse class="glint" cx="322" cy="180" rx="5.5" ry="8"/>
+              <ellipse class="iris" cx="310" cy="202" rx="31" ry="55"/>
+              <g class="pupil-wrap pupil-left">
+                <ellipse class="pupil" cx="310" cy="202" rx="11" ry="48"/>
+                <ellipse class="pupil-core" cx="310" cy="202" rx="4.5" ry="38"/>
+                <ellipse class="glint" cx="315" cy="179" rx="5.5" ry="8.5"/>
+              </g>
             </g>
 
-            <g class="pupil-wrap pupil-right">
-              <ellipse class="pupil" cx="683" cy="202" rx="15" ry="51"/>
-              <ellipse class="pupil-core" cx="683" cy="202" rx="6" ry="38"/>
-              <ellipse class="glint" cx="688" cy="180" rx="5.5" ry="8"/>
+            <g id="eye-right-wrap" class="eye-wrap eye-right-wrap">
+              <path class="eye-shape"
+                d="M542 194
+                   C662 137 795 147 868 218
+                   C755 260 628 246 542 194Z"/>
+              <path class="eyelid"
+                d="M552 193 C656 146 775 145 856 211"/>
+              <path class="lower-lid"
+                d="M562 200 C640 246 745 257 840 223"/>
+
+              <ellipse class="iris" cx="690" cy="202" rx="31" ry="55"/>
+              <g class="pupil-wrap pupil-right">
+                <ellipse class="pupil" cx="690" cy="202" rx="11" ry="48"/>
+                <ellipse class="pupil-core" cx="690" cy="202" rx="4.5" ry="38"/>
+                <ellipse class="glint" cx="695" cy="179" rx="5.5" ry="8.5"/>
+              </g>
             </g>
           </g>
 
           <g id="cheshire-mouth" class="cheshire-mouth" filter="url(#softGlow)">
             <path class="grin-shadow"
-              d="M178 300
-                 C282 368 381 398 500 402
-                 C619 398 718 368 822 300
-                 C768 439 658 503 500 518
-                 C342 503 232 439 178 300Z"/>
+              d="M142 296
+                 C255 370 374 410 500 415
+                 C626 410 745 370 858 296
+                 C802 454 678 529 500 538
+                 C322 529 198 454 142 296Z"/>
 
             <path class="mouth-cavity"
-              d="M185 306
-                 C285 365 382 392 500 397
-                 C618 392 715 365 815 306
-                 C760 432 655 492 500 505
-                 C345 492 240 432 185 306Z"/>
+              d="M150 302
+                 C260 370 375 405 500 410
+                 C625 405 740 370 850 302
+                 C795 445 675 515 500 525
+                 C325 515 205 445 150 302Z"/>
 
-            <g class="teeth upper-teeth" clip-path="url(#mouthClip)">
-              <path d="M215 320 L263 339 L240 382Z"/>
-              <path d="M270 342 L322 360 L295 405Z"/>
-              <path d="M330 362 L385 381 L356 429Z"/>
-              <path d="M393 382 L449 398 L420 449Z"/>
-              <path d="M456 398 L500 407 L479 461Z"/>
-              <path d="M544 398 L500 407 L521 461Z"/>
-              <path d="M607 382 L551 398 L580 449Z"/>
-              <path d="M670 362 L615 381 L644 429Z"/>
-              <path d="M730 342 L678 360 L705 405Z"/>
-              <path d="M785 320 L737 339 L760 382Z"/>
+            <path class="teeth-band upper-band" clip-path="url(#mouthClip)"
+              d="M174 314
+                 C279 371 386 399 500 404
+                 C614 399 721 371 826 314
+                 C762 390 650 430 500 435
+                 C350 430 238 390 174 314Z"/>
+
+            <path class="teeth-band lower-band" clip-path="url(#mouthClip)"
+              d="M235 410
+                 C320 454 407 478 500 482
+                 C593 478 680 454 765 410
+                 C718 470 630 505 500 512
+                 C370 505 282 470 235 410Z"/>
+
+            <g class="tooth-separators upper-separators" clip-path="url(#mouthClip)">
+              <path d="M234 339 L259 390"/>
+              <path d="M298 362 L320 412"/>
+              <path d="M365 383 L382 429"/>
+              <path d="M432 398 L442 437"/>
+              <path d="M500 405 L500 440"/>
+              <path d="M568 398 L558 437"/>
+              <path d="M635 383 L618 429"/>
+              <path d="M702 362 L680 412"/>
+              <path d="M766 339 L741 390"/>
             </g>
 
-            <g class="teeth lower-teeth" clip-path="url(#mouthClip)">
-              <path d="M248 405 L286 449 L267 397Z"/>
-              <path d="M305 439 L348 475 L326 420Z"/>
-              <path d="M369 468 L416 494 L392 438Z"/>
-              <path d="M438 490 L500 507 L469 451Z"/>
-              <path d="M562 490 L500 507 L531 451Z"/>
-              <path d="M631 468 L584 494 L608 438Z"/>
-              <path d="M695 439 L652 475 L674 420Z"/>
-              <path d="M752 405 L714 449 L733 397Z"/>
+            <g class="tooth-separators lower-separators" clip-path="url(#mouthClip)">
+              <path d="M306 447 L326 490"/>
+              <path d="M376 468 L390 505"/>
+              <path d="M448 480 L456 515"/>
+              <path d="M552 480 L544 515"/>
+              <path d="M624 468 L610 505"/>
+              <path d="M694 447 L674 490"/>
             </g>
+
+            <path class="mouth-gap"
+              d="M222 386
+                 C315 424 405 444 500 447
+                 C595 444 685 424 778 386
+                 C704 438 615 464 500 467
+                 C385 464 296 438 222 386Z"/>
 
             <path class="lip lip-top"
-              d="M178 300 C282 368 381 398 500 402 C619 398 718 368 822 300"/>
+              d="M142 296
+                 C255 370 374 410 500 415
+                 C626 410 745 370 858 296"/>
             <path class="lip lip-bottom"
-              d="M185 306
-                 C240 432 345 492 500 505
-                 C655 492 760 432 815 306"/>
+              d="M150 302
+                 C205 445 325 515 500 525
+                 C675 515 795 445 850 302"/>
 
-            <path class="smile-corner left-corner" d="M178 300 Q160 298 146 285"/>
-            <path class="smile-corner right-corner" d="M822 300 Q840 298 854 285"/>
+            <path class="smile-corner left-corner" d="M142 296 Q112 291 91 267"/>
+            <path class="smile-corner right-corner" d="M858 296 Q888 291 909 267"/>
+
+            <path class="cheek-wisp cheek-left" d="M125 330 Q84 342 63 372"/>
+            <path class="cheek-wisp cheek-right" d="M875 330 Q916 342 937 372"/>
           </g>
         </svg>
       </div>
@@ -241,6 +280,6 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-  <script src="starting.js?v=14"></script>
+  <script src="starting.js?v=15"></script>
 </body>
 </html>
