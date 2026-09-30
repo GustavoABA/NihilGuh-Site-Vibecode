@@ -1,5 +1,5 @@
 name: Probe Harpy Hare sync
-# trigger 2
+# trigger 3
 
 on:
   workflow_dispatch:
@@ -39,7 +39,7 @@ jobs:
                   if m: stamps.append(int(m.group(1))*60+float(m.group(2)))
                 if stamps:
                   print("DURATION", duration)
-                  print("FIRST20", ",".join(f"{x:.2f}" for x in stamps[:20]))
+                  print("ALL", ",".join(f"{x:.2f}" for x in stamps))
                   print("COUNT",len(stamps))
                   raise SystemExit
             except SystemExit:
