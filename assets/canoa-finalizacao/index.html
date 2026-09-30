@@ -518,7 +518,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
       set(shard,{x:side*(1-hit)*170,opacity:a*(1-smoothstep(.55,1,hit)),scale:.9+hit*.12});
     });
     set(el.notes[5],{opacity:a*.88,scale:.96+.05*pulse(t,1.1),transformOrigin:'50% 50%'});
-    set(el.darkness,{opacity:a*(1-p)*.32});
+    if(a>0.001) set(el.darkness,{opacity:a*(1-p)*.32});
   }
 
   function renderCalm(t){
