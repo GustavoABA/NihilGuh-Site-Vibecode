@@ -369,3 +369,32 @@ button,input{font:inherit}
 .dancer-art{
   transform-origin:50% 58%!important;
 }
+
+
+/* v9 Cheshire grin rebuild */
+.teeth-fill,.tooth-lines{display:none!important}
+.teeth-layer{
+  transform:none!important;
+  pointer-events:none;
+}
+.cheshire-tooth{
+  fill:#f3efe3;
+  stroke:#17150f;
+  stroke-width:2.25;
+  stroke-linejoin:round;
+}
+.cheshire-tooth.lower{
+  fill:#e6e1d4;
+}
+.mouth-cavity{
+  fill:#050504!important;
+  stroke:none!important;
+}
+.top-lip{
+  stroke:#b7a6d9!important;
+  stroke-width:5.5!important;
+}
+.bottom-lip{
+  stroke:#b7a6d9!important;
+  stroke-width:4!important;
+}
