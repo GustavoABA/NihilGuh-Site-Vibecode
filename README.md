@@ -10,6 +10,7 @@ Hub de live e interação da comunidade publicado em GitHub Pages, com estado au
 - `/overlay/` — overlay OBS 600×400.
 - `/overlay.html` — URL legada do overlay.
 - `/admin.html` — painel privado.
+- `/starting/` — abertura musical/animação da live.
 
 ## Relógio
 
@@ -97,3 +98,11 @@ O overlay 600×400 é transparente e usa um ciclo sincronizado pela hora de iní
 5. O ciclo recomeça.
 
 O backend mantém um feed compacto com até 23 vencedores da sessão. O overlay não consulta a planilha inteira a cada atualização.
+
+## Tela de início
+
+A rota `/starting/` é uma composição 16:9 em preto e branco sincronizada pelo `currentTime` de `assets/audio/harpy-hare.mp3`. O repositório não inclui a gravação comercial; coloque no caminho indicado uma cópia que você tenha direito de usar na transmissão.
+
+- `/starting/?preview=1` testa as cenas sem áudio.
+- `/starting/?debug=1` habilita seek e ajuste fino de offset para calibrar o master usado na live.
+- ao fim da faixa, a tela faz fade, aguarda 2 minutos e reinicia.
