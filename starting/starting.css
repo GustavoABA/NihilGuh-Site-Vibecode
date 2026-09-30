@@ -1,0 +1,172 @@
+:root{
+  --ink:#050505;
+  --paper:#f2f0eb;
+  --fog:#bdbdb8;
+  --line:rgba(255,255,255,.17);
+  --soft:rgba(255,255,255,.07);
+}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;background:#000;color:var(--paper);overflow:hidden}
+body{font-family:Inter,system-ui,sans-serif}
+button,input{font:inherit}
+.broadcast{
+  position:relative;
+  width:100vw;height:100vh;min-height:540px;
+  display:grid;
+  grid-template-rows:72px minmax(0,1fr) 160px 46px;
+  padding:0 clamp(22px,4vw,78px);
+  background:
+    radial-gradient(circle at 50% 42%,rgba(255,255,255,.035),transparent 35%),
+    #000;
+  isolation:isolate;
+  overflow:hidden;
+}
+.broadcast::after{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 35%,rgba(0,0,0,.5) 72%,#000 100%);
+}
+.grain{
+  position:absolute;inset:-50%;z-index:15;pointer-events:none;opacity:.065;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.75'/%3E%3C/svg%3E");
+  animation:grain .2s steps(2) infinite;
+}
+.broadcast-head,.broadcast-foot{
+  position:relative;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;
+  color:#a8a8a3;font-size:.68rem;font-weight:800;letter-spacing:.16em;
+}
+.live-mark{display:flex;align-items:center;gap:9px}
+.live-mark i{width:7px;height:7px;border-radius:50%;background:#efefea;box-shadow:0 0 14px rgba(255,255,255,.55)}
+.tiny-mark{color:#747470}
+.theater{
+  position:relative;
+  width:min(1220px,82vw);
+  height:min(650px,60vh);
+  align-self:center;justify-self:center;
+  border:1px solid rgba(255,255,255,.13);
+  background:linear-gradient(180deg,#080808,#020202);
+  box-shadow:0 26px 90px rgba(0,0,0,.75),inset 0 0 70px rgba(255,255,255,.025);
+  overflow:hidden;
+}
+.theater::before,.theater::after{
+  content:"";position:absolute;z-index:12;pointer-events:none;
+  width:84px;height:1px;background:rgba(255,255,255,.22)
+}
+.theater::before{left:18px;top:18px}.theater::after{right:18px;bottom:18px}
+.scene{
+  position:absolute;inset:0;
+  display:grid;place-items:center;
+  opacity:0;visibility:hidden;transform:scale(1.025);
+  transition:opacity .8s ease,transform 1.2s ease,visibility 0s linear .8s;
+}
+.scene.is-active{
+  opacity:1;visibility:visible;transform:scale(1);
+  transition:opacity .8s ease,transform 1.2s ease,visibility 0s;
+}
+.scene-intro{background:radial-gradient(circle at 50% 50%,#121212,#020202 66%)}
+.moon-ring{position:absolute;width:280px;height:280px;border:1px solid #d8d8d2;border-radius:50%;opacity:.45;box-shadow:0 0 42px rgba(255,255,255,.05)}
+.intro-stars{position:absolute;top:22%;font:700 1.25rem "Cormorant Garamond";letter-spacing:.4em;color:#777}
+.intro-copy{display:grid;text-align:center;gap:8px}
+.intro-copy span{font-size:.72rem;letter-spacing:.27em;text-transform:uppercase;color:#8f8f8a}
+.intro-copy strong{font:700 clamp(2rem,4vw,4.4rem) "Cormorant Garamond";letter-spacing:-.035em;text-transform:lowercase}
+
+.scene-cheshire{background:radial-gradient(ellipse at center,#0d0d0d 0,#020202 72%)}
+.cheshire-haze{position:absolute;width:66%;height:60%;border-radius:50%;background:radial-gradient(ellipse,rgba(255,255,255,.055),transparent 68%);filter:blur(18px);animation:haze 4s ease-in-out infinite}
+.cheshire-svg{width:min(860px,82%);height:auto;overflow:visible}
+.eye{fill:#ededE8;stroke:#7f7f7b;stroke-width:3}
+.pupil{fill:#090909}
+.cheshire-eyes{transform-origin:center;animation:blink 6.3s infinite}
+.grin-fill{fill:#efefe9;stroke:#8d8d89;stroke-width:3}
+.grin-line{fill:none;stroke:#111;stroke-width:7;stroke-linecap:round}
+.grin-line.upper{stroke-width:4}
+.teeth{fill:none;stroke:#111;stroke-width:5;stroke-linejoin:round}
+.cheshire-mouth{transform-origin:480px 320px;transform:scaleY(var(--mouth-open,1));transition:transform 55ms linear}
+.whisper{position:absolute;font:700 6rem "Cormorant Garamond";color:#252525}
+.whisper-a{left:8%;top:18%;animation:float 4s ease-in-out infinite}.whisper-b{right:8%;bottom:12%;animation:float 5s ease-in-out infinite reverse}
+
+.scene-hare{background:linear-gradient(90deg,#030303,#101010 50%,#030303)}
+.speed-lines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 36px,rgba(255,255,255,.035) 37px 38px);transform:skewY(-4deg);animation:lines .7s linear infinite}
+.hare-svg{position:absolute;width:min(520px,52vw);left:-32%;filter:drop-shadow(0 16px 25px #000);animation:hareRun 5.2s linear infinite}
+.hare-svg .fill,.hare-svg .tail{fill:#efefe9;stroke:#6d6d69;stroke-width:4}.hare-svg .stroke{fill:none;stroke:#e7e7e1;stroke-width:9;stroke-linecap:round}.hare-svg .eye-dot{fill:#090909}
+.arrows{fill:none;stroke:#f4f4ef;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+.hare-runner{transform-origin:center;animation:hareBob .28s ease-in-out infinite alternate}
+.hare-trail{position:absolute;left:8%;bottom:20%;font-size:2rem;color:#61615f;letter-spacing:.8em;animation:trail 1s linear infinite}
+
+.scene-dancer{background:radial-gradient(circle at 50% 42%,#171717,#020202 68%)}
+.forest-frame{position:absolute;inset:0;overflow:hidden}
+.tree{position:absolute;bottom:-8%;font-size:14rem;color:#0b0b0b;text-shadow:0 -1px 0 #343431}
+.t1{left:2%;transform:scaleX(.7)}.t2{right:3%;transform:scaleX(.85)}.t3{left:28%;font-size:9rem;opacity:.55}
+.star{position:absolute;color:#aaa;font-family:serif}.s1{left:19%;top:18%;animation:twinkle 2s infinite}.s2{right:24%;top:12%;animation:twinkle 1.6s infinite .4s}.s3{right:16%;top:34%;animation:twinkle 2.4s infinite .7s}
+.dancer-wrap{position:relative;width:330px;height:520px;display:grid;place-items:center;animation:dancerOrbit 4.5s ease-in-out infinite}
+.dancer-svg{width:100%;height:100%;overflow:visible;animation:dancerSpin 3.7s cubic-bezier(.4,0,.2,1) infinite}
+.dancer-body{transform-origin:160px 280px}
+.cat-ear,.hair,.torso,.skirt,.shoe{fill:#090909;stroke:#efefe9;stroke-width:5;stroke-linejoin:round}
+.head{fill:#efefe9;stroke:#efefe9;stroke-width:5}.apron{fill:#efefe9;stroke:#111;stroke-width:4}.arm,.leg{fill:none;stroke:#efefe9;stroke-width:13;stroke-linecap:round}
+.skirt-apron{stroke:#111}
+.dress-orbit{position:absolute;width:360px;height:110px;border:1px solid rgba(255,255,255,.22);border-radius:50%;bottom:60px;animation:orbit 2s linear infinite}
+
+.scene-bird{background:linear-gradient(180deg,#0b0b0b,#020202)}
+.bird-sky{position:absolute;top:22%;left:8%;right:8%;font:700 1.4rem "Cormorant Garamond";color:#6f6f6c;letter-spacing:.9em;animation:sky 6s linear infinite}
+.bird-svg{position:absolute;width:min(560px,52vw);left:-40%;animation:birdFly 8s linear infinite;overflow:visible}
+.bird-fill{fill:#efefe9;stroke:#666663;stroke-width:4}.bird-beak{fill:#bdbdb8}.bird-eye{fill:#050505}
+.wing{fill:#ecece7;stroke:#777773;stroke-width:4;transform-box:fill-box;transform-origin:80% 70%}.wing-left{animation:wingLeft .5s ease-in-out infinite alternate}.wing-right{animation:wingRight .5s ease-in-out infinite alternate}.bird-tail{fill:#e3e3de;stroke:#666663;stroke-width:3}
+.feathers{position:absolute;left:20%;bottom:20%;color:#777;font-size:1.4rem;letter-spacing:1.2em;animation:feathers 2s linear infinite}
+
+.scene-rest{background:#000}.rest-dot{color:#202020;font-size:1rem;animation:restPulse 5s ease-in-out infinite}
+
+.subtitle-area{
+  position:relative;z-index:20;
+  align-self:center;justify-self:center;
+  width:min(1180px,80vw);
+  display:grid;grid-template-columns:42px 1fr;gap:16px;align-items:start;
+  min-height:106px;padding-top:22px;
+}
+.subtitle-icon{font:700 1.5rem "Cormorant Garamond";color:#777;line-height:1}
+.subtitle-current{min-height:1.3em;font-size:clamp(1.2rem,2.2vw,2rem);font-weight:850;letter-spacing:-.025em;color:#f4f3ee;text-shadow:0 2px 18px #000}
+.subtitle-current.is-changing{animation:captionIn .38s ease both}
+.subtitle-next{margin-top:7px;font-size:.82rem;font-weight:650;color:#696965;letter-spacing:.015em}
+
+.start-gate{
+  position:absolute;inset:0;z-index:50;
+  display:grid;place-content:center;gap:8px;text-align:center;
+  border:0;background:rgba(0,0,0,.88);color:#fff;cursor:pointer;
+}
+.start-gate strong{font-size:1.2rem}.start-gate span{font-size:.78rem;color:#888}
+.debug-panel{
+  position:absolute;z-index:80;top:18px;right:18px;width:240px;
+  padding:14px;border:1px solid #444;background:rgba(0,0,0,.88);
+  display:grid;gap:8px;font-size:.72rem;color:#aaa
+}
+.debug-panel strong{color:#fff}.debug-panel b{color:#fff}.debug-panel input{width:100%}
+.debug-panel div{display:flex;gap:6px}.debug-panel button{flex:1;border:1px solid #444;background:#111;color:#ddd;padding:6px;cursor:pointer}
+
+.broadcast.is-fading{animation:fadeOut 2s ease forwards}
+.broadcast.is-resting .broadcast-head,.broadcast.is-resting .subtitle-area,.broadcast.is-resting .broadcast-foot{opacity:0;transition:opacity 1.5s ease}
+.broadcast.is-entering{animation:fadeIn 2.2s ease both}
+
+@keyframes grain{0%{transform:translate(0)}25%{transform:translate(2%,-3%)}50%{transform:translate(-3%,2%)}75%{transform:translate(4%,3%)}100%{transform:translate(-2%,-1%)}}
+@keyframes haze{50%{transform:scale(1.1);opacity:.7}}
+@keyframes blink{0%,45%,48%,100%{transform:scaleY(1)}46%,47%{transform:scaleY(.05)}}
+@keyframes float{50%{transform:translateY(-16px);opacity:.45}}
+@keyframes lines{to{transform:translateX(-40px) skewY(-4deg)}}
+@keyframes hareRun{0%{left:-38%;transform:scale(.82)}42%{left:42%;transform:scale(1)}100%{left:116%;transform:scale(.82)}}
+@keyframes hareBob{to{transform:translateY(-9px) rotate(-1deg)}}
+@keyframes trail{to{transform:translateX(-65px);opacity:.1}}
+@keyframes twinkle{50%{opacity:.25;transform:scale(.7)}}
+@keyframes dancerSpin{0%,10%{transform:rotateY(0) rotate(0)}45%{transform:rotateY(180deg) rotate(7deg)}55%{transform:rotateY(180deg) rotate(7deg)}90%,100%{transform:rotateY(360deg) rotate(0)}}
+@keyframes dancerOrbit{50%{transform:translateY(-12px)}}
+@keyframes orbit{to{transform:rotateZ(360deg) scaleX(.9)}}
+@keyframes sky{to{transform:translateX(-90px)}}
+@keyframes birdFly{0%{left:-40%;transform:translateY(80px) scale(.8)}45%{left:40%;transform:translateY(-30px) scale(1.05)}100%{left:112%;transform:translateY(-100px) scale(.82)}}
+@keyframes wingLeft{to{transform:rotate(-32deg) translateY(-18px)}}@keyframes wingRight{to{transform:rotate(32deg) translateY(-18px)}}
+@keyframes feathers{to{transform:translate(-70px,35px);opacity:.05}}
+@keyframes restPulse{50%{color:#555;transform:scale(1.4)}}
+@keyframes captionIn{from{opacity:0;transform:translateY(8px);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
+@keyframes fadeOut{to{opacity:0}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+@media(max-width:900px){
+  .broadcast{grid-template-rows:58px minmax(0,1fr) 130px 38px;padding:0 18px}
+  .theater{width:92vw;height:58vh}.subtitle-area{width:88vw}
+  .broadcast-head{font-size:.58rem}.tiny-mark{display:none}
+}
+@media(prefers-reduced-motion:reduce){.grain,.hare-svg,.hare-runner,.dancer-wrap,.dancer-svg,.bird-svg,.wing,.cheshire-haze,.whisper{animation-duration:10s!important}}
