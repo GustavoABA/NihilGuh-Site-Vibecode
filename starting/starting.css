@@ -193,3 +193,35 @@ button,input{font:inherit}
   .broadcast-head{font-size:.58rem}.tiny-mark{display:none}
 }
 @media(prefers-reduced-motion:reduce){.grain,.hare-svg,.hare-runner,.dancer-wrap,.dancer-svg,.bird-svg,.wing,.cheshire-haze,.whisper{animation-duration:10s!important}}
+
+/* v4: audio controls never block the animation */
+.start-gate.is-compact{
+  inset:auto 18px 18px auto;
+  width:min(390px,calc(100vw - 36px));
+  height:auto;
+  display:block;
+  background:transparent;
+  pointer-events:none;
+}
+.start-gate.is-compact .start-gate-box{
+  width:100%;
+  padding:13px 14px;
+  gap:6px;
+  background:rgba(5,5,5,.82);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  box-shadow:0 14px 40px rgba(0,0,0,.45);
+  pointer-events:auto;
+}
+.start-gate.is-compact .start-gate-box>strong{font-size:.82rem}
+.start-gate.is-compact .start-gate-box>span{font-size:.67rem}
+.start-gate.is-compact .start-gate-actions{
+  grid-template-columns:1fr 1fr;
+  margin-top:4px;
+}
+.start-gate.is-compact .start-gate-actions button,
+.start-gate.is-compact .start-gate-file,
+.start-gate.is-compact .start-gate-actions a{
+  min-height:34px;
+  font-size:.67rem;
+}
