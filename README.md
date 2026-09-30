@@ -91,7 +91,7 @@ O embed usa autoplay com áudio inicialmente mutado para maximizar compatibilida
 O overlay 600×400 é transparente e usa um ciclo sincronizado pela hora de início da live:
 
 1. **5 minutos:** somente o cronômetro.
-2. **12 segundos:** CTA animado com o avatar apontando para `twitch.tv/nihilguh`.
+2. **3 minutos:** CTA animado com o avatar apontando para o site `gustavoaba.github.io/NihilGuh-Site-Vibecode/`.
 3. **20 minutos:** somente o cronômetro.
 4. **20 segundos:** resumo animado dos vencedores daquele ciclo, mostrando jogador, jogo e minutos aplicados.
 5. O ciclo recomeça.
