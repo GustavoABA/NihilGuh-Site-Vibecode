@@ -4,7 +4,6 @@
   const DURATION = 179.583;
   const REST_MS = 120000;
   const params = new URLSearchParams(location.search);
-  const DEBUG = params.has('debug');
   const AUDIO_SRC = params.get('audio') || '../assets/audio/harpy-hare.mp3?v=2';
 
   const SECTIONS = [
@@ -65,12 +64,40 @@
   const nextEl = $('subtitle-next');
   const iconEl = $('subtitle-icon');
   const statusEl = $('audio-status');
-  const debugPanel = $('debug-panel');
-  const debugTime = $('debug-time');
-  const debugScene = $('debug-scene');
-  const debugSeek = $('debug-seek');
 
   const scenes = Object.fromEntries([...document.querySelectorAll('.scene')].map(el => [el.dataset.scene,el]));
+
+  function buildHarePack(){
+    const scene=scenes.hare;
+    const source=$('hare-art');
+    const main=$('hare-motion');
+    if(!scene || !source || !main || $('hare-pack')) return;
+
+    const pack=document.createElement('div');
+    pack.id='hare-pack';
+    pack.className='hare-pack';
+    pack.setAttribute('aria-hidden','true');
+
+    for(let i=0;i<4;i++){
+      const holder=document.createElement('div');
+      holder.className='mini-hare mini-hare-'+(i+1);
+
+      const clone=source.cloneNode(true);
+      clone.removeAttribute('id');
+      clone.classList.remove('hare-art');
+      clone.classList.add('mini-hare-art');
+      clone.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
+      clone.querySelectorAll('.mouth-arrows').forEach(el=>el.remove());
+
+      holder.appendChild(clone);
+      pack.appendChild(holder);
+    }
+
+    scene.insertBefore(pack,main);
+  }
+
+  buildHarePack();
+
   let captionIndex = -1;
   let audioActive = false;
   let resting = false;
@@ -287,7 +314,6 @@
     const pass=4.8;
     const p=(local%pass)/pass;
 
-    // Fast entry, readable center pass, quick exit.
     const travel=ease('power2.inOut',p);
     const x=-W*.40+W*1.62*travel;
 
@@ -307,7 +333,6 @@
       transformOrigin:'50% 65%'
     });
 
-    // SVG intrinsically faces left; negative X keeps it facing the direction of travel.
     gsap.set('#hare-art',{
       scaleX:-(1+squash),
       scaleY:1-squash*.55,
@@ -327,6 +352,37 @@
       });
     }
 
+    // First entrance: a small pack follows the big hare.
+    // They fade out permanently after the first pass, leaving only the large hare with arrows.
+    const pack=$('hare-pack');
+    if(pack){
+      const firstP=clamp01(local/pass);
+      const firstTravel=ease('power2.inOut',firstP);
+      const firstX=-W*.40+W*1.62*firstTravel;
+      const firstStride=Math.sin(firstP*Math.PI*12);
+      const firstHop=Math.max(0,Math.sin(firstP*Math.PI*6));
+      const packFade=1-smoothstep(3.45,5.05,local);
+
+      gsap.set(pack,{opacity:packFade});
+
+      pack.querySelectorAll('.mini-hare').forEach((el,i)=>{
+        const lag=52+i*58;
+        const scale=.72-i*.075;
+        const lane=(i-1.5)*H*.025;
+        const miniBounce=Math.sin(firstP*Math.PI*(10+i*.35)+i*.8);
+
+        gsap.set(el,{
+          x:firstX-lag,
+          y:-H*.025-firstHop*H*.038+lane+miniBounce*4,
+          rotation:-1+firstStride*(1.1+i*.10),
+          scaleX:-scale,
+          scaleY:scale*(1-Math.abs(firstStride)*.018),
+          opacity:packFade*(.72-i*.09),
+          transformOrigin:'50% 68%'
+        });
+      });
+    }
+
     document.querySelectorAll('.hare-lines i').forEach((el,i)=>{
       gsap.set(el,{x:-((local*(205+i*34)+i*120)%W),opacity:.10+i*.035});
     });
@@ -336,60 +392,54 @@
     if(section.scene!=='dancer') return;
 
     const local=t-section.start;
-    const beatLen=1.05;
-    const beat=local/beatLen;
-    const beatFrac=beat-Math.floor(beat);
-    const bar=beat/4;
-    const barFrac=bar-Math.floor(bar);
+    const beat=local*2*Math.PI/1.05;
+    const pulse=Math.sin(beat);
+    const half=Math.sin(beat*.5);
+    const sway=Math.sin(local*1.95)*4.6;
+    const step=Math.sin(local*3.9);
 
-    const pulse=Math.sin(beat*Math.PI*2);
-    const halfPulse=Math.sin(beat*Math.PI);
-    const sway=Math.sin(local*2.15)*5.2;
-
-    // One elegant turn per 4-beat phrase with a small hold before/after.
-    const turn=smoothstep(.18,.78,barFrac);
-    const baseTurn=Math.floor(bar)*360;
-    const rotationY=baseTurn+turn*360;
-
+    // Stable choreography: the whole character moves as one body.
+    // No full 3D rotation, so limbs stay connected and the character never disappears.
     gsap.set('#dancer-motion',{
-      y:-Math.abs(halfPulse)*7+Math.sin(local*.52)*2.4,
-      x:Math.sin(local*.61)*4,
-      rotationZ:sway*.22,
-      transformOrigin:'50% 58%'
+      x:step*5.5,
+      y:-Math.abs(pulse)*5.5+Math.sin(local*.46)*1.8,
+      rotationZ:sway*.20,
+      transformOrigin:'50% 74%'
     });
 
     gsap.set('#dancer-art',{
-      rotationY,
       rotationZ:sway,
-      scale:1+Math.abs(pulse)*.018,
-      transformPerspective:980,
-      transformOrigin:'50% 58%'
+      scaleX:1+Math.cos(local*.92)*.018,
+      scaleY:1-Math.abs(pulse)*.010,
+      transformOrigin:'50% 74%'
     });
 
-    const skirtLag=Math.sin(local*2.15-.65);
+    const skirtWave=Math.sin(local*2.15-.55);
     gsap.set('#dress-back',{
-      rotation:-sway*1.55,
-      scaleX:1+skirtLag*.065,
-      scaleY:1-Math.abs(skirtLag)*.025,
-      transformOrigin:'50% 15%'
+      rotation:-sway*.72,
+      scaleX:1+skirtWave*.038,
+      transformOrigin:'50% 12%'
     });
     gsap.set('#dress-front',{
-      rotation:sway*1.25,
-      scaleX:1-skirtLag*.050,
-      transformOrigin:'50% 15%'
+      rotation:sway*.58,
+      scaleX:1-skirtWave*.030,
+      transformOrigin:'50% 12%'
     });
+
     gsap.set('#dancer-torso',{
-      rotation:-sway*.38,
-      y:-Math.abs(pulse)*3.5,
-      transformOrigin:'50% 80%'
+      rotation:-sway*.14,
+      y:-Math.abs(pulse)*1.2,
+      transformOrigin:'50% 82%'
     });
+
+    // Small shoulder-led arm motion keeps hands attached visually.
     gsap.set('#arm-left',{
-      rotation:16*Math.sin(local*4.1+.55),
-      transformOrigin:'100% 12%'
+      rotation:6.5*Math.sin(local*3.7+.45),
+      transformOrigin:'92% 14%'
     });
     gsap.set('#arm-right',{
-      rotation:-16*Math.sin(local*4.1+.55),
-      transformOrigin:'0% 12%'
+      rotation:-6.5*Math.sin(local*3.7+.45),
+      transformOrigin:'8% 14%'
     });
   }
 
@@ -573,6 +623,24 @@
       });
     }
 
+    const fireA=windowAlpha(t,82.15,89.96,.28);
+    const fire=$('dance-fire');
+    if(fire){
+      gsap.set(fire,{opacity:fireA});
+      fire.querySelectorAll('i').forEach((el,i)=>{
+        const flicker=Math.sin(t*(5.6+i*.17)+i*.8);
+        const slow=Math.sin(t*(2.1+i*.09)+i);
+        gsap.set(el,{
+          y:-fireA*(8+i%3*4)+flicker*5,
+          scaleX:.86+slow*.12,
+          scaleY:.82+fireA*.34+flicker*.06,
+          rotation:flicker*(2.4+i*.18),
+          opacity:fireA*(.58+.22*(.5+.5*slow)),
+          transformOrigin:'50% 100%'
+        });
+      });
+    }
+
     const dangerA=windowAlpha(t,82.15,85.90,.20);
     if(scenes.dancer){
       gsap.set(scenes.dancer,{
@@ -656,12 +724,6 @@
     updateBird(t,section);
     updateLyricVisuals(t,section);
 
-    if(DEBUG){
-      debugTime.textContent=t.toFixed(2);
-      debugScene.textContent=section.scene;
-      debugSeek.value=String(t);
-    }
-
     if(!audioActive && virtualTime()>=DURATION) enterRest();
     requestAnimationFrame(syncFrame);
   }
@@ -726,17 +788,6 @@
     virtualStart=performance.now()-audio.currentTime*1000;
   });
   audio.addEventListener('pause',()=>{ if(!resting) audioActive=false; });
-
-  if(DEBUG){
-    debugPanel.hidden=false;
-    debugSeek.addEventListener('input',()=>{
-      const v=Number(debugSeek.value)||0;
-      virtualStart=performance.now()-v*1000;
-      try{audio.currentTime=v}catch(_){}
-      master.time(v,false);
-      captionIndex=-1;
-    });
-  }
 
   addEventListener('pageshow',tryAutoplay);
   addEventListener('focus',tryAutoplay);
