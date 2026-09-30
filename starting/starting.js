@@ -3,8 +3,8 @@
 
   const MASTER_DURATION = 181;
   const REST_MS = 2 * 60 * 1000;
-  const AUDIO_SRC = '../assets/audio/harpy-hare.mp3';
   const params = new URLSearchParams(location.search);
+  const AUDIO_SRC = params.get('audio') || '../assets/audio/harpy-hare.mp3';
   const DEBUG = params.has('debug');
   const PREVIEW = params.has('preview');
 
@@ -57,7 +57,10 @@
   const debugOffset = $('debug-offset');
   const debugSeek = $('debug-seek');
 
-  let offset = Number(localStorage.getItem('nihilguh_harpy_offset') || 0);
+  const queryOffset = params.get('offset');
+  let offset = queryOffset !== null
+    ? Number(queryOffset || 0)
+    : Number(localStorage.getItem('nihilguh_harpy_offset') || 0);
   let activeScene = 'intro';
   let activeCaption = -1;
   let resting = false;
