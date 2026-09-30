@@ -1,400 +1,116 @@
 :root{
   --black:#050504;
-  --ink:#171613;
   --paper:#e8e4d6;
-  --paper-2:#d7d2c0;
-  --paper-dark:#aaa590;
-  --line:#292720;
-  --violet:#b7a6d9;
-  --stage-glow:rgba(232,228,214,.09);
+  --paper-2:#cbc5b3;
+  --ink:#171613;
+  --muted:#858177;
+  --violet:#b9a8da;
 }
 *{box-sizing:border-box}
-html,body{width:100%;height:100%;margin:0;background:var(--black);color:#f4f2ea;overflow:hidden}
+html,body{width:100%;height:100%;margin:0;background:#030303;color:#f5f3ec;overflow:hidden}
 body{font-family:Inter,system-ui,sans-serif}
-button,input{font:inherit}
-
 .broadcast{
-  position:relative;
   width:100vw;height:100vh;min-height:540px;
-  display:grid;
-  grid-template-rows:68px minmax(0,1fr) 150px 42px;
-  padding:0 clamp(24px,4vw,80px);
-  overflow:hidden;
-  isolation:isolate;
-  background:
-    radial-gradient(ellipse at 50% 43%,#11100e 0,#060605 55%,#020202 100%);
+  display:grid;grid-template-rows:64px minmax(0,1fr) 138px 40px;
+  padding:0 clamp(22px,4vw,76px);
+  background:radial-gradient(ellipse at 50% 42%,#11100e 0,#060605 54%,#020202 100%);
+  position:relative;isolation:isolate;overflow:hidden
 }
-.broadcast::before{
-  content:"";position:absolute;inset:0;z-index:-3;
-  background:
-    repeating-linear-gradient(90deg,rgba(255,255,255,.008) 0 1px,transparent 1px 53px),
-    repeating-linear-gradient(0deg,rgba(255,255,255,.006) 0 1px,transparent 1px 47px);
-}
-.page-noise{
-  position:absolute;inset:-40%;z-index:80;pointer-events:none;opacity:.045;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation:pageNoise .24s steps(2) infinite;
+.grain{
+  position:absolute;inset:-30%;z-index:80;pointer-events:none;opacity:.045;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.83' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")
 }
 .broadcast-head,.broadcast-foot{
-  position:relative;z-index:50;
-  display:flex;align-items:center;justify-content:space-between;
-  color:#8f8d84;font-size:.66rem;font-weight:850;letter-spacing:.17em;
+  position:relative;z-index:90;display:flex;align-items:center;justify-content:space-between;
+  color:#7c7970;font-size:.64rem;font-weight:850;letter-spacing:.17em
 }
-.live-mark{display:flex;align-items:center;gap:9px}
-.live-mark i{width:6px;height:6px;border-radius:50%;background:#e9e5d8;box-shadow:0 0 13px rgba(255,255,255,.55)}
-.tiny-mark{color:#66645e}
-
 .theater{
-  position:relative;
-  width:min(1280px,84vw);
-  aspect-ratio:16/9;
-  max-height:64vh;
-  align-self:center;justify-self:center;
-  overflow:hidden;
-  background:var(--paper);
-  border:1px solid #2d2b25;
-  box-shadow:
-    0 35px 100px rgba(0,0,0,.72),
-    0 0 0 1px rgba(255,255,255,.035),
-    inset 0 0 70px rgba(0,0,0,.16);
-  contain:layout paint style;
+  position:relative;width:min(1280px,84vw);aspect-ratio:16/9;max-height:64vh;
+  align-self:center;justify-self:center;overflow:hidden;
+  background:var(--paper);border:1px solid #2b2923;
+  box-shadow:0 34px 100px rgba(0,0,0,.72),inset 0 0 80px rgba(0,0,0,.12);
+  contain:layout paint style
 }
-.reference-film{
-  position:absolute;inset:-10%;
-  z-index:0;width:120%;height:120%;
-  object-fit:cover;
-  opacity:.13;
-  filter:grayscale(1) sepia(.18) contrast(1.55) brightness(.9) blur(8px);
-  mix-blend-mode:multiply;
-  transform:scale(1.08);
-  pointer-events:none;
-}
-.paper-wash{
-  position:absolute;inset:0;z-index:1;pointer-events:none;
+.stage-paper{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
   background:
-    radial-gradient(circle at 30% 25%,rgba(255,255,255,.34),transparent 27%),
-    radial-gradient(circle at 72% 64%,rgba(80,74,58,.12),transparent 34%),
-    linear-gradient(90deg,rgba(71,65,50,.08),transparent 13%,transparent 87%,rgba(71,65,50,.08)),
-    rgba(232,228,214,.74);
+    radial-gradient(circle at 26% 22%,rgba(255,255,255,.44),transparent 29%),
+    radial-gradient(circle at 74% 68%,rgba(80,72,54,.12),transparent 34%),
+    linear-gradient(90deg,rgba(66,59,45,.06),transparent 13%,transparent 87%,rgba(66,59,45,.06)),
+    #e8e4d6
 }
-.edge-vignette{
-  position:absolute;inset:0;z-index:30;pointer-events:none;
-  box-shadow:inset 0 0 90px rgba(18,17,14,.30);
-}
-.ornament{
-  position:absolute;left:0;right:0;height:24px;z-index:35;pointer-events:none;
-  background:
-    linear-gradient(90deg,transparent 0 2%,var(--ink) 2% 2.18%,transparent 2.18% 97.82%,var(--ink) 97.82% 98%,transparent 98%),
-    repeating-linear-gradient(90deg,transparent 0 28px,rgba(25,24,20,.85) 28px 30px,transparent 30px 48px),
-    repeating-radial-gradient(ellipse at center,rgba(22,21,18,.72) 0 2px,transparent 2px 10px);
-  opacity:.62;
-}
-.ornament-top{top:0;border-bottom:1px solid rgba(23,22,18,.7)}
-.ornament-bottom{bottom:0;transform:scaleY(-1);border-bottom:1px solid rgba(23,22,18,.7)}
-
 .scene{
-  position:absolute;inset:24px 0;z-index:5;
-  display:grid;place-items:center;
-  opacity:0;visibility:hidden;
-  transform-origin:center;
-  pointer-events:none;
+  position:absolute;inset:0;z-index:5;display:grid;place-items:center;
+  opacity:0;visibility:hidden;will-change:transform,opacity;pointer-events:none
 }
-.scene.is-visible{visibility:visible}
-.scene-rest{background:var(--black);inset:0;z-index:40}
+.scene-cheshire{background:radial-gradient(ellipse at center,#171610 0,#090807 60%,#030303 100%)}
+.scene-rest{background:#030303;z-index:30}
+.scene-rest span{color:#45423d;font:700 2rem "Cormorant Garamond"}
 
-.scene-intro{color:var(--ink)}
-.story-moon{
-  position:absolute;left:50%;top:49%;
-  width:min(360px,28vw);aspect-ratio:1;
-  transform:translate(-50%,-50%);
-  display:grid;place-items:center;
-}
-.story-moon::before{
-  content:"";position:absolute;inset:0;border:1px solid rgba(23,22,19,.32);border-radius:50%;
-  box-shadow:0 0 0 18px rgba(23,22,19,.025),0 0 0 44px rgba(23,22,19,.018);
-}
-.story-moon span{font:600 clamp(6rem,12vw,12rem) "Cormorant Garamond";line-height:1;color:#29271f;opacity:.12}
-.story-moon i{position:absolute;width:8px;height:8px;border-radius:50%;background:#25231e;left:20%;top:25%;box-shadow:210px 180px 0 #25231e,260px 22px 0 #25231e,55px 220px 0 #25231e}
-.intro-stars{position:absolute;top:20%;display:flex;gap:26px;align-items:center;font:700 1.1rem "Cormorant Garamond";color:#6e6a5d}
-.intro-copy{position:relative;display:grid;gap:7px;text-align:center;color:var(--ink)}
+.intro-rings{position:absolute;width:320px;aspect-ratio:1}
+.intro-rings i{position:absolute;inset:0;border:1px solid rgba(25,23,19,.2);border-radius:50%}
+.intro-rings i:nth-child(2){inset:28px}.intro-rings i:nth-child(3){inset:68px}
+.intro-stars{position:absolute;top:19%;color:#716d61;font:700 1.1rem "Cormorant Garamond";letter-spacing:.32em}
+.intro-copy{display:grid;gap:7px;text-align:center;color:var(--ink)}
 .intro-copy small{font-size:.64rem;font-weight:900;letter-spacing:.28em;text-transform:uppercase;color:#777264}
-.intro-copy strong{font:700 clamp(2.8rem,6vw,6rem) "Cormorant Garamond";letter-spacing:-.055em;line-height:.88}
+.intro-copy strong{font:700 clamp(2.8rem,6vw,6rem) "Cormorant Garamond";letter-spacing:-.055em;line-height:.9}
 
-.scene-cheshire{
-  background:radial-gradient(ellipse at center,#161510 0,#080807 58%,#030303 100%);
-  color:#ede9dc;
-}
-.cheshire-mist{position:absolute;width:58%;height:42%;border-radius:50%;background:radial-gradient(ellipse,rgba(183,166,217,.11),transparent 68%);filter:blur(22px)}
-.mist-a{left:0;top:12%}.mist-b{right:-4%;bottom:6%}
-.cheshire-svg{position:relative;width:min(880px,78%);height:auto;overflow:visible}
-.eye-shape{fill:#e7e2d6;stroke:#b7a6d9;stroke-width:3.5}
-.cheshire-pupil{fill:#11100e}
-.eye-glint{fill:#fff}
-.smile-shell{fill:#ebe6d9;stroke:#b7a6d9;stroke-width:3.5}
-.smile-cut{fill:#080807}
-.tooth-lines{fill:none;stroke:#15130f;stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
-.cheshire-eye-pair,.cheshire-mouth{transform-box:fill-box;transform-origin:center;will-change:transform,opacity}
-.cheshire-rune{position:absolute;font:700 6rem "Cormorant Garamond";color:rgba(232,228,214,.07)}
-.rune-a{left:8%;top:12%}.rune-b{right:8%;bottom:9%}
+.cheshire-aura{position:absolute;width:68%;height:52%;border-radius:50%;background:radial-gradient(ellipse,rgba(185,168,218,.10),transparent 70%);filter:blur(18px)}
+.cheshire-svg{width:min(860px,75%);height:auto;overflow:visible}
+.eye-shape{fill:#eeeade;stroke:var(--violet);stroke-width:3.2}
+.pupil{fill:#11100e}.glint{fill:#fff}
+.cheshire-eyes,.cheshire-mouth{transform-box:fill-box;transform-origin:center;will-change:transform}
+.mouth-cavity{fill:#050504}
+.teeth path{fill:#f2eee2;stroke:#17150f;stroke-width:2.1;stroke-linejoin:round}
+.teeth path.lower{fill:#e5e0d4}
+.lip{fill:none;stroke:var(--violet);stroke-linecap:round}
+.lip-top{stroke-width:5.2}.lip-bottom{stroke-width:3.7}
 
-.scene-hare{color:var(--ink)}
-.hare-ground{position:absolute;left:7%;right:7%;bottom:22%;height:1px;background:linear-gradient(90deg,transparent,rgba(31,29,24,.42) 15% 85%,transparent)}
-.hare-speed{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(30,29,24,.25),transparent);transform-origin:left}
-.speed-a{top:37%}.speed-b{top:61%}
-.hare-motion{
-  position:absolute;left:0;top:50%;
-  width:min(480px,38vw);
-  transform:translate3d(-42vw,-48%,0);
-  will-change:transform,opacity;
-}
-.hare-art{width:100%;height:auto;display:block;transform:scaleX(-1);filter:drop-shadow(0 12px 8px rgba(18,17,13,.16))}
-.hare-torso,.hare-head,.hare-tail,.hare-ear{fill:#e9e5d7;stroke:#211f1a;stroke-width:5}
-.hare-ear.back{fill:#c8c2ae}
-.hare-muzzle{fill:none;stroke:#211f1a;stroke-width:7;stroke-linecap:round}
-.hare-eye{fill:#211f1a}.hare-glint{fill:#e9e5d7}
-.hare-backleg,.hare-frontleg{fill:none;stroke:#211f1a;stroke-width:14;stroke-linecap:round}
+.hare-lines{position:absolute;inset:0;overflow:hidden}
+.hare-lines i{position:absolute;left:-10%;width:120%;height:1px;background:linear-gradient(90deg,transparent,rgba(32,29,23,.22),transparent)}
+.hare-lines i:nth-child(1){top:34%}.hare-lines i:nth-child(2){top:51%}.hare-lines i:nth-child(3){top:68%}
+.hare-motion{position:absolute;left:0;top:50%;width:min(500px,39vw);will-change:transform}
+.hare-art{width:100%;display:block;will-change:transform}
+.hare-ear,.hare-torso,.hare-head,.hare-tail{fill:#e9e5d7;stroke:#211f1a;stroke-width:5}
+.hare-ear.back{fill:#c8c2ae}.hare-muzzle{fill:none;stroke:#211f1a;stroke-width:7;stroke-linecap:round}
+.hare-eye{fill:#211f1a}.hare-glint{fill:#e9e5d7}.hare-leg{fill:none;stroke:#211f1a;stroke-width:14;stroke-linecap:round}
 .mouth-arrows{fill:none;stroke:#211f1a;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
-.hare-shadow{position:absolute;left:25%;right:12%;bottom:1%;height:20px;border-radius:50%;background:rgba(25,23,19,.18);filter:blur(5px)}
-.hare-dust{position:absolute;left:10%;bottom:18%;display:flex;gap:8px}
-.hare-dust i{width:8px;height:8px;border-radius:50%;background:#6d685b;opacity:.25}
+.hare-shadow{position:absolute;left:22%;right:12%;bottom:4%;height:19px;border-radius:50%;background:rgba(25,23,19,.18);filter:blur(5px)}
 
-.scene-dancer{color:var(--ink)}
-.forest-silhouette{position:absolute;inset:0;overflow:hidden}
-.tree{position:absolute;bottom:-14%;width:120px;height:70%;background:linear-gradient(90deg,transparent 43%,rgba(28,26,21,.15) 43% 57%,transparent 57%)}
-.tree::before,.tree::after{content:"";position:absolute;left:50%;width:150px;height:150px;border:2px solid rgba(28,26,21,.12);border-radius:50% 50% 48% 52%;transform:translateX(-50%) rotate(22deg)}
-.tree::before{top:4%}.tree::after{top:23%;width:190px;height:190px}
-.tree-a{left:5%}.tree-b{right:6%;transform:scaleX(.82)}.tree-c{left:28%;height:48%;opacity:.6}
-.forest-star{position:absolute;font:700 1.3rem "Cormorant Garamond";color:#6d685b}
-.star-a{left:18%;top:17%}.star-b{right:21%;top:13%}.star-c{right:16%;top:36%}
-.dancer-motion{
-  position:relative;width:min(380px,29vw);height:min(560px,54vh);
-  display:grid;place-items:center;
-  will-change:transform;
-}
-.dancer-art{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 12px 10px rgba(23,21,17,.13))}
-.dancer-shadow ellipse{fill:rgba(28,26,21,.14)}
-.dress-back path,.dancer-bodice,.dancer-hair,.cat-ear,.shoe{fill:#1c1a16;stroke:#1c1a16;stroke-width:4}
-.dancer-head{fill:#e9e5d7;stroke:#1c1a16;stroke-width:5}
-.dancer-neck{fill:#e9e5d7;stroke:#1c1a16;stroke-width:4}
-.dancer-apron-top,.apron-skirt{fill:#e9e5d7;stroke:#1c1a16;stroke-width:4}
-.dancer-legs path,.dancer-arm path{fill:none;stroke:#1c1a16;stroke-width:13;stroke-linecap:round}
-.dancer-arm circle{fill:#e9e5d7;stroke:#1c1a16;stroke-width:4}
-.skirt-line{fill:#28251f;stroke:#1c1a16;stroke-width:5}.hem{fill:none;stroke:#e9e5d7;stroke-width:3}
-.dress-back,.dress-front,.dancer-torso,.dancer-arm{transform-box:fill-box;transform-origin:center;will-change:transform}
-.dance-orbit{position:absolute;left:50%;bottom:8%;border:1px solid rgba(32,29,24,.18);border-radius:50%;transform:translateX(-50%)}
-.orbit-one{width:360px;height:86px}.orbit-two{width:290px;height:62px;opacity:.55}
+.forest{position:absolute;inset:0;overflow:hidden}
+.forest i{position:absolute;bottom:-10%;width:140px;height:72%;border-left:2px solid rgba(31,28,22,.15);border-radius:50%}
+.forest i:nth-child(1){left:7%}.forest i:nth-child(2){left:29%;height:54%}.forest i:nth-child(3){right:8%}
+.forest b{position:absolute;color:#666157;font:700 1.2rem "Cormorant Garamond"}
+.forest b:nth-of-type(1){left:18%;top:20%}.forest b:nth-of-type(2){right:23%;top:14%}.forest b:nth-of-type(3){right:15%;top:36%}
+.dancer-motion{position:relative;width:min(390px,30vw);perspective:1000px;will-change:transform}
+.dancer-art{width:100%;display:block;transform-origin:50% 57%;will-change:transform}
+.dress-back path,.bodice,.hair,.cat-ear,.skirt{fill:#151410;stroke:#25231e;stroke-width:5}
+.head{fill:#e8e4d6;stroke:#25231e;stroke-width:5}
+.neck,.legs path,.arm path{fill:none;stroke:#25231e;stroke-width:13;stroke-linecap:round}
+.arm circle{fill:#e8e4d6;stroke:#25231e;stroke-width:5}
+.apron-top,.apron{fill:#e8e4d6;stroke:#25231e;stroke-width:4}
+.hem{fill:none;stroke:#e8e4d6;stroke-width:4}
+.dress-back,.dress-front,.torso,.arm{transform-box:fill-box;transform-origin:center;will-change:transform}
 
-.scene-bird{color:var(--ink)}
-.bird-stars{position:absolute;inset:13% 9% auto;display:flex;justify-content:space-between;font:700 1.3rem "Cormorant Garamond";color:#6d685b}
-.bird-motion{
-  position:absolute;left:0;top:50%;
-  width:min(450px,36vw);
-  transform:translate3d(-42vw,-50%,0);
-  will-change:transform,opacity;
-}
-.bird-art{width:100%;height:auto;display:block;filter:drop-shadow(0 12px 9px rgba(20,19,15,.14))}
-.bird-body ellipse,.bird-body circle,.bird-tail path,.bird-wing path{fill:#e8e4d6;stroke:#201e19;stroke-width:5}
-.bird-beak{fill:#9e9782;stroke:#201e19;stroke-width:4}.bird-eye{fill:#201e19}
-.bird-wing{transform-box:fill-box;transform-origin:70% 75%;will-change:transform}
-.floating-feathers{position:absolute;left:18%;bottom:18%;display:flex;gap:44px;color:#77705f}
-.floating-feathers i{font:700 2rem "Cormorant Garamond";font-style:normal}
-
-.scene-rest{display:grid;place-items:center}.rest-symbol{font:700 1.2rem "Cormorant Garamond";color:#2e2c28}
+.bird-stars{position:absolute;top:20%;left:8%;right:8%;color:#69655c;font:700 1.2rem "Cormorant Garamond";letter-spacing:.9em}
+.bird-motion{position:absolute;left:0;top:50%;width:min(540px,42vw);will-change:transform}
+.bird-art{width:100%;display:block}
+.bird-tail,.wing path,.bird-body ellipse,.bird-body circle{fill:#e7e3d7;stroke:#292720;stroke-width:4}
+.beak{fill:#8f897a}.bird-eye{fill:#111}
+.wing{transform-box:fill-box;transform-origin:70% 70%;will-change:transform}
 
 .subtitle-area{
-  position:relative;z-index:50;
-  align-self:center;justify-self:center;
-  width:min(1180px,80vw);
-  display:grid;grid-template-columns:42px 1fr;gap:16px;align-items:start;
-  min-height:104px;padding-top:20px;
+  align-self:center;justify-self:center;width:min(1180px,80vw);min-height:104px;
+  display:grid;grid-template-columns:38px 1fr;gap:16px;align-items:start;padding-top:18px;position:relative;z-index:90
 }
-.subtitle-mark{font:700 1.7rem "Cormorant Garamond";color:#777268;line-height:1}
-.subtitle-current{min-height:1.35em;font:700 clamp(1.35rem,2.3vw,2.15rem) "Cormorant Garamond";letter-spacing:-.018em;color:#f2eee3;text-shadow:0 3px 20px #000}
-.subtitle-current.is-changing{animation:captionIn .38s cubic-bezier(.2,.75,.25,1) both}
-.subtitle-next{margin-top:6px;font-size:.73rem;font-weight:700;color:#5e5c56;letter-spacing:.02em}
+.subtitle-icon{font:700 1.45rem "Cormorant Garamond";color:#77736a}
+.subtitle-current{min-height:1.25em;font-size:clamp(1.2rem,2vw,1.9rem);font-weight:850;letter-spacing:-.025em}
+.subtitle-next{margin-top:7px;color:#5f5c55;font-size:.8rem;font-weight:650}
+.debug-panel{position:absolute;right:14px;top:14px;z-index:120;width:220px;padding:12px;background:rgba(0,0,0,.86);border:1px solid #333;display:grid;gap:7px;font-size:.7rem}
+.debug-panel input{width:100%}
 
-.start-gate{
-  position:absolute;z-index:90;right:18px;bottom:18px;
-  width:min(380px,calc(100vw - 36px));
-  background:transparent;
-}
-.start-gate[hidden]{display:none!important}
-.start-gate-box{
-  width:100%;display:grid;gap:6px;padding:12px 13px;
-  border:1px solid rgba(255,255,255,.14);
-  background:rgba(5,5,4,.84);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  box-shadow:0 15px 42px rgba(0,0,0,.48);
-}
-.start-gate-box>strong{font-size:.78rem}.start-gate-box>span{font-size:.65rem;line-height:1.45;color:#888}
-.start-gate-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:3px}
-.start-gate-actions button,.start-gate-file,.start-gate-actions a{
-  min-height:34px;display:flex;align-items:center;justify-content:center;padding:0 9px;
-  border:1px solid #34332f;background:#10100f;color:#e9e5db;text-decoration:none;font-size:.65rem;font-weight:850;cursor:pointer
-}
-.start-gate-file input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
-.start-gate-actions a{grid-column:1/-1;color:#8b8880}
-
-.debug-panel{
-  position:absolute;z-index:100;top:16px;right:16px;width:240px;
-  padding:13px;border:1px solid #45433d;background:rgba(0,0,0,.89);
-  display:grid;gap:7px;font-size:.7rem;color:#999
-}
-.debug-panel strong,.debug-panel b{color:#fff}.debug-panel input{width:100%}
-.debug-panel div{display:flex;gap:5px}.debug-panel button{flex:1;border:1px solid #444;background:#111;color:#ddd;padding:5px;cursor:pointer}
-
-.broadcast.is-fading{animation:fadeOut 2s ease forwards}
-.broadcast.is-resting .broadcast-head,.broadcast.is-resting .subtitle-area,.broadcast.is-resting .broadcast-foot{opacity:0;transition:opacity 1.4s ease}
-.broadcast.is-entering{animation:fadeIn 2s ease both}
-
-@keyframes pageNoise{0%{transform:translate(0)}25%{transform:translate(2%,-2%)}50%{transform:translate(-2%,1%)}75%{transform:translate(1%,2%)}100%{transform:translate(-1%,-1%)}}
-@keyframes captionIn{from{opacity:0;transform:translate3d(0,9px,0);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}
-@keyframes fadeOut{to{opacity:0}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-
+.broadcast.resting .broadcast-head,.broadcast.resting .subtitle-area,.broadcast.resting .broadcast-foot{opacity:0}
 @media(max-width:900px){
-  .broadcast{grid-template-rows:56px minmax(0,1fr) 128px 36px;padding:0 16px}
-  .theater{width:94vw;max-height:58vh}
-  .broadcast-head{font-size:.56rem}.tiny-mark{display:none}
-  .subtitle-area{width:89vw}
-  .hare-motion,.bird-motion{width:54vw}
-  .dancer-motion{width:46vw;height:50vh}
-}
-
-/* v6 visual corrections */
-.ornament,.ornament-top,.ornament-bottom{display:none!important}
-.scene{inset:0}
-.scene-cheshire{overflow:hidden}
-.cheshire-svg{
-  position:absolute;
-  left:50%;
-  top:50%;
-  width:min(900px,76%);
-  max-height:82%;
-  transform:translate(-50%,-50%);
-  overflow:visible;
-}
-.mouth-cavity{fill:#070706;stroke:none}
-.teeth-fill{fill:#ece8dc;stroke:none}
-.tooth-lines{
-  fill:none;
-  stroke:#17150f;
-  stroke-width:5;
-  stroke-linejoin:round;
-  stroke-linecap:round;
-}
-.smile-lip{
-  fill:none;
-  stroke:#b7a6d9;
-  stroke-width:4.5;
-  stroke-linecap:round;
-}
-.bottom-lip{stroke-width:3.5}
-.teeth-layer{pointer-events:none}
-.hare-art{
-  transform:none!important;
-  transform-origin:center!important;
-}
-.dancer-motion{perspective:900px}
-.dancer-art{transform-origin:50% 58%;will-change:transform}
-
-
-/* v7 precision fixes from visual QA */
-.theater{
-  background:#090908!important;
-}
-.scene{
-  inset:0!important;
-}
-.scene::before,
-.scene::after,
-.theater::before,
-.theater::after{
-  display:none!important;
-  content:none!important;
-}
-.ornament,
-.ornament-top,
-.ornament-bottom{
-  display:none!important;
-}
-.paper-wash{
-  inset:0!important;
-}
-
-/* Cheshire: keep the complete face centered inside the stage */
-.scene-cheshire{
-  display:grid!important;
-  place-items:center!important;
-  overflow:hidden!important;
-}
-.cheshire-svg{
-  position:relative!important;
-  left:auto!important;
-  top:auto!important;
-  width:min(820px,72%)!important;
-  max-height:76%!important;
-  transform:none!important;
-  margin:0 auto!important;
-  overflow:visible!important;
-}
-.cheshire-mouth{
-  transform-box:fill-box;
-  transform-origin:50% 18%;
-}
-.teeth-layer{
-  transform:translateY(9px) scaleY(.88);
-  transform-origin:50% 0%;
-  pointer-events:none;
-}
-.tooth-lines{
-  stroke-width:4.5!important;
-}
-.top-lip{
-  stroke-width:6!important;
-}
-.bottom-lip{
-  stroke-width:4.5!important;
-}
-
-/* Hare travels left -> right and visually faces the direction of travel */
-.hare-art{
-  transform:scaleX(-1)!important;
-  transform-origin:50% 50%!important;
-}
-
-/* Faster dance with a little more visual energy */
-.dancer-motion{
-  width:min(390px,30vw)!important;
-}
-.dancer-art{
-  transform-origin:50% 58%!important;
-}
-
-
-/* v9 Cheshire grin rebuild */
-.teeth-fill,.tooth-lines{display:none!important}
-.teeth-layer{
-  transform:none!important;
-  pointer-events:none;
-}
-.cheshire-tooth{
-  fill:#f3efe3;
-  stroke:#17150f;
-  stroke-width:2.25;
-  stroke-linejoin:round;
-}
-.cheshire-tooth.lower{
-  fill:#e6e1d4;
-}
-.mouth-cavity{
-  fill:#050504!important;
-  stroke:none!important;
-}
-.top-lip{
-  stroke:#b7a6d9!important;
-  stroke-width:5.5!important;
-}
-.bottom-lip{
-  stroke:#b7a6d9!important;
-  stroke-width:4!important;
+  .broadcast{grid-template-rows:54px minmax(0,1fr) 118px 34px;padding:0 16px}
+  .theater{width:94vw}.broadcast-head{font-size:.56rem}.subtitle-area{width:90vw}
 }
