@@ -544,3 +544,224 @@ body{
   user-select:none;
   -webkit-user-select:none;
 }
+
+
+/* v19 lyric-driven visual motifs */
+.lyric-layer{
+  position:absolute;
+  inset:0;
+  z-index:12;
+  pointer-events:none;
+  overflow:hidden;
+}
+
+/* Chorus: roots / buried motif */
+.chorus-roots{
+  opacity:0;
+}
+.chorus-roots i{
+  position:absolute;
+  left:50%;
+  bottom:-8%;
+  width:2px;
+  height:42%;
+  background:linear-gradient(180deg,rgba(196,178,235,.05),rgba(196,178,235,.34));
+  transform-origin:50% 100%;
+  border-radius:999px;
+  filter:drop-shadow(0 0 4px rgba(190,170,235,.15));
+}
+.chorus-roots i:nth-child(1){transform:translateX(-260px) rotate(-28deg)}
+.chorus-roots i:nth-child(2){transform:translateX(-130px) rotate(-14deg);height:34%}
+.chorus-roots i:nth-child(3){transform:translateX(0) rotate(0deg);height:46%}
+.chorus-roots i:nth-child(4){transform:translateX(130px) rotate(14deg);height:34%}
+.chorus-roots i:nth-child(5){transform:translateX(260px) rotate(28deg)}
+
+/* Hare: stolen / broken arrows */
+.stolen-arrows span{
+  position:absolute;
+  left:50%;
+  top:50%;
+  font:700 clamp(1rem,2.4vw,2.2rem) "Cormorant Garamond";
+  color:#2a2721;
+  opacity:0;
+  will-change:transform,opacity;
+}
+.stolen-arrows span:nth-child(1){margin-left:-36%;margin-top:-22%}
+.stolen-arrows span:nth-child(2){margin-left:-18%;margin-top:8%}
+.stolen-arrows span:nth-child(3){margin-left:2%;margin-top:-26%}
+.stolen-arrows span:nth-child(4){margin-left:21%;margin-top:10%}
+.stolen-arrows span:nth-child(5){margin-left:34%;margin-top:-14%}
+
+.arrow-fragments i{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:clamp(34px,5vw,74px);
+  height:3px;
+  background:#2a2721;
+  border-radius:999px;
+  opacity:0;
+  transform-origin:center;
+}
+.arrow-fragments i::after{
+  content:"";
+  position:absolute;
+  right:-2px;
+  top:50%;
+  width:8px;height:8px;
+  border-top:2px solid #2a2721;
+  border-right:2px solid #2a2721;
+  transform:translateY(-50%) rotate(45deg);
+}
+.arrow-fragments i:nth-child(1){margin-left:-30%;margin-top:-18%}
+.arrow-fragments i:nth-child(2){margin-left:-12%;margin-top:2%}
+.arrow-fragments i:nth-child(3){margin-left:12%;margin-top:-12%}
+.arrow-fragments i:nth-child(4){margin-left:30%;margin-top:14%}
+.arrow-fragments i:nth-child(5){margin-left:-22%;margin-top:18%}
+.arrow-fragments i:nth-child(6){margin-left:19%;margin-top:-25%}
+
+.hidden-heart{
+  display:grid;
+  place-items:center;
+  opacity:0;
+}
+.hidden-heart span{
+  color:#1d1b17;
+  font-size:clamp(3rem,8vw,7rem);
+  filter:drop-shadow(0 0 12px rgba(0,0,0,.12));
+  will-change:transform,opacity;
+}
+
+/* Hare cage */
+.cage-visual{
+  left:18%;
+  right:18%;
+  top:10%;
+  bottom:10%;
+  opacity:0;
+  overflow:visible;
+}
+.cage-visual b{
+  position:absolute;
+  top:8%;
+  bottom:8%;
+  width:2px;
+  background:rgba(31,28,22,.56);
+  transform-origin:50% 50%;
+}
+.cage-visual b:nth-child(1){left:12%}
+.cage-visual b:nth-child(2){left:27%}
+.cage-visual b:nth-child(3){left:42%}
+.cage-visual b:nth-child(4){left:58%}
+.cage-visual b:nth-child(5){left:73%}
+.cage-visual b:nth-child(6){left:88%}
+.cage-visual em{
+  position:absolute;
+  left:7%;right:7%;
+  height:2px;
+  background:rgba(31,28,22,.62);
+}
+.cage-top{top:8%}.cage-bottom{bottom:8%}
+
+/* Dancer: starry ceiling */
+.star-ceiling span{
+  position:absolute;
+  color:#514d44;
+  opacity:0;
+  font-family:"Cormorant Garamond";
+  will-change:transform,opacity;
+}
+.star-ceiling span:nth-child(1){left:10%;top:10%;font-size:1.1rem}
+.star-ceiling span:nth-child(2){left:28%;top:7%;font-size:1.5rem}
+.star-ceiling span:nth-child(3){left:48%;top:12%;font-size:.9rem}
+.star-ceiling span:nth-child(4){left:65%;top:6%;font-size:1.4rem}
+.star-ceiling span:nth-child(5){left:78%;top:13%;font-size:1.1rem}
+.star-ceiling span:nth-child(6){left:90%;top:8%;font-size:1.3rem}
+
+/* Dancer: woven curtains */
+.curtain-weave i{
+  position:absolute;
+  top:-8%;
+  width:9%;
+  height:116%;
+  opacity:0;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      rgba(32,29,23,.14) 0 6px,
+      rgba(32,29,23,.035) 6px 12px
+    );
+  border-left:1px solid rgba(32,29,23,.12);
+  border-right:1px solid rgba(32,29,23,.08);
+  will-change:transform,opacity;
+}
+.curtain-weave i:nth-child(1){left:0}
+.curtain-weave i:nth-child(2){left:10%}
+.curtain-weave i:nth-child(3){right:10%}
+.curtain-weave i:nth-child(4){right:0}
+
+.story-pages span{
+  position:absolute;
+  top:50%;
+  left:50%;
+  color:#5f594e;
+  font-size:clamp(1.3rem,2.8vw,2.8rem);
+  opacity:0;
+  will-change:transform,opacity;
+}
+.story-pages span:nth-child(1){margin-left:-32%;margin-top:-8%}
+.story-pages span:nth-child(2){margin-left:24%;margin-top:-18%}
+.story-pages span:nth-child(3){margin-left:18%;margin-top:18%}
+
+/* Final cage + distant birds */
+.bird-cage{
+  left:26%;
+  right:26%;
+  top:8%;
+  bottom:8%;
+  opacity:0;
+  overflow:visible;
+}
+.bird-cage b{
+  position:absolute;
+  top:6%;
+  bottom:6%;
+  width:2px;
+  background:rgba(34,31,25,.58);
+  transform-origin:50% 50%;
+}
+.bird-cage b:nth-child(1){left:0}
+.bird-cage b:nth-child(2){left:20%}
+.bird-cage b:nth-child(3){left:40%}
+.bird-cage b:nth-child(4){left:60%}
+.bird-cage b:nth-child(5){left:80%}
+.bird-cage b:nth-child(6){left:100%}
+.bird-cage em{
+  position:absolute;
+  left:-4%;right:-4%;top:6%;
+  height:2px;
+  background:rgba(34,31,25,.62);
+}
+
+.distant-birds span{
+  position:absolute;
+  left:50%;
+  top:50%;
+  color:#4e4a42;
+  font:700 clamp(.8rem,2vw,1.8rem) "Cormorant Garamond";
+  opacity:0;
+  will-change:transform,opacity;
+}
+.distant-birds span:nth-child(1){margin-left:3%;margin-top:-10%}
+.distant-birds span:nth-child(2){margin-left:16%;margin-top:-18%}
+.distant-birds span:nth-child(3){margin-left:28%;margin-top:-6%}
+.distant-birds span:nth-child(4){margin-left:39%;margin-top:-22%}
+
+@media (max-width:560px) and (orientation:portrait){
+  .cage-visual{left:10%;right:10%}
+  .bird-cage{left:18%;right:18%}
+  .chorus-roots i:nth-child(1){transform:translateX(-130px) rotate(-28deg)}
+  .chorus-roots i:nth-child(2){transform:translateX(-65px) rotate(-14deg)}
+  .chorus-roots i:nth-child(4){transform:translateX(65px) rotate(14deg)}
+  .chorus-roots i:nth-child(5){transform:translateX(130px) rotate(28deg)}
+}
