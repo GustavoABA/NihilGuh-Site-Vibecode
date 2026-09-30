@@ -923,3 +923,12 @@ body.overlay-clean-page .overlay-clean-shell{
   .overlay-cta-copy strong,
   .overlay-win-row{animation:none!important}
 }
+
+/* Overlay CTA v18 — site URL */
+.overlay-cta-copy{min-width:360px;max-width:410px}
+.overlay-cta-copy strong{
+  white-space:normal;
+  overflow-wrap:anywhere;
+  font-size:23px;
+  line-height:1.12;
+}
