@@ -25,6 +25,7 @@ jobs:
             head -c 500 /tmp/body || true
             echo
           }
+          probe candidate "https://script.google.com/macros/s/AKfycbx8IbeTPXiVQIJw_QL0YgRBRhurFGk2W2lQWE0CjGweLkF-aFI7KNyeh6PvVBuYZGM/exec"
           probe v6 "https://script.google.com/macros/s/AKfycbzbmAfdOlvSgHHC-QHeArNLLg3PvhT7FCLpAZ1e5avyeFt0rrYkyN_Lkrtb9b-LUdU/exec"
           probe v5 "https://script.google.com/macros/s/AKfycbzne2mZekghThymuej5yg8a6gNy2PNesVuVTo27RWhj7AXmr1TE_YEXMOImUySImf7Y/exec"
           probe v4 "https://script.google.com/macros/s/AKfycbz8yWzWTfFx1N-KFCuYQK3kEx4mC854xja58Dq4pa8GzdZpxXBPX_91lVaqF7MrpUGR/exec"
