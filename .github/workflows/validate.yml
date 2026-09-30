@@ -44,7 +44,8 @@ jobs:
           test -f starting/index.html
           test -f starting/starting.css
           test -f starting/starting.js
-          test -f assets/video/harpy-hare-reference.mp4
+          test -f assets/audio/harpy-hare.mp3
+          test $(wc -c < assets/audio/harpy-hare.mp3) -gt 1000000
           test -f apps-script/ALL_IN_ONE.gs
       - name: Smoke-test deployed Apps Script
         run: |
