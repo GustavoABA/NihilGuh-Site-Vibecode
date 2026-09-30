@@ -1,0 +1,45 @@
+name: Install Harpy Hare audio
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - ".audio-upload/READY"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Rebuild MP3 asset
+        shell: bash
+        run: |
+          if [ ! -f .audio-upload/READY ]; then
+            echo "Audio chunks already cleaned; nothing to do."
+            exit 0
+          fi
+          mkdir -p assets/audio
+          cat .audio-upload/chunk_* | tr -d '\n\r' | base64 -d > assets/audio/harpy-hare.mp3
+          test -s assets/audio/harpy-hare.mp3
+          echo "bytes=$(wc -c < assets/audio/harpy-hare.mp3)"
+          file assets/audio/harpy-hare.mp3
+          rm -rf .audio-upload
+
+      - name: Commit audio asset
+        shell: bash
+        run: |
+          if git diff --quiet && [ -z "$(git status --porcelain)" ]; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/audio/harpy-hare.mp3 .audio-upload
+          git commit -m "assets: install Harpy Hare audio extracted from supplied video"
+          git push
