@@ -1,25 +1,22 @@
 (() => {
   'use strict';
 
-  const MASTER_DURATION = 179.583;
-  const REST_MS = 2 * 60 * 1000;
+  const DURATION = 179.583;
+  const REST_MS = 120000;
   const params = new URLSearchParams(location.search);
-  const DEFAULT_AUDIO_SRC = '../assets/audio/harpy-hare.mp3?v=1';
-  const EXPLICIT_AUDIO_SRC = params.get('audio') || '';
   const DEBUG = params.has('debug');
-  const PREVIEW = params.has('preview');
+  const AUDIO_SRC = params.get('audio') || '../assets/audio/harpy-hare.mp3?v=2';
 
   const SECTIONS = [
-    { start:0, end:14, scene:'intro', icon:'✦' },
-    { start:14, end:38, scene:'cheshire', icon:'☾' },
-    { start:38, end:70, scene:'hare', icon:'➶' },
-    { start:70, end:94, scene:'cheshire', icon:'☾' },
-    { start:94, end:128, scene:'dancer', icon:'♠' },
-    { start:128, end:165.5, scene:'cheshire', icon:'☾' },
-    { start:165.5, end:MASTER_DURATION + .5, scene:'bird', icon:'⌁' }
+    {start:0,end:14,scene:'intro',icon:'✦'},
+    {start:14,end:38,scene:'cheshire',icon:'☾'},
+    {start:38,end:70,scene:'hare',icon:'➶'},
+    {start:70,end:94,scene:'cheshire',icon:'☾'},
+    {start:94,end:128,scene:'dancer',icon:'♠'},
+    {start:128,end:165.5,scene:'cheshire',icon:'☾'},
+    {start:165.5,end:DURATION,scene:'bird',icon:'⌁'}
   ];
 
-  // Legendas fornecidas pelo usuário.
   const CAPTIONS = [
     {t:14.0,text:'Lebre Harpia'},{t:16.2,text:'Onde você enterrou todos os seus filhos?'},{t:20.8,text:'Me conte, digo eu'},
     {t:25.0,text:'Lebre Harpia'},{t:27.2,text:'Onde você enterrou todos os seus filhos?'},{t:32.0,text:'Me conte, digo eu'},
@@ -41,401 +38,231 @@
 
   const $ = id => document.getElementById(id);
   const audio = $('harpy-audio');
+  const theater = $('theater');
   const broadcast = $('broadcast');
-  const gate = $('start-gate');
-  const gateTitle = $('start-gate-title');
-  const gateCopy = $('start-gate-copy');
-  const gatePlay = $('start-gate-play');
-  const localAudioFile = $('local-audio-file');
   const currentEl = $('subtitle-current');
   const nextEl = $('subtitle-next');
   const iconEl = $('subtitle-icon');
-  const audioStatus = $('audio-status');
+  const statusEl = $('audio-status');
   const debugPanel = $('debug-panel');
   const debugTime = $('debug-time');
   const debugScene = $('debug-scene');
-  const debugOffset = $('debug-offset');
   const debugSeek = $('debug-seek');
 
-  const queryOffset = params.get('offset');
-  let offset = queryOffset !== null ? Number(queryOffset || 0) : Number(localStorage.getItem('nihilguh_harpy_offset') || 0);
-  let activeCaption = -1;
-  let activeScene = '';
+  const scenes = Object.fromEntries([...document.querySelectorAll('.scene')].map(el => [el.dataset.scene,el]));
+  let captionIndex = -1;
+  let audioActive = false;
   let resting = false;
-  let restTimer = null;
-  let audioReady = false;
-  let audioDrivesTimeline = false;
-  let localObjectUrl = '';
-  let virtualStartedAt = performance.now();
-  let virtualPausedAt = 0;
-  let virtualPaused = false;
-  let virtualEndHandled = false;
-  let analyser = null;
-  let analyserData = null;
-  let audioContext = null;
-  let analyserSourceConnected = false;
+  let restTimer = 0;
+  let virtualStart = performance.now();
+  let retryTimer = 0;
 
-  const sceneElements = new Map();
-  const scrubbers = [];
-  const loops = [];
+  const master = gsap.timeline({paused:true, defaults:{ease:'power2.inOut'}});
+  gsap.set('.scene',{autoAlpha:0,scale:1.025});
+  gsap.set('.scene-rest',{autoAlpha:0,scale:1});
 
-  function clamp(v,min=0,max=1){ return Math.min(max,Math.max(min,v)); }
-  function sectionAt(t){ return SECTIONS.find(s => t >= s.start && t < s.end) || SECTIONS[SECTIONS.length - 1]; }
-
-  function makeScrubber(el,keyframes,start,end,easing='linear'){
-    if(!el) return null;
-    const anim=el.animate(keyframes,{duration:Math.max(1,(end-start)*1000),fill:'both',easing});
-    anim.pause();
-    scrubbers.push({anim,start,end,el});
-    return anim;
+  for(const s of SECTIONS){
+    const el=scenes[s.scene];
+    if(!el) continue;
+    master.to(el,{autoAlpha:1,scale:1,duration:.72,ease:'power3.out'},s.start);
+    master.to(el,{autoAlpha:0,scale:.99,duration:.62,ease:'power2.in'},Math.max(s.start,s.end-.62));
   }
 
-  function makeLoop(el,keyframes,start,end,duration,easing='linear'){
-    if(!el) return null;
-    const anim=el.animate(keyframes,{duration,iterations:Infinity,fill:'both',easing});
-    anim.pause();
-    loops.push({anim,start,end,duration,el});
-    return anim;
+  master
+    .fromTo('.intro-copy',{y:18,opacity:0},{y:0,opacity:1,duration:1.3,ease:'power3.out'},1.0)
+    .fromTo('.intro-rings',{scale:.78,rotation:-8,opacity:0},{scale:1,rotation:0,opacity:1,duration:2.2,ease:'expo.out'},.5)
+    .fromTo('.intro-stars',{y:-8,opacity:0},{y:0,opacity:.9,duration:1.4},1.4);
+
+  function ease(name,p){ return gsap.parseEase(name)(Math.max(0,Math.min(1,p))); }
+  function sectionAt(t){ return SECTIONS.find(s=>t>=s.start&&t<s.end) || SECTIONS[SECTIONS.length-1]; }
+  function virtualTime(){ return (performance.now()-virtualStart)/1000; }
+  function timeNow(){ return audioActive&&!audio.paused ? audio.currentTime : Math.min(DURATION,virtualTime()); }
+
+  function updateCheshire(t,section){
+    if(section.scene!=='cheshire') return;
+    const local=t-section.start;
+    const eyes=$('cheshire-eyes');
+    const mouth=$('cheshire-mouth');
+    const blinkPhase=local%5.3;
+    const blink=blinkPhase>5.08?Math.max(.08,1-(blinkPhase-5.08)*7):1;
+    const lookX=Math.sin(local*.55)*11;
+    const lookY=Math.cos(local*.39)*3;
+    gsap.set(eyes,{x:lookX,y:lookY,scaleY:blink,transformOrigin:'50% 50%'});
+
+    const syllable=Math.pow(Math.abs(Math.sin(t*8.8)),1.5);
+    const phrase=Math.abs(Math.sin(t*2.17+.35));
+    const open=.96+(syllable*.11+phrase*.035);
+    gsap.set(mouth,{y:Math.sin(t*1.4)*2.4,scaleY:open,transformOrigin:'50% 8%'});
   }
 
-  function setupSceneAnimations(){
-    document.querySelectorAll('.scene').forEach(el => {
-      sceneElements.set(el.dataset.scene,el);
-    });
-
-    const hareStart=38, hareEnd=70;
-    makeLoop($('hare-motion'),[
-      {transform:'translate3d(-42vw,-45%,0) rotate(-2deg)',opacity:0,offset:0},
-      {transform:'translate3d(-20vw,-50%,0) rotate(1deg)',opacity:1,offset:.08},
-      {transform:'translate3d(22vw,-55%,0) rotate(-1deg)',opacity:1,offset:.42},
-      {transform:'translate3d(64vw,-47%,0) rotate(1.5deg)',opacity:1,offset:.76},
-      {transform:'translate3d(110vw,-53%,0) rotate(-1deg)',opacity:0,offset:1}
-    ],hareStart,hareEnd,5600,'cubic-bezier(.34,.02,.27,.99)');
-    makeLoop($('hare-art'),[
-      {transform:'scaleX(-1) translateY(0) rotate(-1deg)'},
-      {transform:'scaleX(-1) translateY(-9px) rotate(1deg)'},
-      {transform:'scaleX(-1) translateY(1px) rotate(-.5deg)'}
-    ],hareStart,hareEnd,255,'ease-in-out');
-    document.querySelectorAll('.hare-dust i').forEach((el,i)=>makeLoop(el,[
-      {transform:'translate3d(0,0,0) scale(.5)',opacity:.35},
-      {transform:`translate3d(${-34-i*12}px,${-10+i*4}px,0) scale(1.4)`,opacity:0}
-    ],hareStart,hareEnd,850+i*120,'ease-out'));
-
-    const dancerStart=94,dancerEnd=128;
-    makeLoop($('dancer-motion'),[
-      {transform:'translate3d(-16px,4px,0) rotate(-3deg)'},
-      {transform:'translate3d(6px,-10px,0) rotate(1.7deg)'},
-      {transform:'translate3d(18px,3px,0) rotate(3.5deg)'},
-      {transform:'translate3d(-6px,-7px,0) rotate(-1.8deg)'},
-      {transform:'translate3d(-16px,4px,0) rotate(-3deg)'}
-    ],dancerStart,dancerEnd,1050,'cubic-bezier(.42,0,.25,1)');
-    makeLoop($('dress-back'),[
-      {transform:'rotate(-3deg) scaleX(.96)'},
-      {transform:'rotate(5deg) scaleX(1.09)'},
-      {transform:'rotate(-2deg) scaleX(.98)'}
-    ],dancerStart,dancerEnd,680,'ease-in-out');
-    makeLoop($('dress-front'),[
-      {transform:'rotate(2deg) scaleX(1.02)'},
-      {transform:'rotate(-5deg) scaleX(.93)'},
-      {transform:'rotate(3deg) scaleX(1.04)'}
-    ],dancerStart,dancerEnd,680,'ease-in-out');
-    makeLoop($('dancer-torso'),[
-      {transform:'rotate(-1.5deg) translateY(0)'},
-      {transform:'rotate(2deg) translateY(-7px)'},
-      {transform:'rotate(-1deg) translateY(0)'}
-    ],dancerStart,dancerEnd,680,'ease-in-out');
-    makeLoop($('arm-left'),[
-      {transform:'rotate(14deg)'},{transform:'rotate(-20deg)'},{transform:'rotate(14deg)'}
-    ],dancerStart,dancerEnd,560,'ease-in-out');
-    makeLoop($('arm-right'),[
-      {transform:'rotate(-15deg)'},{transform:'rotate(21deg)'},{transform:'rotate(-15deg)'}
-    ],dancerStart,dancerEnd,560,'ease-in-out');
-    makeLoop($('dancer-art'),[
-      {transform:'rotateY(-7deg) rotateZ(-1.5deg) scale(1)'},
-      {transform:'rotateY(12deg) rotateZ(2deg) scale(1.025)'},
-      {transform:'rotateY(-10deg) rotateZ(-2deg) scale(.995)'},
-      {transform:'rotateY(-7deg) rotateZ(-1.5deg) scale(1)'}
-    ],dancerStart,dancerEnd,920,'cubic-bezier(.45,.05,.2,1)');
-
-    const birdStart=165.5,birdEnd=MASTER_DURATION;
-    makeLoop($('bird-motion'),[
-      {transform:'translate3d(-42vw,10vh,0) rotate(-6deg)',opacity:0,offset:0},
-      {transform:'translate3d(-18vw,1vh,0) rotate(-2deg)',opacity:1,offset:.12},
-      {transform:'translate3d(28vw,-9vh,0) rotate(3deg)',opacity:1,offset:.52},
-      {transform:'translate3d(72vw,-2vh,0) rotate(-1deg)',opacity:1,offset:.82},
-      {transform:'translate3d(112vw,-13vh,0) rotate(5deg)',opacity:0,offset:1}
-    ],birdStart,birdEnd,7600,'cubic-bezier(.31,.02,.21,.99)');
-    makeLoop($('wing-front'),[
-      {transform:'rotate(12deg)'},{transform:'rotate(-34deg)'},{transform:'rotate(13deg)'}
-    ],birdStart,birdEnd,620,'ease-in-out');
-    makeLoop($('wing-back'),[
-      {transform:'rotate(-9deg)'},{transform:'rotate(31deg)'},{transform:'rotate(-10deg)'}
-    ],birdStart,birdEnd,620,'ease-in-out');
+  function updateHare(t,section){
+    if(section.scene!=='hare') return;
+    const W=theater.clientWidth;
+    const local=t-section.start;
+    const pass=5.1;
+    const p=(local%pass)/pass;
+    const travel=ease('power1.inOut',p);
+    const x=-W*.38 + W*1.58*travel;
+    const hop=Math.sin(p*Math.PI*4);
+    const stride=Math.sin(p*Math.PI*10);
+    gsap.set('#hare-motion',{x,y:-20+hop*13,rotation:hop*1.8});
+    gsap.set('#hare-art',{scaleX:-1*(1+Math.abs(stride)*.035),scaleY:1-Math.abs(stride)*.025,transformOrigin:'50% 65%'});
+    gsap.set('#hare-leg-a',{rotation:stride*12,transformOrigin:'0% 0%'});
+    gsap.set('#hare-leg-b',{rotation:-stride*15,transformOrigin:'100% 0%'});
+    gsap.set('#hare-leg-c',{rotation:stride*10,transformOrigin:'100% 0%'});
+    document.querySelectorAll('.hare-lines i').forEach((el,i)=>gsap.set(el,{x:-(local*150+i*100)%W}));
   }
 
-  function updateSceneStage(t,sec){
-    sceneElements.forEach((el,name)=>{
-      const visible=!resting && name===sec.scene;
-      el.classList.toggle('is-visible',visible);
-      if(!visible || name==='rest') return;
-      const fadeIn=clamp((t-sec.start)/.85);
-      const fadeOut=clamp((sec.end-t)/.85);
-      const alpha=Math.min(fadeIn,fadeOut,1);
-      const zoom=1.014-(alpha*.014);
-      el.style.opacity=String(alpha);
-      el.style.transform='scale('+zoom.toFixed(4)+')';
-    });
+  function updateDancer(t,section){
+    if(section.scene!=='dancer') return;
+    const local=t-section.start;
+    const beat=local*2*Math.PI/1.05;
+    const spin=(local*175)%360;
+    const bob=Math.sin(beat)*8;
+    const sway=Math.sin(beat*.5)*4.5;
+    gsap.set('#dancer-motion',{y:bob,rotationZ:sway*.35});
+    gsap.set('#dancer-art',{rotationY:spin,rotationZ:sway,scale:1+Math.abs(Math.sin(beat))*0.025,transformPerspective:900,transformOrigin:'50% 58%'});
+    gsap.set('#dress-back',{rotation:-sway*1.45,scaleX:1+Math.sin(beat+.8)*.07,transformOrigin:'50% 15%'});
+    gsap.set('#dress-front',{rotation:sway*1.2,scaleX:1-Math.sin(beat+.8)*.055,transformOrigin:'50% 15%'});
+    gsap.set('#dancer-torso',{rotation:-sway*.45,y:-Math.abs(Math.sin(beat))*5,transformOrigin:'50% 80%'});
+    gsap.set('#arm-left',{rotation:18*Math.sin(beat+.6),transformOrigin:'100% 12%'});
+    gsap.set('#arm-right',{rotation:-18*Math.sin(beat+.6),transformOrigin:'0% 12%'});
   }
 
-  function updateAnimations(t,sec){
-    updateSceneStage(t,sec);
-    for(const item of scrubbers){
-      const active=t>=item.start && t<=item.end;
-      if(active) item.anim.currentTime=clamp((t-item.start)/(item.end-item.start))*((item.end-item.start)*1000);
-    }
-    for(const item of loops){
-      if(t>=item.start && t<=item.end){
-        const local=(t-item.start)*1000;
-        item.anim.currentTime=local % item.duration;
-      }
-    }
+  function updateBird(t,section){
+    if(section.scene!=='bird') return;
+    const W=theater.clientWidth;
+    const H=theater.clientHeight;
+    const p=Math.max(0,Math.min(1,(t-section.start)/(section.end-section.start)));
+    const travel=ease('sine.inOut',p);
+    const x=-W*.42+W*1.62*travel;
+    const wave=Math.sin(p*Math.PI*3);
+    const y=-H*.08-H*.18*Math.sin(p*Math.PI)+wave*12;
+    gsap.set('#bird-motion',{x,y,rotation:wave*2.5});
+    const flap=Math.sin((t-section.start)*10.8);
+    gsap.set('#wing-front',{rotation:-18-flap*24,transformOrigin:'20% 80%'});
+    gsap.set('#wing-back',{rotation:14+flap*22,transformOrigin:'80% 80%'});
   }
 
-  function virtualTime(){ return virtualPaused ? virtualPausedAt : (performance.now()-virtualStartedAt)/1000; }
-  function timelineTime(){
-    const raw=audioDrivesTimeline && !audio.paused ? Number(audio.currentTime||0) : virtualTime();
-    return clamp(raw+offset,0,MASTER_DURATION);
+  function captionAt(t){
+    let i=-1;
+    for(let n=0;n<CAPTIONS.length;n++){ if(CAPTIONS[n].t<=t)i=n; else break; }
+    return i;
   }
 
-  function captionIndexAt(t){
-    let idx=-1;
-    for(let i=0;i<CAPTIONS.length;i++){ if(CAPTIONS[i].t<=t) idx=i; else break; }
-    return idx;
-  }
-
-  function setCaption(idx){
-    if(idx===activeCaption) return;
-    activeCaption=idx;
-    const cue=CAPTIONS[idx], next=CAPTIONS[idx+1];
-    currentEl.classList.remove('is-changing');
-    void currentEl.offsetWidth;
+  function updateCaption(t){
+    const i=captionAt(t);
+    if(i===captionIndex) return;
+    captionIndex=i;
+    const cue=CAPTIONS[i],next=CAPTIONS[i+1];
+    gsap.killTweensOf(currentEl);
     currentEl.textContent=cue?cue.text:'';
-    currentEl.classList.add('is-changing');
     nextEl.textContent=next?next.text:'';
+    gsap.fromTo(currentEl,{opacity:0,y:10,filter:'blur(4px)'},{opacity:1,y:0,filter:'blur(0px)',duration:.38,ease:'power2.out'});
   }
 
-  function setupAnalyser(){
-    if(analyser || !audioReady) return;
+  function syncFrame(){
+    if(resting){ requestAnimationFrame(syncFrame); return; }
+    const t=Math.max(0,Math.min(DURATION,timeNow()));
+    const section=sectionAt(t);
+    master.time(t,false);
+    iconEl.textContent=section.icon;
+    updateCaption(t);
+    updateCheshire(t,section);
+    updateHare(t,section);
+    updateDancer(t,section);
+    updateBird(t,section);
+
+    if(DEBUG){
+      debugTime.textContent=t.toFixed(2);
+      debugScene.textContent=section.scene;
+      debugSeek.value=String(t);
+    }
+
+    if(!audioActive && virtualTime()>=DURATION) enterRest();
+    requestAnimationFrame(syncFrame);
+  }
+
+  async function tryAutoplay(){
+    if(resting) return;
+    clearTimeout(retryTimer);
     try{
-      audioContext=new (window.AudioContext||window.webkitAudioContext)();
-      const source=audioContext.createMediaElementSource(audio);
-      analyser=audioContext.createAnalyser();
-      analyser.fftSize=256;
-      analyser.smoothingTimeConstant=.68;
-      analyserData=new Uint8Array(analyser.fftSize);
-      source.connect(analyser);
-      analyser.connect(audioContext.destination);
-      analyserSourceConnected=true;
-    }catch(_){ analyser=null; }
-  }
-
-  function vocalEnergy(t){
-    if(analyser && analyserData){
-      analyser.getByteTimeDomainData(analyserData);
-      let sum=0;
-      for(let i=0;i<analyserData.length;i++){
-        const v=(analyserData[i]-128)/128;
-        sum+=v*v;
+      if(!audio.src) audio.src=AUDIO_SRC;
+      audio.autoplay=true;
+      audio.preload='auto';
+      if(Math.abs((audio.currentTime||0)-virtualTime())>.5 && virtualTime()<DURATION-.3){
+        audio.currentTime=Math.max(0,Math.min(DURATION-.2,virtualTime()));
       }
-      return clamp(Math.sqrt(sum/analyserData.length)*5.4);
-    }
-    const syllable=Math.abs(Math.sin(t*8.6))*Math.abs(Math.sin(t*2.13+.7));
-    return .18+syllable*.62;
-  }
-
-  function updateCheshire(t,scene){
-    const eyes=$('cheshire-eyes'),mouth=$('cheshire-mouth');
-    if(!eyes||!mouth) return;
-    if(scene!=='cheshire'){
-      eyes.style.transform='translate3d(0,0,0)';
-      mouth.style.transform='scaleY(1)';
-      return;
-    }
-    const local=t-(SECTIONS.find(s=>s.scene==='cheshire'&&t>=s.start&&t<s.end)?.start||0);
-    const look=Math.sin(local*.46)*12;
-    const blink=(local%5.8)>5.55 ? .08 : 1;
-    eyes.style.transform=`translate3d(${look}px,${Math.cos(local*.37)*3}px,0) scaleY(${blink})`;
-    const e=vocalEnergy(t);
-    mouth.style.transform=`translate3d(0,${Math.sin(t*1.6)*3}px,0) scaleY(${1+e*.24})`;
-  }
-
-  function showGate(title,copy,canPlay=true){
-    gateTitle.textContent=title;
-    gateCopy.textContent=copy;
-    gatePlay.hidden=!canPlay;
-    gate.hidden=false;
-  }
-
-  async function beginAudio(fromGesture=false){
-    if(!audioReady||!audio.src) return;
-    try{
-      const visual=clamp(virtualTime(),0,MASTER_DURATION-.1);
-      if(Math.abs((audio.currentTime||0)-visual)>.35) audio.currentTime=visual;
       await audio.play();
-      audioDrivesTimeline=true;
-      gate.hidden=true;
-      audioStatus.textContent='HARPY HARE · ÁUDIO';
-      if(fromGesture){
-        setupAnalyser();
-        if(audioContext?.state==='suspended') await audioContext.resume().catch(()=>{});
-      }
-    }catch(_){
-      showGate('▶ liberar áudio','O navegador bloqueou o som. A animação continua sincronizada sem ele.',true);
-      audioStatus.textContent='ANIMAÇÃO · ÁUDIO BLOQUEADO';
-    }
-  }
-
-  async function configureAudio(){
-    if(PREVIEW){ audioStatus.textContent='PREVIEW · SEM ÁUDIO'; return; }
-    const candidate=EXPLICIT_AUDIO_SRC||DEFAULT_AUDIO_SRC;
-    try{
-      const response=await fetch(candidate,{method:'HEAD',cache:'no-store'});
-      if(!response.ok) throw new Error('missing');
-      audio.src=candidate;
-      audioReady=true;
-      audio.addEventListener('canplay',()=>beginAudio(false),{once:true});
-      audio.addEventListener('ended',enterRest);
-      audio.load();
-    }catch(_){
-      showGate('Animação rodando sem áudio','Escolha o MP3 para testar o lip-sync. A abertura não para sem ele.',false);
-      audioStatus.textContent='ANIMAÇÃO · SEM ÁUDIO';
+      audioActive=true;
+      statusEl.textContent='HARPY HARE';
+    }catch(err){
+      audioActive=false;
+      statusEl.textContent='HARPY HARE · AUTOPLAY BLOQUEADO';
+      retryTimer=setTimeout(tryAutoplay,1400);
     }
   }
 
   function enterRest(){
     if(resting) return;
     resting=true;
-    audioDrivesTimeline=false;
-    broadcast.classList.add('is-fading');
-    setTimeout(()=>{
-      broadcast.classList.remove('is-fading');
-      broadcast.classList.add('is-resting');
-      sceneElements.forEach(el=>el.classList.remove('is-visible'));
-      const rest=sceneElements.get('rest');
-      if(rest){rest.classList.add('is-visible');rest.style.opacity='1';rest.style.transform='scale(1)';}
-    },1900);
+    audioActive=false;
+    clearTimeout(retryTimer);
+    try{audio.pause()}catch(_){}
+    gsap.to(broadcast,{opacity:0,duration:1.6,ease:'power2.inOut',onComplete:()=>{
+      broadcast.classList.add('resting');
+      gsap.set('.scene',{autoAlpha:0});
+      gsap.set('.scene-rest',{autoAlpha:1});
+      gsap.to(broadcast,{opacity:1,duration:1.2});
+    }});
     clearTimeout(restTimer);
     restTimer=setTimeout(async()=>{
-      resting=false;
-      broadcast.classList.remove('is-resting');
-      broadcast.classList.add('is-entering');
-      setTimeout(()=>broadcast.classList.remove('is-entering'),2100);
-      virtualStartedAt=performance.now();
-      virtualPausedAt=0;
-      virtualPaused=false;
-      virtualEndHandled=false;
-      activeCaption=-1;
-      activeScene='';
-      try{audio.currentTime=0}catch(_){}
-      if(audioReady) await beginAudio(false);
+      gsap.to(broadcast,{opacity:0,duration:1.2,onComplete:()=>{
+        broadcast.classList.remove('resting');
+        master.time(0,false);
+        captionIndex=-1;
+        currentEl.textContent='';
+        nextEl.textContent='';
+        virtualStart=performance.now();
+        try{audio.currentTime=0}catch(_){}
+        resting=false;
+        gsap.to(broadcast,{opacity:1,duration:1.6,ease:'power2.out'});
+        tryAutoplay();
+      }});
     },REST_MS);
   }
 
-  function seekVirtual(v){
-    const value=clamp(Number(v)||0,0,MASTER_DURATION);
-    virtualStartedAt=performance.now()-value*1000;
-    virtualPausedAt=value;
-    virtualEndHandled=false;
-    if(audioDrivesTimeline){try{audio.currentTime=value}catch(_){}}
-    activeCaption=-1;
-  }
-
-  function setOffset(delta){
-    offset=clamp(offset+delta,-10,10);
-    localStorage.setItem('nihilguh_harpy_offset',String(offset));
-  }
-
-  function paint(){
-    const raw=virtualTime();
-    if(!resting&&!audioDrivesTimeline&&raw>=MASTER_DURATION&&!virtualEndHandled){
-      virtualEndHandled=true;enterRest();
-    }
-    const t=timelineTime();
-    const sec=sectionAt(t);
-    activeScene=resting?'rest':sec.scene;
-    iconEl.textContent=sec.icon||'✦';
-    if(!resting){
-      updateAnimations(t,sec);
-      updateCheshire(t,sec.scene);
-      setCaption(captionIndexAt(t));
-    }else{
-      currentEl.textContent='';nextEl.textContent='';
-    }
-    if(DEBUG){
-      debugTime.textContent=t.toFixed(2);
-      debugScene.textContent=activeScene;
-      debugOffset.textContent=offset.toFixed(2);
-      debugSeek.value=String(t);
-    }
-    requestAnimationFrame(paint);
-  }
-
-  gatePlay.addEventListener('click',()=>{
-    setupAnalyser();
-    beginAudio(true);
+  audio.src=AUDIO_SRC;
+  audio.autoplay=true;
+  audio.preload='auto';
+  audio.addEventListener('ended',enterRest);
+  audio.addEventListener('canplay',tryAutoplay);
+  audio.addEventListener('loadeddata',tryAutoplay);
+  audio.addEventListener('play',()=>{
+    audioActive=true;
+    virtualStart=performance.now()-audio.currentTime*1000;
   });
-
-  localAudioFile.addEventListener('change',e=>{
-    const file=e.target.files?.[0];
-    if(!file) return;
-    if(localObjectUrl) URL.revokeObjectURL(localObjectUrl);
-    localObjectUrl=URL.createObjectURL(file);
-    audio.src=localObjectUrl;
-    audioReady=true;
-    audio.addEventListener('canplay',()=>{
-      setupAnalyser();
-      beginAudio(true);
-    },{once:true});
-    audio.addEventListener('ended',enterRest,{once:false});
-    audio.load();
-  });
+  audio.addEventListener('pause',()=>{ if(!resting) audioActive=false; });
 
   if(DEBUG){
     debugPanel.hidden=false;
-    debugSeek.max=String(MASTER_DURATION);
-    debugSeek.addEventListener('input',e=>seekVirtual(e.target.value));
-    debugPanel.addEventListener('click',e=>{
-      const action=e.target.closest('button')?.dataset.debug;
-      if(action==='minus')setOffset(-.1);
-      if(action==='plus')setOffset(.1);
-      if(action==='restart'){seekVirtual(0);if(audioReady)beginAudio(false)}
+    debugSeek.addEventListener('input',()=>{
+      const v=Number(debugSeek.value)||0;
+      virtualStart=performance.now()-v*1000;
+      try{audio.currentTime=v}catch(_){}
+      master.time(v,false);
+      captionIndex=-1;
     });
   }
 
-  addEventListener('keydown',e=>{
-    if(e.key==='[')setOffset(e.shiftKey?-1:-.1);
-    if(e.key===']')setOffset(e.shiftKey?1:.1);
-    if(e.key==='ArrowLeft'){e.preventDefault();seekVirtual(timelineTime()-offset-1)}
-    if(e.key==='ArrowRight'){e.preventDefault();seekVirtual(timelineTime()-offset+1)}
-    if(e.code==='Space'&&DEBUG){
-      e.preventDefault();
-      if(audioDrivesTimeline&&!audio.paused){audio.pause();audioDrivesTimeline=false;virtualStartedAt=performance.now()-audio.currentTime*1000}
-      else if(audioReady)beginAudio(true);
-      else{
-        if(!virtualPaused){
-          virtualPausedAt=virtualTime();
-          virtualPaused=true;
-        }else{
-          virtualPaused=false;
-          virtualStartedAt=performance.now()-virtualPausedAt*1000;
-        }
-      }
-    }
-  });
+  addEventListener('pageshow',tryAutoplay);
+  addEventListener('focus',tryAutoplay);
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden)tryAutoplay(); });
+  addEventListener('pointerdown',tryAutoplay,{passive:true});
+  addEventListener('keydown',tryAutoplay);
 
-  setupSceneAnimations();
-  sceneElements.get('intro')?.classList.add('is-visible');
-  virtualStartedAt=performance.now();
-  configureAudio();
-  paint();
+  virtualStart=performance.now();
+  master.time(0,false);
+  tryAutoplay();
+  requestAnimationFrame(syncFrame);
 })();
