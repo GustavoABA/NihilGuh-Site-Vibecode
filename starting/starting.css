@@ -873,3 +873,145 @@ body{
   .mini-hare{width:min(230px,30%)}
   .dance-fire{left:8%;right:8%;height:54%}
 }
+
+
+/* v21 hound tunnel */
+.hound-tunnel{
+  position:absolute;
+  inset:0;
+  z-index:76;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  overflow:hidden;
+  background:#020202;
+  will-change:opacity;
+}
+.hound-blackout{
+  position:absolute;
+  inset:0;
+  background:#000;
+  opacity:0;
+  will-change:opacity;
+}
+.hound-jaw{
+  position:absolute;
+  left:-3%;
+  width:106%;
+  height:53%;
+  overflow:visible;
+  will-change:transform,opacity;
+  filter:drop-shadow(0 8px 18px rgba(0,0,0,.42));
+}
+.hound-jaw-top{
+  top:-3%;
+  transform-origin:50% 0%;
+}
+.hound-jaw-bottom{
+  bottom:-3%;
+  transform-origin:50% 100%;
+}
+.hound-muzzle{
+  fill:#111113;
+}
+.hound-gum{
+  fill:#2b272b;
+}
+.hound-teeth path{
+  fill:#ded8ca;
+  stroke:#100f10;
+  stroke-width:2.4;
+  stroke-linejoin:round;
+}
+.hound-nose{
+  fill:#050506;
+}
+.hound-tunnel-core{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:92%;
+  aspect-ratio:1;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  overflow:visible;
+  opacity:0;
+  will-change:transform,opacity;
+}
+.hound-tunnel-core::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  background:
+    radial-gradient(circle,
+      #030303 0 8%,
+      #2d2d2f 8% 12%,
+      #080808 12% 18%,
+      #555558 18% 22%,
+      #0a0a0a 22% 30%,
+      #3b3b3e 30% 34%,
+      #050505 34% 44%,
+      #606064 44% 48%,
+      #090909 48% 59%,
+      #303033 59% 63%,
+      #030303 63% 100%);
+  filter:blur(.25px);
+}
+.hound-tunnel-core i{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:42%;
+  aspect-ratio:1;
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  border:clamp(8px,1.7vw,24px) solid rgba(255,255,255,.06);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.015),
+    inset 0 0 22px rgba(0,0,0,.62),
+    0 0 26px rgba(0,0,0,.50);
+  opacity:0;
+  will-change:transform,opacity;
+}
+.hound-tunnel-core i:nth-child(odd){
+  border-color:rgba(88,88,92,.26);
+}
+.hound-tunnel-core i:nth-child(even){
+  border-color:rgba(22,22,24,.68);
+}
+.hound-endlight{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:8%;
+  aspect-ratio:1;
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,
+    rgba(255,255,255,1) 0 18%,
+    rgba(255,255,255,.92) 34%,
+    rgba(255,255,255,.45) 58%,
+    rgba(255,255,255,0) 78%);
+  opacity:0;
+  filter:blur(1px);
+  will-change:transform,opacity;
+}
+.hound-whiteout{
+  position:absolute;
+  inset:0;
+  background:#fff;
+  opacity:0;
+  will-change:opacity;
+}
+
+@media(max-width:560px) and (orientation:portrait){
+  .hound-jaw{
+    left:-10%;
+    width:120%;
+    height:50%;
+  }
+  .hound-tunnel-core{
+    width:118%;
+  }
+}
