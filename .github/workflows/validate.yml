@@ -27,6 +27,13 @@ jobs:
       - name: Check ALL_IN_ONE sync
         run: |
           python -c 'from pathlib import Path; h="/**\n * NIHILGUH — ALL IN ONE\n * Gerado de Code.gs + Interactions.gs + RoundEngine.gs.\n * Cole este arquivo inteiro no projeto Apps Script do site.\n */\n\n"; e=h+Path("apps-script/Code.gs").read_text()+"\n\n"+Path("apps-script/Interactions.gs").read_text()+"\n\n"+Path("apps-script/RoundEngine.gs").read_text()+"\n"; a=Path("apps-script/ALL_IN_ONE.gs").read_text(); assert a==e, "ALL_IN_ONE.gs is out of sync with source files"'
+      - name: Check starting page document shell
+        run: |
+          grep -qi '^<!doctype html>' starting/index.html
+          grep -q '<head>' starting/index.html
+          grep -q 'href="starting.css?v=' starting/index.html
+          grep -q '<main class="broadcast" id="broadcast">' starting/index.html
+          grep -q '</html>' starting/index.html
       - name: Check required routes
         run: |
           test -f index.html
