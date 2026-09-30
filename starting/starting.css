@@ -673,8 +673,8 @@ body{
   z-index:3;
   top:8%;
   bottom:8%;
-  width:2px;
-  background:rgba(31,28,22,.56);
+  width:clamp(4px,.38vw,6px);
+  background:rgba(31,28,22,.64);
   transform-origin:50% 50%;
 }
 .cage-visual b:nth-child(1){left:12%}
@@ -687,8 +687,8 @@ body{
   position:absolute;
   z-index:3;
   left:7%;right:7%;
-  height:2px;
-  background:rgba(31,28,22,.62);
+  height:clamp(4px,.34vw,6px);
+  background:rgba(31,28,22,.70);
 }
 .cage-top{top:8%}.cage-bottom{bottom:8%}
 
@@ -756,8 +756,8 @@ body{
   position:absolute;
   top:6%;
   bottom:6%;
-  width:2px;
-  background:rgba(34,31,25,.58);
+  width:clamp(4px,.34vw,6px);
+  background:rgba(34,31,25,.66);
   transform-origin:50% 50%;
 }
 .bird-cage b:nth-child(1){left:0}
@@ -769,8 +769,8 @@ body{
 .bird-cage em{
   position:absolute;
   left:-4%;right:-4%;top:6%;
-  height:2px;
-  background:rgba(34,31,25,.62);
+  height:clamp(4px,.34vw,6px);
+  background:rgba(34,31,25,.70);
 }
 
 .distant-birds{z-index:7}
@@ -1037,7 +1037,7 @@ body{
 
 .cage-bunnies{
   position:absolute;
-  inset:10% 8%;
+  inset:5% 4%;
   z-index:1;
   pointer-events:none;
   overflow:visible;
@@ -1045,8 +1045,8 @@ body{
 .cage-bunny{
   position:absolute;
   left:50%;
-  top:58%;
-  width:min(190px,22%);
+  top:54%;
+  width:min(260px,31%);
   opacity:0;
   will-change:transform,opacity;
 }
@@ -1154,6 +1154,6 @@ body{
 }
 
 @media(max-width:560px) and (orientation:portrait){
-  .cage-bunny{width:min(140px,25%)}
+  .cage-bunny{width:min(190px,34%)}
   .final-grass{height:20%}
 }
