@@ -56,6 +56,16 @@
     {t:174.55,text:'Nós estaremos distantes e voaremos para longe'}
   ];
 
+  // Wordless vocalise / "Ha-ha-ah" passages. These do not alter lyric timing.
+  const HOUND_WINDOWS = [
+    [35.55,38.05],
+    [65.10,67.70],
+    [94.45,97.28],
+    [104.00,119.45],
+    [124.10,126.72],
+    [134.50,163.45]
+  ];
+
   const $ = id => document.getElementById(id);
   const audio = $('harpy-audio');
   const theater = $('theater');
@@ -686,6 +696,118 @@
     }
   }
 
+  function updateHoundTunnel(t){
+    const hound=$('hound-tunnel');
+    if(!hound) return;
+
+    let active=null;
+    for(const pair of HOUND_WINDOWS){
+      const start=pair[0];
+      const end=pair[1];
+      if(t>=start-.10 && t<=end+.08){
+        active={start,end};
+        break;
+      }
+    }
+
+    if(!active){
+      gsap.set(hound,{autoAlpha:0});
+      gsap.set('.subtitle-area',{opacity:1});
+      return;
+    }
+
+    const start=active.start;
+    const end=active.end;
+    const duration=end-start;
+    const p=clamp01((t-start)/duration);
+    const fadeIn=smoothstep(-.10/duration,.035,p);
+    const fadeOut=1-smoothstep(.965,1,p);
+    const visibility=Math.max(0,Math.min(1,fadeIn*fadeOut));
+
+    const bite=smoothstep(0,.16,p);
+    const swallowed=smoothstep(.12,.34,p);
+    const jawFade=1-smoothstep(.27,.43,p);
+    const tunnelA=swallowed*(1-smoothstep(.90,.985,p));
+    const light=smoothstep(.78,.945,p);
+    const white=smoothstep(.925,.992,p);
+
+    gsap.set(hound,{autoAlpha:visibility});
+    gsap.set('.subtitle-area',{opacity:1-visibility*.98});
+
+    const top=document.querySelector('.hound-jaw-top');
+    const bottom=document.querySelector('.hound-jaw-bottom');
+    const blackout=hound.querySelector('.hound-blackout');
+    const core=$('hound-tunnel-core');
+    const endLight=$('hound-endlight');
+    const whiteout=$('hound-whiteout');
+
+    if(top){
+      gsap.set(top,{
+        yPercent:-94*(1-bite)+swallowed*8,
+        scaleX:.90+bite*.10+swallowed*.16,
+        scaleY:.92+bite*.08+swallowed*.10,
+        opacity:visibility*jawFade,
+        transformOrigin:'50% 0%'
+      });
+    }
+
+    if(bottom){
+      gsap.set(bottom,{
+        yPercent:94*(1-bite)-swallowed*8,
+        scaleX:.90+bite*.10+swallowed*.16,
+        scaleY:.92+bite*.08+swallowed*.10,
+        opacity:visibility*jawFade,
+        transformOrigin:'50% 100%'
+      });
+    }
+
+    if(blackout){
+      gsap.set(blackout,{
+        opacity:visibility*swallowed*(1-white*.82)
+      });
+    }
+
+    if(core){
+      const elapsed=Math.max(0,t-start);
+      gsap.set(core,{
+        xPercent:-50,
+        yPercent:-50,
+        opacity:visibility*tunnelA,
+        scale:.88+Math.sin(elapsed*.72)*.018,
+        rotation:elapsed*4.4
+      });
+
+      core.querySelectorAll('i').forEach((el,i)=>{
+        const phase=(elapsed*.72+i/9)%1;
+        const depth=Math.sin(Math.PI*phase);
+        const pulse=.18+phase*4.35;
+
+        gsap.set(el,{
+          xPercent:-50,
+          yPercent:-50,
+          scale:pulse,
+          rotation:(i%2===0?1:-1)*(elapsed*(8+i*.7)+i*13),
+          opacity:visibility*tunnelA*Math.pow(Math.max(0,depth),1.15)*(.34+i*.025)
+        });
+      });
+    }
+
+    if(endLight){
+      gsap.set(endLight,{
+        xPercent:-50,
+        yPercent:-50,
+        opacity:visibility*light,
+        scale:.25+light*10.5
+      });
+    }
+
+    if(whiteout){
+      gsap.set(whiteout,{
+        opacity:visibility*white
+      });
+    }
+  }
+
   function captionAt(t){
     let i=-1;
     for(let n=0;n<CAPTIONS.length;n++){ if(CAPTIONS[n].t<=t)i=n; else break; }
@@ -723,6 +845,7 @@
     updateDancer(t,section);
     updateBird(t,section);
     updateLyricVisuals(t,section);
+    updateHoundTunnel(t);
 
     if(!audioActive && virtualTime()>=DURATION) enterRest();
     requestAnimationFrame(syncFrame);
