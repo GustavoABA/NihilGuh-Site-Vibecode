@@ -259,3 +259,40 @@ button,input{font:inherit}
   .hare-motion,.bird-motion{width:54vw}
   .dancer-motion{width:46vw;height:50vh}
 }
+
+/* v6 visual corrections */
+.ornament,.ornament-top,.ornament-bottom{display:none!important}
+.scene{inset:0}
+.scene-cheshire{overflow:hidden}
+.cheshire-svg{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:min(900px,76%);
+  max-height:82%;
+  transform:translate(-50%,-50%);
+  overflow:visible;
+}
+.mouth-cavity{fill:#070706;stroke:none}
+.teeth-fill{fill:#ece8dc;stroke:none}
+.tooth-lines{
+  fill:none;
+  stroke:#17150f;
+  stroke-width:5;
+  stroke-linejoin:round;
+  stroke-linecap:round;
+}
+.smile-lip{
+  fill:none;
+  stroke:#b7a6d9;
+  stroke-width:4.5;
+  stroke-linecap:round;
+}
+.bottom-lip{stroke-width:3.5}
+.teeth-layer{pointer-events:none}
+.hare-art{
+  transform:none!important;
+  transform-origin:center!important;
+}
+.dancer-motion{perspective:900px}
+.dancer-art{transform-origin:50% 58%;will-change:transform}
