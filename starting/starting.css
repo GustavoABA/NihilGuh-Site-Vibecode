@@ -57,14 +57,43 @@ body{font-family:Inter,system-ui,sans-serif}
 
 .cheshire-aura{position:absolute;width:68%;height:52%;border-radius:50%;background:radial-gradient(ellipse,rgba(185,168,218,.10),transparent 70%);filter:blur(18px)}
 .cheshire-svg{width:min(860px,75%);height:auto;overflow:visible}
-.eye-shape{fill:#eeeade;stroke:var(--violet);stroke-width:3.2}
-.pupil{fill:#11100e}.glint{fill:#fff}
-.cheshire-eyes,.cheshire-mouth{transform-box:fill-box;transform-origin:center;will-change:transform}
-.mouth-cavity{fill:#050504}
-.teeth path{fill:#f2eee2;stroke:#17150f;stroke-width:2.1;stroke-linejoin:round}
-.teeth path.lower{fill:#e5e0d4}
-.lip{fill:none;stroke:var(--violet);stroke-linecap:round}
-.lip-top{stroke-width:5.2}.lip-bottom{stroke-width:3.7}
+.eye-shape{
+  fill:#f1ede2;
+  stroke:#c5b4ea;
+  stroke-width:2.8;
+  filter:drop-shadow(0 0 8px rgba(197,180,234,.28));
+}
+.pupil{fill:#0c0b0a}.glint{fill:#fff}
+.cheshire-eyes,.cheshire-mouth{
+  transform-box:fill-box;
+  transform-origin:center;
+  will-change:transform;
+}
+.cheshire-mouth{
+  filter:drop-shadow(0 0 12px rgba(190,170,235,.18));
+}
+.mouth-cavity{
+  fill:#020202;
+}
+.teeth path{
+  fill:#f3efe4;
+  stroke:#100f0d;
+  stroke-width:2.4;
+  stroke-linejoin:round;
+}
+.lip{
+  fill:none;
+  stroke:#c5b4ea;
+  stroke-linecap:round;
+}
+.lip-top{
+  stroke-width:6.5;
+  filter:drop-shadow(0 0 7px rgba(197,180,234,.42));
+}
+.lip-bottom{
+  stroke-width:4.2;
+  opacity:.95;
+}
 
 .hare-lines{position:absolute;inset:0;overflow:hidden}
 .hare-lines i{position:absolute;left:-10%;width:120%;height:1px;background:linear-gradient(90deg,transparent,rgba(32,29,23,.22),transparent)}
