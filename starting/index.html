@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="starting.css?v=5">
+  <link rel="stylesheet" href="starting.css?v=6">
 </head>
 <body>
   <main class="broadcast" id="broadcast">
@@ -32,8 +32,6 @@
         aria-hidden="true"></video>
 
       <div class="paper-wash" aria-hidden="true"></div>
-      <div class="ornament ornament-top" aria-hidden="true"></div>
-      <div class="ornament ornament-bottom" aria-hidden="true"></div>
       <div class="edge-vignette" aria-hidden="true"></div>
 
       <div class="scene scene-intro" data-scene="intro">
@@ -59,6 +57,9 @@
               <feGaussianBlur stdDeviation="4.8" result="blur"/>
               <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
+            <clipPath id="cheshireMouthClip">
+              <path d="M289 323 Q500 452 711 323 Q500 402 289 323Z"/>
+            </clipPath>
           </defs>
 
           <g class="cheshire-eye-pair" id="cheshire-eyes" filter="url(#cheshireGlow)">
@@ -71,11 +72,13 @@
           </g>
 
           <g class="cheshire-mouth" id="cheshire-mouth" filter="url(#cheshireGlow)">
-            <path class="smile-shell" d="M265 315 Q500 498 735 315 Q500 402 265 315Z"/>
-            <path class="smile-cut" d="M289 325 Q500 447 711 325 Q500 390 289 325Z"/>
-            <g class="tooth-lines">
-              <path d="M330 342 L359 393 L386 354 L419 421 L450 370 L499 443 L548 370 L581 421 L614 354 L641 393 L670 342"/>
+            <path class="mouth-cavity" d="M270 309 Q500 493 730 309 Q500 411 270 309Z"/>
+            <g class="teeth-layer" clip-path="url(#cheshireMouthClip)">
+              <path class="teeth-fill" d="M287 318 Q500 451 713 318 Q500 412 287 318Z"/>
+              <path class="tooth-lines" d="M319 330 L350 390 L382 348 L417 416 L452 362 L500 438 L548 362 L583 416 L618 348 L650 390 L681 330"/>
             </g>
+            <path class="smile-lip top-lip" d="M265 309 Q500 397 735 309"/>
+            <path class="smile-lip bottom-lip" d="M270 309 Q500 493 730 309"/>
           </g>
         </svg>
         <div class="cheshire-rune rune-a">◜</div>
@@ -119,7 +122,7 @@
         </div>
 
         <div class="dancer-motion" id="dancer-motion">
-          <svg class="dancer-art" viewBox="0 0 420 620" role="img" aria-label="Garota-gato dançando com vestido inspirado em Alice">
+          <svg class="dancer-art" id="dancer-art" viewBox="0 0 420 620" role="img" aria-label="Garota-gato dançando com vestido inspirado em Alice">
             <g class="dancer-shadow"><ellipse cx="210" cy="568" rx="108" ry="18"/></g>
 
             <g class="dress-back" id="dress-back">
@@ -230,6 +233,6 @@
     <audio id="harpy-audio" preload="auto" playsinline></audio>
   </main>
 
-  <script src="starting.js?v=5"></script>
+  <script src="starting.js?v=6"></script>
 </body>
 </html>
