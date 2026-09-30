@@ -41,7 +41,7 @@ body{
   min-width:0;
   min-height:0;
   display:grid;
-  grid-template-rows:var(--header-h) minmax(0,1fr) var(--caption-h) var(--footer-h);
+  grid-template-rows:var(--header-h) minmax(0,1fr) var(--footer-h);
   row-gap:var(--layout-gap);
   padding:
     var(--page-pad-top)
@@ -70,7 +70,7 @@ body{
   letter-spacing:clamp(.10em,.16vw,.17em);
   white-space:nowrap;
 }
-.theater{
+.stage-stack{
   --stage-available-h:
     calc(
       100dvh
@@ -79,9 +79,20 @@ body{
       - var(--header-h)
       - var(--caption-h)
       - var(--footer-h)
-      - (var(--layout-gap) * 3)
+      - (var(--layout-gap) * 2)
     );
+  min-width:0;
+  min-height:0;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  overflow:visible;
+}
 
+.theater{
   position:relative;
   width:min(
     var(--stage-max-w),
@@ -91,8 +102,9 @@ body{
   max-width:100%;
   max-height:100%;
   aspect-ratio:16/9;
+  flex:0 0 auto;
   align-self:center;
-  justify-self:center;
+  justify-self:auto;
   overflow:hidden;
   background:var(--paper);
   border:1px solid #2b2923;
@@ -287,15 +299,32 @@ body{
 .forest i:nth-child(1){left:7%}.forest i:nth-child(2){left:29%;height:54%}.forest i:nth-child(3){right:8%}
 .forest b{position:absolute;color:#666157;font:700 1.2rem "Cormorant Garamond"}
 .forest b:nth-of-type(1){left:18%;top:20%}.forest b:nth-of-type(2){right:23%;top:14%}.forest b:nth-of-type(3){right:15%;top:36%}
-.dancer-motion{position:relative;width:min(390px,31%);perspective:1000px;will-change:transform}
-.dancer-art{width:100%;display:block;transform-origin:50% 57%;will-change:transform}
+.dancer-motion{
+  position:relative;
+  z-index:18;
+  width:min(390px,31%);
+  will-change:transform;
+}
+.dancer-art{
+  width:100%;
+  display:block;
+  transform-origin:50% 57%;
+  will-change:transform;
+  backface-visibility:visible !important;
+  -webkit-backface-visibility:visible !important;
+  overflow:visible;
+}
 .dress-back path,.bodice,.hair,.cat-ear,.skirt{fill:#151410;stroke:#25231e;stroke-width:5}
 .head{fill:#e8e4d6;stroke:#25231e;stroke-width:5}
 .neck,.legs path,.arm path{fill:none;stroke:#25231e;stroke-width:13;stroke-linecap:round}
 .arm circle{fill:#e8e4d6;stroke:#25231e;stroke-width:5}
 .apron-top,.apron{fill:#e8e4d6;stroke:#25231e;stroke-width:4}
 .hem{fill:none;stroke:#e8e4d6;stroke-width:4}
-.dress-back,.dress-front,.torso,.arm{transform-box:fill-box;transform-origin:center;will-change:transform}
+.dress-back,.dress-front,.torso,.arm{transform-box:fill-box;will-change:transform}
+.dress-back,.dress-front{transform-origin:50% 12%}
+.torso{transform-origin:50% 82%}
+.arm-left{transform-origin:92% 14%}
+.arm-right{transform-origin:8% 14%}
 
 .bird-stars{position:absolute;top:20%;left:8%;right:8%;color:#69655c;font:700 1.2rem "Cormorant Garamond";letter-spacing:.9em}
 .bird-motion{position:absolute;left:0;top:50%;width:min(540px,43%);will-change:transform}
@@ -305,21 +334,25 @@ body{
 .wing{transform-box:fill-box;transform-origin:70% 70%;will-change:transform}
 
 .subtitle-area{
-  align-self:stretch;
-  justify-self:center;
-  width:min(1180px,92vw);
+  width:min(
+    var(--stage-max-w),
+    calc(100vw - (var(--page-pad-x) * 2)),
+    calc(var(--stage-available-h) * 16 / 9)
+  );
   min-width:0;
   min-height:0;
+  height:var(--caption-h);
+  flex:0 0 var(--caption-h);
   display:grid;
   grid-template-columns:clamp(24px,2.4vw,38px) minmax(0,1fr);
   gap:clamp(8px,1.2vw,16px);
   align-content:center;
   align-items:start;
-  padding:clamp(8px,1.5dvh,18px) 0 0;
+  padding:clamp(7px,1.25dvh,14px) clamp(2px,.4vw,6px) 0;
   position:relative;
   z-index:90;
+  border-top:1px solid rgba(185,168,218,.10);
 }
-.subtitle-copy{min-width:0}
 .subtitle-icon{
   font:700 clamp(1rem,1.7vw,1.45rem) "Cormorant Garamond";
   color:#77736a;
@@ -345,8 +378,6 @@ body{
   text-wrap:balance;
   overflow-wrap:anywhere;
 }
-.debug-panel{position:absolute;right:14px;top:14px;z-index:120;width:220px;padding:12px;background:rgba(0,0,0,.86);border:1px solid #333;display:grid;gap:7px;font-size:.7rem}
-.debug-panel input{width:100%}
 
 .broadcast.resting .broadcast-head,.broadcast.resting .subtitle-area,.broadcast.resting .broadcast-foot{opacity:0}
 
@@ -368,7 +399,6 @@ body{
 .hare-motion,
 .hare-art,
 .dancer-motion,
-.dancer-art,
 .bird-motion,
 .bird-art,
 .face-shadow,
@@ -462,7 +492,10 @@ body{
   }
 
   .subtitle-area{
-    width:calc(100vw - 24px);
+    width:min(
+      calc(100vw - 20px),
+      calc(var(--stage-available-h) * 16 / 9)
+    );
     grid-template-columns:24px minmax(0,1fr);
     gap:8px;
     padding-top:8px;
@@ -491,12 +524,6 @@ body{
 
   .bird-motion{
     width:min(470px,50%);
-  }
-
-  .debug-panel{
-    width:min(210px,64vw);
-    right:8px;
-    top:8px;
   }
 }
 
@@ -764,4 +791,85 @@ body{
   .chorus-roots i:nth-child(2){transform:translateX(-65px) rotate(-14deg)}
   .chorus-roots i:nth-child(4){transform:translateX(65px) rotate(14deg)}
   .chorus-roots i:nth-child(5){transform:translateX(130px) rotate(28deg)}
+}
+
+
+/* v20 scene refinements */
+.hare-pack{
+  position:absolute;
+  inset:0;
+  z-index:7;
+  pointer-events:none;
+  overflow:visible;
+}
+.mini-hare{
+  position:absolute;
+  left:0;
+  top:50%;
+  width:min(320px,25%);
+  opacity:0;
+  will-change:transform,opacity;
+}
+.mini-hare-art{
+  width:100%;
+  display:block;
+  opacity:.62;
+}
+.mini-hare:nth-child(1){filter:blur(.15px)}
+.mini-hare:nth-child(2){filter:blur(.35px)}
+.mini-hare:nth-child(3){filter:blur(.55px)}
+.mini-hare:nth-child(4){filter:blur(.75px)}
+
+.dance-fire{
+  position:absolute;
+  left:19%;
+  right:19%;
+  bottom:-3%;
+  height:58%;
+  z-index:8;
+  opacity:0;
+  pointer-events:none;
+  filter:blur(.2px);
+  overflow:hidden;
+}
+.dance-fire i{
+  position:absolute;
+  bottom:-14%;
+  width:13%;
+  height:72%;
+  border-radius:52% 48% 48% 52% / 68% 68% 32% 32%;
+  transform-origin:50% 100%;
+  background:
+    radial-gradient(ellipse at 50% 78%,
+      rgba(250,241,208,.94) 0 14%,
+      rgba(205,168,106,.86) 28%,
+      rgba(108,74,58,.60) 49%,
+      rgba(50,35,38,.18) 68%,
+      transparent 72%);
+  mix-blend-mode:multiply;
+  will-change:transform,opacity;
+}
+.dance-fire i:nth-child(1){left:1%;height:52%}
+.dance-fire i:nth-child(2){left:11%;height:78%}
+.dance-fire i:nth-child(3){left:22%;height:61%}
+.dance-fire i:nth-child(4){left:33%;height:88%}
+.dance-fire i:nth-child(5){left:44%;height:70%}
+.dance-fire i:nth-child(6){left:55%;height:92%}
+.dance-fire i:nth-child(7){left:66%;height:64%}
+.dance-fire i:nth-child(8){left:77%;height:81%}
+.dance-fire i:nth-child(9){left:88%;height:56%}
+.dance-fire::after{
+  content:"";
+  position:absolute;
+  left:10%;
+  right:10%;
+  bottom:0;
+  height:24%;
+  background:radial-gradient(ellipse,rgba(130,83,56,.25),transparent 70%);
+  filter:blur(9px);
+}
+
+@media (max-width:560px) and (orientation:portrait){
+  .mini-hare{width:min(230px,30%)}
+  .dance-fire{left:8%;right:8%;height:54%}
 }
