@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="starting.css?v=13">
+  <link rel="stylesheet" href="starting.css?v=14">
 </head>
 <body>
   <main class="broadcast" id="broadcast">
@@ -36,38 +36,114 @@
         <div class="cheshire-aura" aria-hidden="true"></div>
         <svg class="cheshire-svg" viewBox="0 0 1000 560" aria-label="Olhos e sorriso do Gato de Cheshire">
           <defs>
-            <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
-              <feGaussianBlur stdDeviation="3.2" result="b"/>
-              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            <filter id="softGlow" x="-45%" y="-45%" width="190%" height="190%">
+              <feGaussianBlur stdDeviation="2.6" result="blur"/>
+              <feColorMatrix in="blur" type="matrix"
+                values="0.74 0 0 0 0.16
+                        0 0.66 0 0 0.12
+                        0 0 0.92 0 0.22
+                        0 0 0 0.9 0"/>
+              <feMerge>
+                <feMergeNode/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
             </filter>
+
+            <linearGradient id="eyeIvory" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#fffdf4"/>
+              <stop offset="100%" stop-color="#d8d1c2"/>
+            </linearGradient>
+
+            <linearGradient id="toothIvory" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#fffdf4"/>
+              <stop offset="100%" stop-color="#d7d0c1"/>
+            </linearGradient>
+
             <clipPath id="mouthClip">
-              <path d="M220 300 Q500 505 780 300 Q500 395 220 300Z"/>
+              <path d="M185 306
+                       C285 365 382 392 500 397
+                       C618 392 715 365 815 306
+                       C760 432 655 492 500 505
+                       C345 492 240 432 185 306Z"/>
             </clipPath>
           </defs>
 
           <g id="cheshire-eyes" class="cheshire-eyes" filter="url(#softGlow)">
-            <path class="eye-shape" d="M205 205 Q315 122 427 205 Q315 281 205 205Z"/>
-            <path class="eye-shape" d="M573 205 Q685 122 795 205 Q685 281 573 205Z"/>
-            <ellipse class="pupil" cx="318" cy="205" rx="14" ry="45"/>
-            <ellipse class="pupil" cx="682" cy="205" rx="14" ry="45"/>
-            <circle class="glint" cx="323" cy="185" r="5"/>
-            <circle class="glint" cx="687" cy="185" r="5"/>
+            <path class="eye-shape eye-left"
+              d="M167 213
+                 C222 147 330 127 435 188
+                 C365 251 255 274 167 213Z"/>
+            <path class="eye-shape eye-right"
+              d="M565 188
+                 C670 127 778 147 833 213
+                 C745 274 635 251 565 188Z"/>
+
+            <path class="eyelid eyelid-left"
+              d="M174 206 C244 143 343 140 426 187"/>
+            <path class="eyelid eyelid-right"
+              d="M574 187 C657 140 756 143 826 206"/>
+
+            <g class="pupil-wrap pupil-left">
+              <ellipse class="pupil" cx="317" cy="202" rx="15" ry="51"/>
+              <ellipse class="pupil-core" cx="317" cy="202" rx="6" ry="38"/>
+              <ellipse class="glint" cx="322" cy="180" rx="5.5" ry="8"/>
+            </g>
+
+            <g class="pupil-wrap pupil-right">
+              <ellipse class="pupil" cx="683" cy="202" rx="15" ry="51"/>
+              <ellipse class="pupil-core" cx="683" cy="202" rx="6" ry="38"/>
+              <ellipse class="glint" cx="688" cy="180" rx="5.5" ry="8"/>
+            </g>
           </g>
 
           <g id="cheshire-mouth" class="cheshire-mouth" filter="url(#softGlow)">
-            <path class="mouth-cavity" d="M220 300 Q500 505 780 300 Q500 395 220 300Z"/>
-            <g class="teeth" clip-path="url(#mouthClip)">
-              <path d="M255 312 L305 334 L280 372Z"/>
-              <path d="M315 336 L372 360 L344 405Z"/>
-              <path d="M382 364 L445 390 L414 438Z"/>
-              <path d="M455 392 L500 410 L475 462Z"/>
-              <path d="M545 392 L500 410 L525 462Z"/>
-              <path d="M555 390 L618 364 L586 438Z"/>
-              <path d="M628 360 L685 336 L656 405Z"/>
-              <path d="M695 334 L745 312 L720 372Z"/>
+            <path class="grin-shadow"
+              d="M178 300
+                 C282 368 381 398 500 402
+                 C619 398 718 368 822 300
+                 C768 439 658 503 500 518
+                 C342 503 232 439 178 300Z"/>
+
+            <path class="mouth-cavity"
+              d="M185 306
+                 C285 365 382 392 500 397
+                 C618 392 715 365 815 306
+                 C760 432 655 492 500 505
+                 C345 492 240 432 185 306Z"/>
+
+            <g class="teeth upper-teeth" clip-path="url(#mouthClip)">
+              <path d="M215 320 L263 339 L240 382Z"/>
+              <path d="M270 342 L322 360 L295 405Z"/>
+              <path d="M330 362 L385 381 L356 429Z"/>
+              <path d="M393 382 L449 398 L420 449Z"/>
+              <path d="M456 398 L500 407 L479 461Z"/>
+              <path d="M544 398 L500 407 L521 461Z"/>
+              <path d="M607 382 L551 398 L580 449Z"/>
+              <path d="M670 362 L615 381 L644 429Z"/>
+              <path d="M730 342 L678 360 L705 405Z"/>
+              <path d="M785 320 L737 339 L760 382Z"/>
             </g>
-            <path class="lip lip-top" d="M215 297 Q500 392 785 297"/>
-            <path class="lip lip-bottom" d="M220 300 Q500 505 780 300"/>
+
+            <g class="teeth lower-teeth" clip-path="url(#mouthClip)">
+              <path d="M248 405 L286 449 L267 397Z"/>
+              <path d="M305 439 L348 475 L326 420Z"/>
+              <path d="M369 468 L416 494 L392 438Z"/>
+              <path d="M438 490 L500 507 L469 451Z"/>
+              <path d="M562 490 L500 507 L531 451Z"/>
+              <path d="M631 468 L584 494 L608 438Z"/>
+              <path d="M695 439 L652 475 L674 420Z"/>
+              <path d="M752 405 L714 449 L733 397Z"/>
+            </g>
+
+            <path class="lip lip-top"
+              d="M178 300 C282 368 381 398 500 402 C619 398 718 368 822 300"/>
+            <path class="lip lip-bottom"
+              d="M185 306
+                 C240 432 345 492 500 505
+                 C655 492 760 432 815 306"/>
+
+            <path class="smile-corner left-corner" d="M178 300 Q160 298 146 285"/>
+            <path class="smile-corner right-corner" d="M822 300 Q840 298 854 285"/>
           </g>
         </svg>
       </div>
@@ -165,6 +241,6 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-  <script src="starting.js?v=13"></script>
+  <script src="starting.js?v=14"></script>
 </body>
 </html>
