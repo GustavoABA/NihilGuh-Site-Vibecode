@@ -114,9 +114,9 @@
     ],hareStart,hareEnd,5600,'cubic-bezier(.34,.02,.27,.99)');
     makeLoop($('hare-art'),[
       {transform:'scaleX(-1) translateY(0) rotate(-1deg)'},
-      {transform:'scaleX(-1) translateY(-10px) rotate(1.2deg)'},
-      {transform:'scaleX(-1) translateY(1px) rotate(-.6deg)'}
-    ],hareStart,hareEnd,310,'ease-in-out');
+      {transform:'scaleX(-1) translateY(-9px) rotate(1deg)'},
+      {transform:'scaleX(-1) translateY(1px) rotate(-.5deg)'}
+    ],hareStart,hareEnd,255,'ease-in-out');
     document.querySelectorAll('.hare-dust i').forEach((el,i)=>makeLoop(el,[
       {transform:'translate3d(0,0,0) scale(.5)',opacity:.35},
       {transform:`translate3d(${-34-i*12}px,${-10+i*4}px,0) scale(1.4)`,opacity:0}
@@ -129,28 +129,34 @@
       {transform:'translate3d(18px,3px,0) rotate(3.5deg)'},
       {transform:'translate3d(-6px,-7px,0) rotate(-1.8deg)'},
       {transform:'translate3d(-16px,4px,0) rotate(-3deg)'}
-    ],dancerStart,dancerEnd,5200,'cubic-bezier(.42,0,.3,1)');
+    ],dancerStart,dancerEnd,2350,'cubic-bezier(.42,0,.3,1)');
     makeLoop($('dress-back'),[
       {transform:'rotate(-3deg) scaleX(.96)'},
       {transform:'rotate(5deg) scaleX(1.09)'},
       {transform:'rotate(-2deg) scaleX(.98)'}
-    ],dancerStart,dancerEnd,2550,'ease-in-out');
+    ],dancerStart,dancerEnd,1180,'ease-in-out');
     makeLoop($('dress-front'),[
       {transform:'rotate(2deg) scaleX(1.02)'},
       {transform:'rotate(-5deg) scaleX(.93)'},
       {transform:'rotate(3deg) scaleX(1.04)'}
-    ],dancerStart,dancerEnd,2550,'ease-in-out');
+    ],dancerStart,dancerEnd,1180,'ease-in-out');
     makeLoop($('dancer-torso'),[
       {transform:'rotate(-1.5deg) translateY(0)'},
       {transform:'rotate(2deg) translateY(-7px)'},
       {transform:'rotate(-1deg) translateY(0)'}
-    ],dancerStart,dancerEnd,2550,'ease-in-out');
+    ],dancerStart,dancerEnd,1180,'ease-in-out');
     makeLoop($('arm-left'),[
       {transform:'rotate(11deg)'},{transform:'rotate(-15deg)'},{transform:'rotate(11deg)'}
-    ],dancerStart,dancerEnd,2550,'ease-in-out');
+    ],dancerStart,dancerEnd,1180,'ease-in-out');
     makeLoop($('arm-right'),[
       {transform:'rotate(-12deg)'},{transform:'rotate(16deg)'},{transform:'rotate(-12deg)'}
-    ],dancerStart,dancerEnd,2550,'ease-in-out');
+    ],dancerStart,dancerEnd,1180,'ease-in-out');
+    makeLoop($('dancer-art'),[
+      {transform:'rotateY(-7deg) rotateZ(-1.5deg) scale(1)'},
+      {transform:'rotateY(12deg) rotateZ(2deg) scale(1.025)'},
+      {transform:'rotateY(-10deg) rotateZ(-2deg) scale(.995)'},
+      {transform:'rotateY(-7deg) rotateZ(-1.5deg) scale(1)'}
+    ],dancerStart,dancerEnd,1850,'cubic-bezier(.45,.05,.2,1)');
 
     const birdStart=165.5,birdEnd=MASTER_DURATION;
     makeLoop($('bird-motion'),[
