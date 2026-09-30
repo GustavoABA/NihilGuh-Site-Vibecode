@@ -727,7 +727,7 @@
       const trapped=$('cage-bunnies');
       if(trapped){
         trapped.querySelectorAll('.cage-bunny').forEach((el,i)=>{
-          const scale=.34+i*.018;
+          const scale=.52+i*.024;
           const tremble=Math.sin(t*(4.2+i*.23)+i)*2.2;
           const escapeEase=ease('power2.in',cageBreak);
           const lane=(i-2)*H*.020;
@@ -1003,22 +1003,37 @@
   function resetForReplay(){
     broadcast.classList.remove('resting','final-hold');
 
-    master.pause(0);
-    master.time(0,false);
+    // Rewind the master timeline first, then clear procedural transforms.
+    master.pause();
+    master.totalTime(0,true);
 
-    gsap.set('.scene',{autoAlpha:0,scale:1.035,y:10,x:0,filter:'none'});
-    gsap.set('.scene-rest',{autoAlpha:0,scale:1,y:0});
+    gsap.set('.scene',{
+      autoAlpha:0,
+      scale:1.035,
+      x:0,
+      y:10,
+      rotation:0,
+      filter:'none'
+    });
+
+    gsap.set('.scene-rest',{autoAlpha:0,scale:1,x:0,y:0});
     gsap.set('.lyric-layer',{opacity:0});
     gsap.set('.subtitle-area',{opacity:1});
     gsap.set('#hound-tunnel',{autoAlpha:0});
+
     gsap.set('.eye-spiral',{opacity:0,rotation:0,scale:1});
     gsap.set('.pupil-left,.pupil-right',{opacity:1,x:0,y:0,rotation:0});
-    gsap.set('.cheshire-svg',{filter:'none',scale:1});
+    gsap.set('.cheshire-svg',{filter:'none',scale:1,x:0,y:0,rotation:0});
     gsap.set('#cheshire-eyes,#cheshire-mouth',{clearProps:'transform'});
-    gsap.set('#bird-motion',{opacity:1});
+
+    gsap.set('#bird-motion',{opacity:1,x:0,y:0,rotation:0,scale:1});
     gsap.set('#final-ground,#final-grass',{opacity:0});
     gsap.set('#bird-cage',{opacity:0});
-    gsap.set('#cage-bunnies .cage-bunny',{opacity:0,clearProps:'transform'});
+
+    gsap.set('#cage-bunnies .cage-bunny',{
+      opacity:0,
+      clearProps:'transform'
+    });
     gsap.set('#hare-pack',{opacity:0});
 
     captionIndex=-1;
@@ -1026,7 +1041,11 @@
     nextEl.textContent='';
     iconEl.textContent='✦';
 
-    master.time(0,false);
+    // Force GSAP to render the timeline from a fresh frame.
+    master.invalidate();
+    master.totalTime(0,true);
+    master.time(.001,true);
+    master.time(0,true);
   }
 
   async function tryAutoplay(force=false){
@@ -1071,16 +1090,45 @@
 
     clearTimeout(restTimer);
     restTimer=setTimeout(async()=>{
-      try{audio.currentTime=0}catch(_){}
+      // Reset the complete visual state BEFORE restarting the soundtrack.
+      resetForReplay();
+
+      resting=false;
+      audioActive=false;
+      virtualStart=performance.now();
+
+      try{
+        audio.pause();
+        audio.currentTime=0;
+      }catch(_){}
+
+      // Render the opening scene immediately while the audio starts.
+      const opening=scenes.intro;
+      if(opening){
+        gsap.set(opening,{
+          autoAlpha:1,
+          scale:1.035,
+          x:0,
+          y:10,
+          filter:'none'
+        });
+      }
 
       const ok=await tryAutoplay(true);
-      if(!ok) return;
+
+      if(!ok){
+        // Keep the animation clock at the beginning while autoplay retries.
+        virtualStart=performance.now();
+        return;
+      }
 
       try{audio.currentTime=0}catch(_){}
-      resetForReplay();
       virtualStart=performance.now();
-      resting=false;
       audioActive=true;
+
+      // Force frame zero again after play() resolves so audio and visuals share the same origin.
+      master.totalTime(0,true);
+      captionIndex=-1;
     },REST_MS);
   }
 
@@ -1092,7 +1140,14 @@
   audio.addEventListener('loadeddata',tryAutoplay);
   audio.addEventListener('play',()=>{
     audioActive=true;
-    virtualStart=performance.now()-audio.currentTime*1000;
+
+    if(audio.currentTime<.25){
+      master.totalTime(0,true);
+      captionIndex=-1;
+      virtualStart=performance.now();
+    }else{
+      virtualStart=performance.now()-audio.currentTime*1000;
+    }
   });
   audio.addEventListener('pause',()=>{ if(!resting) audioActive=false; });
 
