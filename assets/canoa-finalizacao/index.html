@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#07131b">
+  <link rel="icon" type="image/webp" href="../avatar-nihilguh.webp">
   <title>NihilGuh — Canoa // Finalização</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,8 +32,10 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
 .vignette{position:fixed;inset:0;z-index:48;pointer-events:none;background:radial-gradient(ellipse at 50% 46%,transparent 42%,rgba(0,0,0,.16) 70%,rgba(0,0,0,.42) 100%)}
 .corner{position:absolute;z-index:42;font-size:clamp(.46rem,.58vw,.68rem);font-weight:900;letter-spacing:.22em;color:rgba(245,238,218,.54);text-transform:uppercase;pointer-events:none}
 .corner-a{left:2.8%;top:3.4%}.corner-b{right:2.8%;top:3.4%}
-.section-label{position:absolute;z-index:41;left:50%;bottom:4.4%;transform:translateX(-50%);min-width:18%;text-align:center;pointer-events:none;color:rgba(245,238,218,.76);font:700 italic clamp(.78rem,1.15vw,1.18rem) "Cormorant Garamond",serif;letter-spacing:.11em;text-transform:uppercase;text-shadow:0 1px 15px rgba(0,0,0,.45)}
-.section-label span{display:inline-block;will-change:transform,opacity}
+.section-label{position:absolute;z-index:41;left:50%;bottom:3.8%;transform:translateX(-50%);width:min(86%,1180px);text-align:center;pointer-events:none;text-shadow:0 2px 18px rgba(0,0,0,.72);display:grid;gap:clamp(2px,.45vh,6px);justify-items:center}
+.subtitle-current{display:block;max-width:100%;color:#f7efd9;font:700 clamp(1.0rem,2.05vw,2.15rem) "Cormorant Garamond",serif;letter-spacing:.018em;line-height:1.05;will-change:transform,opacity}
+.subtitle-next{display:block;max-width:92%;color:rgba(247,239,217,.46);font:700 clamp(.56rem,.82vw,.88rem) Inter,system-ui,sans-serif;letter-spacing:.105em;line-height:1.2;text-transform:uppercase;will-change:transform,opacity}
+.art g,.art path,.art circle,.art ellipse,.art rect{transform-box:fill-box}
 .stars circle{fill:#f4ead1;opacity:.85}
 #map-world path{fill:none;stroke:#c7bd9f;stroke-width:2;stroke-linecap:round;stroke-dasharray:4 12;opacity:.34}
 .route-shadow{fill:none;stroke:#000;stroke-width:14;opacity:.12;filter:blur(7px)}
@@ -67,9 +70,9 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
 #end-mark circle{fill:#f0ce85;filter:drop-shadow(0 0 8px rgba(240,206,133,.7))}
 .paper-notes{position:absolute;inset:0;z-index:30;pointer-events:none}.note{position:absolute;color:rgba(23,32,34,.58);font:700 italic clamp(.78rem,1.05vw,1.18rem) "Cormorant Garamond",serif;letter-spacing:.16em;opacity:0;will-change:transform,opacity}.n1{left:18%;top:29%;transform:rotate(-8deg)}.n2{right:18%;top:31%;transform:rotate(6deg)}.n3{left:50%;top:20%;transform:translateX(-50%)}.n4{left:9%;bottom:17%;color:rgba(235,224,193,.44)}.n5{right:11%;top:26%;color:rgba(235,224,193,.46)}.n6{left:50%;top:14%;transform:translateX(-50%);color:rgba(245,223,157,.66)}.n7{right:12%;bottom:21%;color:rgba(244,222,161,.62)}
 .start-gate{position:absolute;inset:0;z-index:100;display:grid;place-content:center;justify-items:center;gap:9px;background:radial-gradient(circle at 50% 46%,rgba(18,39,49,.68),rgba(3,8,11,.96));cursor:pointer;text-align:center;transition:opacity .55s ease,visibility .55s ease}.start-gate.hidden{opacity:0;visibility:hidden;pointer-events:none}.gate-mark{font:600 clamp(3rem,7vw,7rem) "Cormorant Garamond",serif;color:#e9cd89;line-height:.65;animation:floatMark 2.5s ease-in-out infinite}.start-gate strong{font-size:clamp(.8rem,1.1vw,1.12rem);letter-spacing:.24em}.start-gate small{font:600 italic clamp(.68rem,.88vw,.92rem) "Cormorant Garamond",serif;letter-spacing:.06em;color:rgba(247,239,217,.55)}
-.yt-audio{position:absolute;width:2px;height:2px;left:-10px;top:-10px;overflow:hidden;opacity:0;pointer-events:none}#html-audio{display:none}
+.yt-audio{position:absolute;width:220px;height:220px;left:-9999px;top:-9999px;overflow:hidden;opacity:.001;pointer-events:none}#html-audio{display:none}
 @keyframes floatMark{50%{transform:translateY(-7px) rotate(-2deg)}}
-@media (max-aspect-ratio:1/1){.corner{font-size:.46rem}.section-label{bottom:3.5%}}
+@media (max-aspect-ratio:1/1){.corner{font-size:.46rem}.section-label{bottom:3.2%;width:92%}.subtitle-current{font-size:clamp(.92rem,3.7vw,1.55rem)}.subtitle-next{font-size:clamp(.48rem,1.65vw,.72rem)}}
 @media (prefers-reduced-motion:reduce){.gate-mark{animation:none}}
 
   </style>
@@ -136,19 +139,19 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
             <circle cx="105" cy="615" r="8"/><circle cx="485" cy="520" r="7"/><circle cx="865" cy="430" r="7"/><circle cx="1300" cy="322" r="7"/>
           </g>
           <g id="memory-cards">
-            <g transform="translate(250 270) rotate(-7)"><rect width="190" height="130" rx="4"/><path d="M20 95 L70 54 L104 79 L142 42 L170 95"/><circle cx="58" cy="37" r="13"/></g>
-            <g transform="translate(715 230) rotate(5)"><rect width="170" height="118" rx="4"/><path d="M18 88 Q64 42 100 72 T153 62"/><circle cx="55" cy="37" r="11"/></g>
-            <g transform="translate(1120 185) rotate(-4)"><rect width="185" height="126" rx="4"/><path d="M16 94 L55 62 L88 76 L126 39 L168 94"/><circle cx="122" cy="34" r="12"/></g>
+            <g transform="translate(250 270) rotate(-7)"><g class="memory-card-motion"><rect width="190" height="130" rx="4"/><path d="M20 95 L70 54 L104 79 L142 42 L170 95"/><circle cx="58" cy="37" r="13"/></g></g>
+            <g transform="translate(715 230) rotate(5)"><g class="memory-card-motion"><rect width="170" height="118" rx="4"/><path d="M18 88 Q64 42 100 72 T153 62"/><circle cx="55" cy="37" r="11"/></g></g>
+            <g transform="translate(1120 185) rotate(-4)"><g class="memory-card-motion"><rect width="185" height="126" rx="4"/><path d="M16 94 L55 62 L88 76 L126 39 L168 94"/><circle cx="122" cy="34" r="12"/></g></g>
           </g>
         </g>
 
         <g id="writing-scene" opacity="0">
-          <g id="pencil" transform="translate(250 350) rotate(-18)">
+          <g transform="translate(250 350) rotate(-18)"><g id="pencil">
             <rect x="0" y="-14" width="245" height="28" rx="8"/><path d="M245 -14 L295 0 L245 14Z"/><path d="M0 -14 L-35 0 L0 14Z"/>
-          </g>
-          <g id="pen" transform="translate(280 460) rotate(10)">
+          </g></g>
+          <g transform="translate(280 460) rotate(10)"><g id="pen">
             <rect x="0" y="-12" width="260" height="24" rx="10"/><path d="M260 -12 L315 0 L260 12Z"/><path d="M285 -6 L330 0 L285 6Z"/>
-          </g>
+          </g></g>
           <path id="ink-script" pathLength="1" d="M545 470 C632 423 676 493 753 448 C831 402 891 468 957 433 C1028 395 1083 425 1164 387 C1242 350 1304 381 1392 338"/>
           <g id="ink-splashes"><circle cx="570" cy="482" r="5"/><circle cx="935" cy="444" r="4"/><circle cx="1183" cy="391" r="6"/><circle cx="1395" cy="336" r="3"/></g>
         </g>
@@ -195,12 +198,12 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
         <g id="wake" opacity="0"><path d="M570 665 C430 675 340 716 246 748 M585 690 C448 718 385 765 312 810"/></g>
 
         <g id="canoe-wrap" opacity="0" transform="translate(800 610)">
-          <g id="canoe-bob">
+          <g id="canoe-travel"><g id="canoe-bob">
             <ellipse id="canoe-shadow" cx="0" cy="83" rx="260" ry="34"/>
             <path id="canoe" d="M-310 18 Q-190 108 2 112 Q194 108 316 18 Q205 55 0 56 Q-208 55 -310 18Z" fill="url(#boatGradient)"/>
             <path class="canoe-rim" d="M-306 18 Q-198 48 0 49 Q200 48 312 18"/>
             <path class="canoe-rim inner" d="M-250 38 Q-145 70 0 70 Q148 70 257 37"/>
-            <g id="traveler" transform="translate(-18 -126)">
+            <g transform="translate(-18 -126)"><g id="traveler">
               <circle class="head" cx="0" cy="0" r="42"/>
               <path class="body" d="M-26 42 Q0 21 29 44 L50 154 L-54 154Z"/>
               <path id="arm" class="limb" d="M22 76 Q82 112 105 157"/>
@@ -214,16 +217,16 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
               <g id="healed" opacity="0">
                 <path d="M-24 76 l18 15 l-15 17 l20 18"/><path d="M19 91 l-15 20 l19 17 l-17 20"/>
               </g>
-            </g>
-            <g id="paddle" transform="translate(88 -92) rotate(28)"><rect x="-8" y="-55" width="16" height="275" rx="8"/><path d="M0 220 C-28 247 -34 305 0 334 C35 305 28 247 0 220Z"/></g>
-            <g id="home-lantern" transform="translate(-135 -66)">
+            </g></g>
+            <g transform="translate(88 -92) rotate(28)"><g id="paddle"><rect x="-8" y="-55" width="16" height="275" rx="8"/><path d="M0 220 C-28 247 -34 305 0 334 C35 305 28 247 0 220Z"/></g></g>
+            <g transform="translate(-135 -66)"><g id="home-lantern">
               <circle class="lantern-aura" r="92" fill="url(#lanternGlow)"/>
               <path class="tiny-home" d="M-34 12 V-28 L0-56 L34-28 V12Z"/>
               <rect class="tiny-window" x="-10" y="-15" width="20" height="24" rx="2"/>
               <path class="tiny-roof" d="M-45 -23 L0-64 L45-23"/>
-            </g>
+            </g></g>
             <ellipse id="home-shield" cx="-135" cy="-25" rx="112" ry="96"/>
-          </g>
+          </g></g>
         </g>
 
         <g id="darkness" opacity="0">
@@ -231,13 +234,13 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
           <path id="dark-right" d="M1600 72 C1402 132 1395 306 1268 365 C1160 417 1138 520 1215 900 H1600Z"/>
         </g>
 
-        <g id="faith-sigil" opacity="0" transform="translate(800 366)">
+        <g id="faith-sigil" opacity="0" transform="translate(800 366)"><g id="faith-motion">
           <circle class="faith-ring outer" r="170"/><circle class="faith-ring mid" r="128"/><circle class="faith-ring inner" r="73"/>
           <path class="faith-needle" d="M0 -145 L30 -12 L0 32 L-30 -12Z"/>
           <path class="faith-needle south" d="M0 145 L22 20 L0 -20 L-22 20Z"/>
           <path class="faith-cross" d="M-140 0 H140 M0 -140 V140"/>
           <circle class="faith-core" r="16"/>
-        </g>
+        </g></g>
 
         <g id="storm-shards" opacity="0">
           <path d="M84 408 l92 42 l-78 38"/><path d="M1515 384 l-108 55 l88 44"/><path d="M135 570 l96 28 l-84 49"/><path d="M1470 557 l-96 36 l76 43"/>
@@ -262,7 +265,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
         <span class="note n7">MARÉ BAIXA</span>
       </div>
 
-      <div class="section-label" id="section-label"><span>UMA ÚLTIMA TRAVESSIA</span></div>
+      <div class="section-label" id="section-label" aria-live="polite"><span class="subtitle-current" id="subtitle-current"></span><span class="subtitle-next" id="subtitle-next"></span></div>
       <div class="corner corner-a">NIHILGUH // FINALIZAÇÃO</div>
       <div class="corner corner-b">CANOA</div>
 
@@ -278,43 +281,90 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-  <script src="https://www.youtube.com/iframe_api"></script>
   <script>
 (() => {
   'use strict';
 
   const DURATION = 185.411;
-  const ACTIVE_END = 181.05;
+  const VISUAL_END = 173.0;
+  const ACTIVE_END = DURATION;
   const YOUTUBE_ID = 'fULQ3gmyP88';
   const params = new URLSearchParams(location.search);
   const loopMode = params.get('loop') === '1';
-  const auto = params.get('autoplay') !== '0';
+  const auto = params.get('autoplay') === '1';
   const localAudioSrc = params.get('audio');
   const useLocalAudio = Boolean(localAudioSrc);
+  const SYNC_OFFSET = Number.isFinite(Number(params.get('offset'))) ? Number(params.get('offset')) : 0;
 
   const MARKS = {
     introEnd: 5.34,
-    memoryEnd: 16.16,
-    firstTurn: 26.0,
+    memoryEnd: 21.08,
+    firstTurn: 28.93,
     pre1: 36.29,
     chorus1: 52.55,
     interludeEnd: 60.91,
-    verse2End: 74.19,
+    verse2End: 76.65,
     pre2End: 91.39,
     chorus2End: 107.62,
-    faithEnd: 122.39,
+    faithEnd: 123.37,
     calmEnd: 141.08,
-    final1: 149.15,
-    final2: 157.20,
-    final3: 165.25,
-    final4: 174.05,
-    fadeEnd: 181.05
+    final1: 149.01,
+    final2: 156.83,
+    final3: 164.70,
+    final4: 172.55,
+    fadeEnd: VISUAL_END
   };
+
+  const CAPTIONS = [
+    [5.34,'Andei sem rumo por aí pra trazer luz pra casa'],
+    [9.27,'E tatuei os momentos bons'],
+    [13.21,'Lápis é pra quem sente medo de errar palavras'],
+    [17.16,'Uso caneta em canções'],
+    [21.08,'Enchi o pulmão, enchi meu coração de paz'],
+    [25.01,'Vivenciei tudo sendo novo demais'],
+    [28.93,'Já odiei, mas hoje eu não consigo mais'],
+    [32.88,'Eu joguei fora tudo que ficou pra trás'],
+    [36.29,'Canoa uso pra desbravar o mar'],
+    [40.26,'Correnteza vem, mas não invade meu lar'],
+    [44.16,'Canoa uso pra desbravar o mar'],
+    [48.14,'Correnteza vem, mas não invade meu lar'],
+    [60.91,'Andei sem rumo por aí, fiz do mundo minha casa'],
+    [64.85,'Me escondendo da escuridão'],
+    [68.75,'Cicatrizei as dores tatuadas na minha alma'],
+    [72.68,'Fiz do meu trauma uma lição'],
+    [76.65,'Já odiei, mas hoje eu não consigo mais'],
+    [80.60,'Eu joguei fora tudo que ficou pra trás'],
+    [84.52,'Já odiei, mas hoje eu não consigo mais'],
+    [88.47,'Eu joguei fora tudo que ficou pra trás'],
+    [91.39,'Canoa uso pra desbravar o mar'],
+    [95.32,'Correnteza vem, mas não invade meu lar'],
+    [99.27,'Canoa uso pra desbravar o mar'],
+    [103.19,'Correnteza vem, mas não invade meu lar'],
+    [107.62,'A fé em alguma coisa é como uma arma'],
+    [111.57,'Pra quem teme coisa ruim, teme coisa ruim'],
+    [115.52,'A fé em alguma coisa é como uma arma'],
+    [119.44,'Pra quem teme coisa ruim, teme coisa ruim'],
+    [123.37,'Eu ando com a canoa devagar'],
+    [127.32,'Positividade pra maré baixar'],
+    [131.24,'E eu ando com a canoa devagar'],
+    [135.19,'Positividade pra maré baixar'],
+    [141.08,'Canoa uso pra desbravar o mar'],
+    [145.01,'Correnteza vem, mas não invade meu lar'],
+    [148.96,'Canoa uso pra desbravar o mar'],
+    [152.88,'Correnteza vem, mas não invade meu lar'],
+    [156.83,'Canoa uso pra desbravar o mar'],
+    [160.75,'Correnteza vem, mas não invade meu lar'],
+    [164.70,'Canoa uso pra desbravar o mar'],
+    [168.60,'Correnteza vem, mas não invade meu lar'],
+    [172.55,'']
+  ];
 
   const $ = id => document.getElementById(id);
   const stage = $('stage');
   const gate = $('start-gate');
-  const label = $('section-label').querySelector('span');
+  const subtitleCurrent = $('subtitle-current');
+  const subtitleNext = $('subtitle-next');
+  const art = document.querySelector('.art');
   const htmlAudio = $('html-audio');
 
   const el = {
@@ -323,9 +373,9 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
     memories: $('memory-cards'), writing: $('writing-scene'), pencil: $('pencil'), pen: $('pen'), script: $('ink-script'),
     breath: $('breath-scene'), heart: $('heart'), shards: $('past-shards'), islands: $('horizon-islands'), storm: $('storm-back'),
     waterFar: $('wave-far'), waterMid: $('wave-mid'), waterFront: $('wave-front'), foam: $('foam'), wake: $('wake'),
-    canoeWrap: $('canoe-wrap'), canoeBob: $('canoe-bob'), paddle: $('paddle'), traveler: $('traveler'), tattoos: $('tattoos'),
+    canoeWrap: $('canoe-wrap'), canoeTravel: $('canoe-travel'), canoeBob: $('canoe-bob'), paddle: $('paddle'), traveler: $('traveler'), tattoos: $('tattoos'),
     scars: $('scars'), healed: $('healed'), lantern: $('home-lantern'), shield: $('home-shield'), darkness: $('darkness'),
-    darkLeft: $('dark-left'), darkRight: $('dark-right'), faith: $('faith-sigil'), stormShards: $('storm-shards'), birds: $('birds'),
+    darkLeft: $('dark-left'), darkRight: $('dark-right'), faith: $('faith-sigil'), faithMotion: $('faith-motion'), stormShards: $('storm-shards'), birds: $('birds'),
     endMark: $('end-mark'), notes: [...document.querySelectorAll('.note')]
   };
 
@@ -333,10 +383,12 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
   let ytReady = false;
   let ytPlaying = false;
   let started = false;
-  let pendingStart = auto;
+  let pendingStart = false;
   let ended = false;
   let virtualStart = performance.now();
-  let lastLabel = '';
+  let lastCaption = -2;
+  let lastMediaTime = 0;
+  let lastMediaPerf = performance.now();
   let holdStart = 0;
 
   const clamp01 = v => Math.max(0, Math.min(1, v));
@@ -352,30 +404,38 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
     return 1;
   };
   const pulse = (t,speed=1,phase=0) => .5 + .5*Math.sin(t*speed+phase);
-  const set = (target, vars) => target && gsap.set(target, vars);
+  function set(target, vars){
+    if(!target) return;
+    const v={...vars};
+    if(target instanceof SVGElement){
+      const sx=(art?.clientWidth || stage.clientWidth || 1600)/1600;
+      const sy=(art?.clientHeight || stage.clientHeight || 900)/900;
+      if(typeof v.x==='number') v.x*=sx;
+      if(typeof v.y==='number') v.y*=sy;
+    }
+    gsap.set(target,v);
+  }
 
-  function sectionInfo(t){
-    if(t < MARKS.introEnd) return ['UMA ÚLTIMA TRAVESSIA', 0];
-    if(t < MARKS.memoryEnd) return ['MEMÓRIA', 1];
-    if(t < MARKS.pre1) return ['O QUE FICA PARA TRÁS', 2];
-    if(t < MARKS.chorus1) return ['CORRENTEZA', 3];
-    if(t < MARKS.interludeEnd) return ['ENTRE MARÉS', 4];
-    if(t < MARKS.verse2End) return ['O MUNDO COMO CASA', 5];
-    if(t < MARKS.pre2End) return ['CICATRIZ → LIÇÃO', 6];
-    if(t < MARKS.chorus2End) return ['CORRENTEZA', 7];
-    if(t < MARKS.faithEnd) return ['FÉ', 8];
-    if(t < MARKS.calmEnd) return ['DEVAGAR', 9];
-    if(t < MARKS.fadeEnd) return ['HORIZONTE', 10];
-    return ['', 11];
+  function captionIndexAt(t){
+    let idx=-1;
+    for(let i=0;i<CAPTIONS.length;i++){
+      if(t>=CAPTIONS[i][0]) idx=i; else break;
+    }
+    return idx;
   }
 
   function updateLabel(t){
-    const [text] = sectionInfo(t);
-    if(text === lastLabel) return;
-    lastLabel = text;
-    gsap.to(label,{opacity:0,y:7,duration:.22,onComplete:()=>{
-      label.textContent=text;
-      gsap.fromTo(label,{opacity:0,y:-7},{opacity:text?1:0,y:0,duration:.48,ease:'power2.out'});
+    const idx=captionIndexAt(t);
+    if(idx===lastCaption) return;
+    lastCaption=idx;
+    const current=idx>=0 ? CAPTIONS[idx][1] : '';
+    const next=(idx+1<CAPTIONS.length) ? CAPTIONS[idx+1][1] : '';
+    gsap.killTweensOf([subtitleCurrent,subtitleNext]);
+    gsap.to([subtitleCurrent,subtitleNext],{opacity:0,y:5,duration:.12,onComplete:()=>{
+      subtitleCurrent.textContent=current;
+      subtitleNext.textContent=next;
+      gsap.fromTo(subtitleCurrent,{opacity:0,y:-5},{opacity:current?1:0,y:0,duration:.24,ease:'power2.out'});
+      gsap.fromTo(subtitleNext,{opacity:0,y:-3},{opacity:next ? .22 : 0,y:0,duration:.32,ease:'power2.out'});
     }});
   }
 
@@ -402,7 +462,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
     set(el.route,{opacity:routeA});
     if(el.routeLine) el.routeLine.style.strokeDashoffset=String(1-smoothstep(0,.86,p));
     set(el.memories,{opacity:routeA*smoothstep(.18,.45,p),y:-smoothstep(.22,1,p)*16});
-    [...el.memories.children].forEach((card,i)=>{
+    [...el.memories.querySelectorAll('.memory-card-motion')].forEach((card,i)=>{
       set(card,{y:Math.sin(t*.55+i)*7,x:Math.cos(t*.34+i*1.7)*5,rotation:Math.sin(t*.23+i)*1.8,transformOrigin:'50% 50%'});
     });
 
@@ -416,9 +476,9 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
     const p = clamp01((t-MARKS.memoryEnd)/(MARKS.pre1-MARKS.memoryEnd));
     set(el.writing,{opacity:a});
     const pencilOut=smoothstep(.06,.34,p);
-    set(el.pencil,{opacity:a*(1-pencilOut),x:pencilOut*125,y:-pencilOut*38,rotation:-18+pencilOut*15,transformOrigin:'50% 50%'});
+    set(el.pencil,{opacity:a*(1-pencilOut),x:pencilOut*125,y:-pencilOut*38,rotation:pencilOut*15,transformOrigin:'50% 50%'});
     const penIn=smoothstep(.22,.40,p);
-    set(el.pen,{opacity:a*penIn,x:(1-penIn)*-80+Math.sin(t*.7)*3,y:Math.sin(t*1.1)*2,rotation:10+Math.sin(t*.45)*1.2,transformOrigin:'50% 50%'});
+    set(el.pen,{opacity:a*penIn,x:(1-penIn)*-80+Math.sin(t*.7)*3,y:Math.sin(t*1.1)*2,rotation:Math.sin(t*.45)*1.2,transformOrigin:'50% 50%'});
     if(el.script) el.script.style.strokeDashoffset=String(1-smoothstep(.34,.82,p));
     set(el.notes[2],{opacity:a*smoothstep(.48,.64,p)*.72,scale:.96+.04*pulse(t,.8),transformOrigin:'50% 50%'});
 
@@ -456,13 +516,14 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
 
     const bob=Math.sin(t*2.55)*9*waveAmp;
     const roll=Math.sin(t*1.38)*2.2*waveAmp;
-    const finalTravel=smoothstep(MARKS.calmEnd,MARKS.fadeEnd,t);
+    const finalTravel=smoothstep(MARKS.calmEnd,VISUAL_END,t);
     const scale=1-finalTravel*.70;
     const x=finalTravel*430;
     const y=-finalTravel*170;
-    set(el.canoeWrap,{opacity,x,y,scale,transformOrigin:'50% 55%'});
+    set(el.canoeWrap,{opacity});
+    set(el.canoeTravel,{x,y,scale,transformOrigin:'50% 55%'});
     set(el.canoeBob,{y:bob,rotation:roll,transformOrigin:'50% 70%'});
-    set(el.paddle,{rotation:28+Math.sin(t*2.05)*18*(1-finalTravel*.7),transformOrigin:'0% 0%'});
+    set(el.paddle,{rotation:Math.sin(t*2.05)*18*(1-finalTravel*.7),transformOrigin:'0% 0%'});
     set(el.traveler,{rotation:-roll*.18,y:Math.sin(t*.95)*2,transformOrigin:'50% 100%'});
 
     const protect=(t>=MARKS.pre1 ? .36 : .18)+.08*pulse(t,1.3);
@@ -509,7 +570,8 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
   function renderFaith(t){
     const a=win(t,MARKS.chorus2End,MARKS.faithEnd,.45);
     const p=clamp01((t-MARKS.chorus2End)/(MARKS.faithEnd-MARKS.chorus2End));
-    set(el.faith,{opacity:a,scale:.72+smoothstep(0,.32,p)*.34,rotation:-12+p*36+Math.sin(t*.42)*2,transformOrigin:'50% 50%'});
+    set(el.faith,{opacity:a});
+    set(el.faithMotion,{scale:.72+smoothstep(0,.32,p)*.34,rotation:-12+p*36+Math.sin(t*.42)*2,transformOrigin:'50% 50%'});
     set(el.stormShards,{opacity:a*(1-smoothstep(.68,1,p))});
     [...el.stormShards.children].forEach((shard,i)=>{
       const q=(p*1.25-i*.075);
@@ -567,23 +629,36 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
 
   function virtualTime(){ return (performance.now()-virtualStart)/1000; }
   function currentTime(){
-    if(useLocalAudio && !htmlAudio.paused && Number.isFinite(htmlAudio.currentTime)) return htmlAudio.currentTime;
-    if(ytReady && ytPlaying && player && typeof player.getCurrentTime==='function'){
-      const n=player.getCurrentTime(); if(Number.isFinite(n)) return n;
+    if(useLocalAudio && Number.isFinite(htmlAudio.currentTime)){
+      lastMediaTime=htmlAudio.currentTime;
+      lastMediaPerf=performance.now();
+      return Math.max(0,Math.min(DURATION,htmlAudio.currentTime + SYNC_OFFSET));
     }
-    return Math.min(DURATION,virtualTime());
+    if(ytReady && player && typeof player.getCurrentTime==='function'){
+      try{
+        const n=Number(player.getCurrentTime());
+        if(Number.isFinite(n)){
+          lastMediaTime=n;
+          lastMediaPerf=performance.now();
+          return Math.max(0,Math.min(DURATION,n + SYNC_OFFSET));
+        }
+      }catch(_){ }
+    }
+    const fallback=lastMediaTime + (performance.now()-lastMediaPerf)/1000;
+    return Math.max(0,Math.min(DURATION,(started?fallback:virtualTime()) + SYNC_OFFSET));
   }
 
   function restart(){
-    ended=false; holdStart=0; virtualStart=performance.now();
+    ended=false; holdStart=0; lastCaption=-2; lastMediaTime=0; lastMediaPerf=performance.now(); virtualStart=performance.now();
     if(useLocalAudio){ htmlAudio.currentTime=0; htmlAudio.play().catch(()=>{}); }
-    else if(player && ytReady){ try{ player.seekTo(0,true); player.playVideo(); }catch(_){} }
+    else if(player && ytReady){ try{ player.seekTo(0,true); player.unMute(); player.playVideo(); }catch(_){} }
   }
 
   function finish(){
     if(ended) return;
     ended=true; holdStart=performance.now();
-    render(ACTIVE_END);
+    render(VISUAL_END);
+    renderHold(0);
     if(loopMode){ setTimeout(restart,7000); }
   }
 
@@ -591,67 +666,98 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--cream);overscroll-behavi
     if(!started){ requestAnimationFrame(tick); return; }
     const t=currentTime();
     if(!ended){
-      render(Math.min(t,ACTIVE_END));
-      if(t>=ACTIVE_END || (useLocalAudio && htmlAudio.ended)) finish();
+      if(t<VISUAL_END) render(t);
+      else { render(VISUAL_END); renderHold((t-VISUAL_END)*1000); updateLabel(t); }
+      if(t>=DURATION-.06 || (useLocalAudio && htmlAudio.ended)) finish();
     }else{
       renderHold(performance.now()-holdStart);
     }
     requestAnimationFrame(tick);
   }
 
-  function activate(){
-    if(started) return;
-    started=true; ended=false; virtualStart=performance.now(); gate.classList.add('hidden');
+  function activate(mediaTime=0){
+    if(!started){
+      started=true; ended=false; gate.classList.add('hidden');
+    }
+    lastMediaTime=Number.isFinite(mediaTime)?mediaTime:0;
+    lastMediaPerf=performance.now();
+    virtualStart=performance.now()-lastMediaTime*1000;
+  }
+
+  function setGateStatus(message){
+    const small=gate.querySelector('small');
+    if(small) small.textContent=message;
   }
 
   function begin(){
     if(started) return;
     pendingStart=true;
+    setGateStatus('iniciando áudio…');
     if(useLocalAudio){
-      htmlAudio.src=localAudioSrc;
+      if(htmlAudio.src!==localAudioSrc) htmlAudio.src=localAudioSrc;
       htmlAudio.currentTime=0;
       const attempt=htmlAudio.play();
       if(attempt && typeof attempt.then==='function'){
-        attempt.then(activate).catch(()=>{ pendingStart=false; gate.classList.remove('hidden'); });
-      }else activate();
+        attempt.then(()=>{ activate(0); pendingStart=false; }).catch(()=>{ pendingStart=false; setGateStatus('o navegador bloqueou o áudio — clique novamente'); });
+      }else { activate(0); pendingStart=false; }
     }else if(player && ytReady){
-      try{ player.seekTo(0,true); player.unMute(); player.setVolume(100); player.playVideo(); }catch(_){}
+      try{ player.seekTo(0,true); player.unMute(); player.setVolume(100); player.playVideo(); }
+      catch(_){ pendingStart=false; setGateStatus('não foi possível iniciar o player'); }
+    }else{
+      setGateStatus('carregando o player do YouTube…');
     }
   }
 
   gate.addEventListener('click',begin);
   gate.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); begin(); }});
   htmlAudio.addEventListener('ended',finish);
-  htmlAudio.addEventListener('error',()=>{ if(useLocalAudio) console.warn('Áudio local não pôde ser carregado.'); });
+  htmlAudio.addEventListener('error',()=>{ if(useLocalAudio) setGateStatus('áudio local não pôde ser carregado'); });
 
   window.onYouTubeIframeAPIReady = () => {
-    if(useLocalAudio || !window.YT) return;
+    if(useLocalAudio || player || !window.YT?.Player) return;
     player = new YT.Player('yt-audio',{
-      width:'2',height:'2',videoId:params.get('video')||YOUTUBE_ID,
-      playerVars:{autoplay:auto?1:0,controls:0,disablekb:1,fs:0,iv_load_policy:3,playsinline:1,rel:0},
+      host:'https://www.youtube.com',
+      width:'220',height:'220',videoId:params.get('video')||YOUTUBE_ID,
+      playerVars:{
+        autoplay:0,controls:0,disablekb:1,fs:0,iv_load_policy:3,playsinline:1,rel:0,
+        enablejsapi:1,origin:location.origin,widget_referrer:location.href
+      },
       events:{
         onReady:ev=>{
           ytReady=true;
-          if(pendingStart){
-            try{ ev.target.setVolume(100); ev.target.playVideo(); }catch(_){}
+          setGateStatus('clique para liberar o áudio no navegador');
+          if(pendingStart || auto){
+            pendingStart=true;
+            try{ ev.target.seekTo(0,true); ev.target.unMute(); ev.target.setVolume(100); ev.target.playVideo(); }catch(_){ }
           }
         },
         onStateChange:ev=>{
           if(!window.YT) return;
           ytPlaying = ev.data===YT.PlayerState.PLAYING;
-          if(ytPlaying){ activate(); pendingStart=false; }
+          if(ytPlaying){
+            let mt=0; try{ mt=Number(ev.target.getCurrentTime())||0; }catch(_){ }
+            activate(mt); pendingStart=false;
+          }
           if(ev.data===YT.PlayerState.ENDED) finish();
         },
-        onError:()=>{ ytReady=false; ytPlaying=false; }
+        onError:()=>{ ytReady=false; ytPlaying=false; pendingStart=false; setGateStatus('YouTube não liberou este áudio incorporado'); }
       }
     });
   };
 
-  // If the API happened to load before this script, initialize it immediately.
-  if(window.YT && window.YT.Player) window.onYouTubeIframeAPIReady();
+  function loadYouTubeApi(){
+    if(useLocalAudio || document.querySelector('script[data-youtube-iframe-api]')) return;
+    const script=document.createElement('script');
+    script.src='https://www.youtube.com/iframe_api';
+    script.async=true;
+    script.dataset.youtubeIframeApi='1';
+    document.head.appendChild(script);
+  }
 
+  if(!useLocalAudio) loadYouTubeApi();
   if(auto && useLocalAudio){ begin(); }
   render(0);
+  updateLabel(0);
   requestAnimationFrame(tick);
 })();
 
