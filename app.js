@@ -39,18 +39,62 @@
     return at ? Math.max(0, Math.ceil((new Date(at).getTime() - Date.now()) / 1000)) : 0;
   }
 
+  function twitchTargetVisible(target) {
+    if (!target) return false;
+    const style = getComputedStyle(target);
+    if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) === 0) return false;
+    const rect = target.getBoundingClientRect();
+    return rect.width >= 400 && rect.height >= 300;
+  }
+
   function ensureTwitch(targetId, live) {
     const target = $(targetId);
     if (!target) return;
+
     if (!live) {
-      if (embedded.has(targetId)) embedded.delete(targetId);
-      target.innerHTML = '<div class="offline-art"><strong>O Mundo Louco está dormindo.</strong><br>Quando a Twitch entrar ao vivo, o player aparece aqui automaticamente.</div>';
+      embedded.delete(targetId);
+      embeddingPending.delete(targetId);
+      if (!target.querySelector('.offline-art')) {
+        target.innerHTML = '<div class="offline-art"><strong>O Mundo Louco está dormindo.</strong><br>Quando a Twitch entrar ao vivo, o player aparece aqui automaticamente.</div>';
+      }
       return;
     }
-    if (embedded.has(targetId)) return;
-    const parent = location.hostname || 'gustavoaba.github.io';
-    target.innerHTML = '<iframe title="Live NihilGuh na Twitch" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen="true" scrolling="no" src="https://player.twitch.tv/?channel=nihilguh&parent=' + encodeURIComponent(parent) + '&autoplay=true&muted=true"></iframe>';
-    embedded.add(targetId);
+
+    if (embedded.has(targetId) || embeddingPending.has(targetId)) return;
+    embeddingPending.add(targetId);
+
+    const mount = () => {
+      if (embedded.has(targetId)) {
+        embeddingPending.delete(targetId);
+        return;
+      }
+
+      if (!twitchTargetVisible(target)) {
+        requestAnimationFrame(() => setTimeout(mount,120));
+        return;
+      }
+
+      const parent = location.hostname || 'gustavoaba.github.io';
+      const iframe = document.createElement('iframe');
+      iframe.title = 'Live NihilGuh na Twitch';
+      iframe.scrolling = 'no';
+      iframe.allow = 'autoplay; fullscreen; picture-in-picture';
+      iframe.src = 'https://player.twitch.tv/?channel=nihilguh&parent=' + encodeURIComponent(parent) + '&autoplay=true&muted=true';
+      iframe.addEventListener('load',() => {
+        embeddingPending.delete(targetId);
+        embedded.add(targetId);
+      },{once:true});
+
+      target.replaceChildren(iframe);
+
+      // Fail-safe: don't allow a stuck pending state to spawn duplicates.
+      setTimeout(() => {
+        if (target.querySelector('iframe')) embedded.add(targetId);
+        embeddingPending.delete(targetId);
+      },2500);
+    };
+
+    requestAnimationFrame(() => requestAnimationFrame(mount));
   }
 
 
@@ -182,9 +226,7 @@
     document.querySelectorAll('[data-live-only]').forEach(el => el.toggleAttribute('hidden',!live));
 
     if (!live) {
-      embedded.delete('home-player');
-      const player = $('home-player');
-      if (player) player.innerHTML = '';
+      ensureTwitch('home-player', false);
       return;
     }
 
@@ -463,7 +505,7 @@
       countVisit(state);
       render(state);
     } catch (err) {
-      console.warn('NihilGuh backend indisponível:',err);
+      console.warn('NihilGuh backend indisponível:',err,'URL:',api?.backendUrl);
       const fallback = await twitchFallbackState();
       if (fallback) {
         state = fallback;
