@@ -101,16 +101,7 @@
 
   function setupSceneAnimations(){
     document.querySelectorAll('.scene').forEach(el => {
-      const name=el.dataset.scene;
-      const sec=SECTIONS.find(s=>s.scene===name);
-      sceneElements.set(name,el);
-      if(!sec || name==='rest') return;
-      makeScrubber(el,[
-        {opacity:0,transform:'scale(1.018)',offset:0},
-        {opacity:1,transform:'scale(1)',offset:.07},
-        {opacity:1,transform:'scale(1)',offset:.91},
-        {opacity:0,transform:'scale(.988)',offset:1}
-      ],sec.start,sec.end,'linear');
+      sceneElements.set(el.dataset.scene,el);
     });
 
     const hareStart=38, hareEnd=70;
@@ -177,10 +168,24 @@
     ],birdStart,birdEnd,620,'ease-in-out');
   }
 
-  function updateAnimations(t){
+  function updateSceneStage(t,sec){
+    sceneElements.forEach((el,name)=>{
+      const visible=!resting && name===sec.scene;
+      el.classList.toggle('is-visible',visible);
+      if(!visible || name==='rest') return;
+      const fadeIn=clamp((t-sec.start)/.85);
+      const fadeOut=clamp((sec.end-t)/.85);
+      const alpha=Math.min(fadeIn,fadeOut,1);
+      const zoom=1.014-(alpha*.014);
+      el.style.opacity=String(alpha);
+      el.style.transform='scale('+zoom.toFixed(4)+')';
+    });
+  }
+
+  function updateAnimations(t,sec){
+    updateSceneStage(t,sec);
     for(const item of scrubbers){
-      const active=t>=item.start-.9 && t<=item.end+.9;
-      item.el.classList.toggle('is-visible',active);
+      const active=t>=item.start && t<=item.end;
       if(active) item.anim.currentTime=clamp((t-item.start)/(item.end-item.start))*((item.end-item.start)*1000);
     }
     for(const item of loops){
@@ -324,7 +329,8 @@
       broadcast.classList.remove('is-fading');
       broadcast.classList.add('is-resting');
       sceneElements.forEach(el=>el.classList.remove('is-visible'));
-      sceneElements.get('rest')?.classList.add('is-visible');
+      const rest=sceneElements.get('rest');
+      if(rest){rest.classList.add('is-visible');rest.style.opacity='1';rest.style.transform='scale(1)';}
     },1900);
     clearTimeout(restTimer);
     restTimer=setTimeout(async()=>{
@@ -367,7 +373,7 @@
     activeScene=resting?'rest':sec.scene;
     iconEl.textContent=sec.icon||'✦';
     if(!resting){
-      updateAnimations(t);
+      updateAnimations(t,sec);
       updateCheshire(t,sec.scene);
       setCaption(captionIndexAt(t));
       syncFilm(t);
@@ -424,7 +430,15 @@
       e.preventDefault();
       if(audioDrivesTimeline&&!audio.paused){audio.pause();audioDrivesTimeline=false;virtualStartedAt=performance.now()-audio.currentTime*1000}
       else if(audioReady)beginAudio(true);
-      else{virtualPaused=!virtualPaused;if(virtualPaused)virtualPausedAt=virtualTime();else virtualStartedAt=performance.now()-virtualPausedAt*1000}
+      else{
+        if(!virtualPaused){
+          virtualPausedAt=virtualTime();
+          virtualPaused=true;
+        }else{
+          virtualPaused=false;
+          virtualStartedAt=performance.now()-virtualPausedAt*1000;
+        }
+      }
     }
   });
 
