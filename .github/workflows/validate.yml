@@ -34,3 +34,21 @@ jobs:
           test -f overlay/index.html
           test -f overlay.html
           test -f apps-script/ALL_IN_ONE.gs
+      - name: Smoke-test deployed Apps Script
+        run: |
+          URL=$(python - <<'PY'
+          import re
+          text=open("site.config.js",encoding="utf-8").read()
+          m=re.search(r"DEFAULT_BACKEND = '([^']+)'", text)
+          assert m, "DEFAULT_BACKEND not found"
+          print(m.group(1))
+          PY
+          )
+          echo "Testing $URL"
+          BODY=$(curl -fsSL --max-time 30 "$URL?action=stateLite&callback=smokeTest" || true)
+          echo "$BODY" | head -c 1000
+          echo
+          echo "$BODY" | grep -q '^smokeTest(' || {
+            echo "Apps Script did not return public JSONP"
+            exit 1
+          }
