@@ -111,6 +111,17 @@ body{font-family:Inter,system-ui,sans-serif}
   fill:url(#irisGlow);
   opacity:.48;
 }
+.eye-inner{
+  isolation:isolate;
+}
+.eye-inner .iris,
+.eye-inner .pupil-wrap,
+.eye-inner .pupil,
+.eye-inner .pupil-core,
+.eye-inner .glint{
+  pointer-events:none;
+}
+
 .pupil-wrap{
   transform-box:fill-box;
   transform-origin:center;
