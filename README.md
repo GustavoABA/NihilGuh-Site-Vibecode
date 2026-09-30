@@ -106,3 +106,16 @@ A rota `/starting/` é uma composição 16:9 em preto e branco sincronizada pelo
 - `/starting/?preview=1` testa as cenas sem áudio.
 - `/starting/?debug=1` habilita seek e ajuste fino de offset para calibrar o master usado na live.
 - ao fim da faixa, a tela faz fade, aguarda 2 minutos e reinicia.
+
+
+### Motor visual da tela de início
+
+A abertura usa uma timeline determinística baseada na **Web Animations API**. As animações são criadas pausadas e o `currentTime` de cada uma é sincronizado ao relógio mestre da música/preview, evitando que loops CSS independentes saiam de fase.
+
+Os movimentos principais usam `transform` e `opacity`; `requestAnimationFrame` atua apenas como controlador de sincronização.
+
+O vídeo enviado como referência foi convertido para uma textura de baixíssimo peso e está em:
+
+`assets/video/harpy-hare-reference.mp4`
+
+Essa cópia é deliberadamente pequena porque aparece somente como textura desfocada/monocromática no palco. O vídeo original continua sendo a referência visual de direção de arte.
