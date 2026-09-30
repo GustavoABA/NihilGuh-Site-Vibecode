@@ -1,0 +1,31 @@
+name: Probe Apps Script deployments
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/probe-backends.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe known deployments
+        run: |
+          probe() {
+            NAME="$1"
+            URL="$2"
+            echo "===== $NAME ====="
+            CODE=$(curl -L -sS -o /tmp/body -w "%{http_code}" --max-time 30 "$URL?action=stateLite&callback=probe" || true)
+            echo "HTTP=$CODE"
+            head -c 500 /tmp/body || true
+            echo
+          }
+          probe v6 "https://script.google.com/macros/s/AKfycbzbmAfdOlvSgHHC-QHeArNLLg3PvhT7FCLpAZ1e5avyeFt0rrYkyN_Lkrtb9b-LUdU/exec"
+          probe v5 "https://script.google.com/macros/s/AKfycbzne2mZekghThymuej5yg8a6gNy2PNesVuVTo27RWhj7AXmr1TE_YEXMOImUySImf7Y/exec"
+          probe v4 "https://script.google.com/macros/s/AKfycbz8yWzWTfFx1N-KFCuYQK3kEx4mC854xja58Dq4pa8GzdZpxXBPX_91lVaqF7MrpUGR/exec"
+          probe v3 "https://script.google.com/macros/s/AKfycbzmJicdKBhkA4hOC8v0bjF6eDWBR2ngPoPDpwVOtglxkSWDP_Q5VyTezfymGnhKGngH/exec"
