@@ -113,6 +113,39 @@
     return 0;
   }
 
+  function updateIntro(t,section){
+    if(section.scene!=='intro') return;
+    const p=Math.max(0,Math.min(1,(t-section.start)/(section.end-section.start)));
+    const rings=document.querySelector('.intro-rings');
+    const stars=document.querySelector('.intro-stars');
+    const copy=document.querySelector('.intro-copy');
+    const paper=document.querySelector('.stage-paper');
+
+    const slow=t*5.2;
+    const pulse=.5+.5*Math.sin(t*.72);
+    const approach=Math.max(0,(p-.72)/.28);
+
+    gsap.set(rings,{
+      rotation:slow,
+      scale:1+p*.16+Math.sin(t*.4)*.015,
+      opacity:.52+p*.32,
+      transformOrigin:'50% 50%'
+    });
+    gsap.set(stars,{
+      x:Math.sin(t*.23)*28,
+      y:Math.cos(t*.31)*7,
+      opacity:.45+.4*pulse
+    });
+    gsap.set(copy,{
+      y:Math.sin(t*.36)*3-approach*10,
+      opacity:1-approach*.82,
+      scale:1+Math.sin(t*.28)*.006
+    });
+    gsap.set(paper,{
+      filter:`brightness(${1-approach*.42}) contrast(${1+approach*.22})`
+    });
+  }
+
   function updateCheshire(t,section){
     if(section.scene!=='cheshire') return;
     const local=t-section.start;
@@ -204,6 +237,7 @@
     master.time(t,false);
     iconEl.textContent=section.icon;
     updateCaption(t);
+    updateIntro(t,section);
     updateCheshire(t,section);
     updateHare(t,section);
     updateDancer(t,section);
