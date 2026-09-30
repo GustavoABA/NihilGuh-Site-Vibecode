@@ -4,7 +4,8 @@
   const MASTER_DURATION = 181;
   const REST_MS = 2 * 60 * 1000;
   const params = new URLSearchParams(location.search);
-  const AUDIO_SRC = params.get('audio') || '../assets/audio/harpy-hare.mp3';
+  const DEFAULT_AUDIO_SRC = '../assets/audio/harpy-hare.mp3';
+  const EXPLICIT_AUDIO_SRC = params.get('audio') || '';
   const DEBUG = params.has('debug');
   const PREVIEW = params.has('preview');
 
@@ -47,6 +48,10 @@
   const audio = $('harpy-audio');
   const broadcast = $('broadcast');
   const gate = $('start-gate');
+  const gateTitle = $('start-gate-title');
+  const gateCopy = $('start-gate-copy');
+  const gatePlay = $('start-gate-play');
+  const localAudioFile = $('local-audio-file');
   const currentEl = $('subtitle-current');
   const nextEl = $('subtitle-next');
   const iconEl = $('subtitle-icon');
@@ -72,6 +77,10 @@
   let analyser = null;
   let analyserData = null;
   let audioContext = null;
+  let audioReady = false;
+  let audioSource = '';
+  let localObjectUrl = '';
+  let userGestureUnlocked = false;
 
   function adjustedTime() {
     const raw = PREVIEW
@@ -158,7 +167,7 @@
   }
 
   function setupAnalyser() {
-    if (analyser || PREVIEW) return;
+    if (analyser || PREVIEW || !userGestureUnlocked) return;
     try {
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
       const source = audioContext.createMediaElementSource(audio);
@@ -173,21 +182,47 @@
     }
   }
 
-  async function beginAudio() {
+  function showGate(title,copy,canPlay=true) {
+    gateTitle.textContent = title;
+    gateCopy.textContent = copy;
+    gatePlay.hidden = !canPlay;
+    gate.hidden = false;
+  }
+
+  async function beginAudio(fromGesture=false) {
     if (PREVIEW) {
       gate.hidden = true;
       return;
     }
-    setupAnalyser();
-    if (audioContext?.state === 'suspended') {
-      try { await audioContext.resume(); } catch (_) {}
+    if (!audioReady || !audio.src) {
+      showGate(
+        'Áudio ainda não configurado',
+        'Escolha um MP3 do seu PC para testar agora, ou use ?audio=URL quando hospedar a faixa.',
+        false
+      );
+      audioStatus.textContent = 'ÁUDIO NÃO CONFIGURADO';
+      return;
     }
+
+    if (fromGesture) userGestureUnlocked = true;
+
     try {
       await audio.play();
       gate.hidden = true;
       audioStatus.textContent = 'HARPY HARE · AO VIVO';
+
+      if (userGestureUnlocked) {
+        setupAnalyser();
+        if (audioContext?.state === 'suspended') {
+          try { await audioContext.resume(); } catch (_) {}
+        }
+      }
     } catch (_) {
-      gate.hidden = false;
+      showGate(
+        '▶ iniciar abertura',
+        'O navegador bloqueou o autoplay com áudio. Clique uma vez para liberar.',
+        true
+      );
       audioStatus.textContent = 'CLIQUE PARA INICIAR';
     }
   }
@@ -223,19 +258,61 @@
     activeScene = '';
   }
 
-  if (!PREVIEW) {
-    audio.src = AUDIO_SRC;
-    audio.addEventListener('canplay', beginAudio, { once:true });
+  async function configureAudioSource() {
+    if (PREVIEW) {
+      audioStatus.textContent = 'MODO PREVIEW · SEM ÁUDIO';
+      return;
+    }
+
     audio.addEventListener('ended', enterRest);
-    audio.addEventListener('error', () => {
-      audioStatus.textContent = 'ÁUDIO AUSENTE · assets/audio/harpy-hare.mp3';
-      if (!DEBUG) gate.hidden = true;
-    });
-  } else {
-    audioStatus.textContent = 'MODO PREVIEW · SEM ÁUDIO';
+
+    if (EXPLICIT_AUDIO_SRC) {
+      audioSource = EXPLICIT_AUDIO_SRC;
+      audio.src = audioSource;
+      audioReady = true;
+      audio.addEventListener('canplay',() => beginAudio(false),{once:true});
+      audio.load();
+      return;
+    }
+
+    // Probe the same-origin default path with fetch first. A missing file no
+    // longer gets assigned to <audio>, avoiding the noisy media 404.
+    try {
+      const response = await fetch(DEFAULT_AUDIO_SRC,{method:'HEAD',cache:'no-store'});
+      if (response.ok) {
+        audioSource = DEFAULT_AUDIO_SRC;
+        audio.src = audioSource;
+        audioReady = true;
+        audio.addEventListener('canplay',() => beginAudio(false),{once:true});
+        audio.load();
+        return;
+      }
+    } catch (_) {}
+
+    showGate(
+      'Áudio ainda não configurado',
+      'Escolha um MP3 do seu PC para testar agora. Para o OBS, hospede a faixa e use ?audio=URL.',
+      false
+    );
+    audioStatus.textContent = 'ÁUDIO NÃO CONFIGURADO';
   }
 
-  gate.addEventListener('click', beginAudio);
+  gatePlay.addEventListener('click',() => beginAudio(true));
+
+  localAudioFile.addEventListener('change',async e => {
+    const file=e.target.files && e.target.files[0];
+    if(!file) return;
+    if(localObjectUrl) URL.revokeObjectURL(localObjectUrl);
+    localObjectUrl=URL.createObjectURL(file);
+    audioSource=localObjectUrl;
+    audio.src=audioSource;
+    audioReady=true;
+    userGestureUnlocked=true;
+    audio.load();
+    try {
+      await beginAudio(true);
+    } catch (_) {}
+  });
 
   if (DEBUG) {
     debugPanel.hidden = false;
@@ -286,6 +363,8 @@
   if (PREVIEW) {
     gate.hidden = true;
     previewStartedAt = performance.now();
+  } else {
+    configureAudioSource();
   }
 
   paint();
