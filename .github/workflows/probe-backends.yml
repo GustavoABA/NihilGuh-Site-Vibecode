@@ -30,3 +30,5 @@ jobs:
           probe v5 "https://script.google.com/macros/s/AKfycbzne2mZekghThymuej5yg8a6gNy2PNesVuVTo27RWhj7AXmr1TE_YEXMOImUySImf7Y/exec"
           probe v4 "https://script.google.com/macros/s/AKfycbz8yWzWTfFx1N-KFCuYQK3kEx4mC854xja58Dq4pa8GzdZpxXBPX_91lVaqF7MrpUGR/exec"
           probe v3 "https://script.google.com/macros/s/AKfycbzmJicdKBhkA4hOC8v0bjF6eDWBR2ngPoPDpwVOtglxkSWDP_Q5VyTezfymGnhKGngH/exec"
+
+# probe refresh 2026-10-01
