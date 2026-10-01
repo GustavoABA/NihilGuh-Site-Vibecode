@@ -1,45 +1,82 @@
 (() => {
   const cfg = window.NIHILGUH_CONFIG || {};
+  const BACKEND_FALLBACKS = [
+    'https://script.google.com/macros/s/AKfycbx8IbeTPXiVQIJw_QL0YgRBRhurFGk2W2lQWE0CjGweLkF-aFI7KNyeh6PvVBuYZGM/exec',
+    'https://script.google.com/macros/s/AKfycbzne2mZekghThymuej5yg8a6gNy2PNesVuVTo27RWhj7AXmr1TE_YEXMOImUySImf7Y/exec',
+    'https://script.google.com/macros/s/AKfycbz8yWzWTfFx1N-KFCuYQK3kEx4mC854xja58Dq4pa8GzdZpxXBPX_91lVaqF7MrpUGR/exec'
+  ];
+
+  function backendCandidates(){
+    const preferred = localStorage.getItem('nihilguh_backend_url') || cfg.backendUrl || '';
+    return [preferred, ...BACKEND_FALLBACKS].filter((url,index,all)=>url && all.indexOf(url)===index);
+  }
+
   const API = {
     get backendUrl(){ return localStorage.getItem('nihilguh_backend_url') || cfg.backendUrl || ''; },
     set backendUrl(v){ if(v) localStorage.setItem('nihilguh_backend_url', v.replace(/\/$/,'')); else localStorage.removeItem('nihilguh_backend_url'); },
 
     call(action, params = {}) {
-      return new Promise((resolve, reject) => {
-        const base = API.backendUrl;
-        if (!base) return reject(new Error('backend_not_configured'));
-        const callback = '__nihilguh_cb_' + Math.random().toString(36).slice(2);
-        const script = document.createElement('script');
-        let settled = false;
-        const timeout = setTimeout(() => {
-          if (settled) return;
-          settled = true;
-          // Keep a harmless callback alive briefly so a late JSONP response
-          // does not throw "__nihilguh_cb_* is not defined" in the browser.
-          window[callback] = () => {};
-          setTimeout(() => { try { delete window[callback]; } catch {} }, 60000);
-          script.remove();
-          reject(new Error('timeout'));
-        }, 30000);
+      const candidates = backendCandidates();
 
-        function cleanup(error, data){
-          if (settled) return;
-          settled = true;
-          clearTimeout(timeout);
-          try { delete window[callback]; } catch {}
-          script.remove();
-          error ? reject(error) : resolve(data);
+      function callOne(base) {
+        return new Promise((resolve, reject) => {
+          if (!base) return reject(new Error('backend_not_configured'));
+
+          const callback = '__nihilguh_cb_' + Math.random().toString(36).slice(2);
+          const script = document.createElement('script');
+          let settled = false;
+
+          const timeout = setTimeout(() => {
+            if (settled) return;
+            settled = true;
+            window[callback] = () => {};
+            setTimeout(() => { try { delete window[callback]; } catch {} }, 60000);
+            script.remove();
+            reject(new Error('timeout'));
+          }, 12000);
+
+          function cleanup(error, data){
+            if (settled) return;
+            settled = true;
+            clearTimeout(timeout);
+            try { delete window[callback]; } catch {}
+            script.remove();
+            error ? reject(error) : resolve(data);
+          }
+
+          window[callback] = data => {
+            if (data && data.ok === false) cleanup(new Error(data.error || 'api_error'));
+            else cleanup(null, data);
+          };
+
+          const qs = new URLSearchParams({ action, callback, ...params, _: Date.now().toString() });
+          script.src = base.replace(/\/$/,'') + '?' + qs.toString();
+          script.onerror = () => cleanup(new Error('network_error'));
+          document.head.appendChild(script);
+        });
+      }
+
+      return (async()=>{
+        let lastError = new Error('backend_not_configured');
+
+        for(const base of candidates){
+          try{
+            const data = await callOne(base);
+
+            // Promote a working deployment so subsequent calls use it first.
+            if(base !== API.backendUrl){
+              localStorage.setItem('nihilguh_backend_url',base);
+            }
+
+            return data;
+          }catch(err){
+            lastError = err;
+            console.warn('NihilGuh backend falhou, tentando reserva:',base,err?.message||err);
+          }
         }
 
-        window[callback] = data => {
-          if (data && data.ok === false) cleanup(new Error(data.error || 'api_error'));
-          else cleanup(null, data);
-        };
-        const qs = new URLSearchParams({ action, callback, ...params, _: Date.now().toString() });
-        script.src = base + '?' + qs.toString();
-        script.onerror = () => cleanup(new Error('network_error'));
-        document.head.appendChild(script);
-      });
+        throw lastError;
+      })();
     },
 
     visitorId(){
