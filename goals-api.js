@@ -18,42 +18,51 @@
     call(action, params = {}) {
       const candidates = backendCandidates();
 
-      function callOne(base) {
-        return new Promise((resolve, reject) => {
-          if (!base) return reject(new Error('backend_not_configured'));
+      async function callOne(base) {
+        if (!base) throw new Error('backend_not_configured');
 
-          const callback = '__nihilguh_cb_' + Math.random().toString(36).slice(2);
-          const script = document.createElement('script');
-          let settled = false;
+        const qs = new URLSearchParams({ action, ...params, _: Date.now().toString() });
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 12000);
 
-          const timeout = setTimeout(() => {
-            if (settled) return;
-            settled = true;
-            window[callback] = () => {};
-            setTimeout(() => { try { delete window[callback]; } catch {} }, 60000);
-            script.remove();
-            reject(new Error('timeout'));
-          }, 12000);
+        try {
+          const response = await fetch(base.replace(/\/$/,'') + '?' + qs.toString(), {
+            method:'GET',
+            mode:'cors',
+            credentials:'omit',
+            cache:'no-store',
+            redirect:'follow',
+            signal:controller.signal,
+            headers:{ 'Accept':'application/json,text/plain,*/*' }
+          });
 
-          function cleanup(error, data){
-            if (settled) return;
-            settled = true;
-            clearTimeout(timeout);
-            try { delete window[callback]; } catch {}
-            script.remove();
-            error ? reject(error) : resolve(data);
+          if (!response.ok) {
+            throw new Error('http_' + response.status);
           }
 
-          window[callback] = data => {
-            if (data && data.ok === false) cleanup(new Error(data.error || 'api_error'));
-            else cleanup(null, data);
-          };
+          const text = await response.text();
+          let data;
 
-          const qs = new URLSearchParams({ action, callback, ...params, _: Date.now().toString() });
-          script.src = base.replace(/\/$/,'') + '?' + qs.toString();
-          script.onerror = () => cleanup(new Error('network_error'));
-          document.head.appendChild(script);
-        });
+          try {
+            data = JSON.parse(text);
+          } catch (_) {
+            // Compatibility with any deployment that still wraps JSON in callback(...).
+            const match = text.match(/^[A-Za-z_$][0-9A-Za-z_$]*\((.*)\)\s*;?$/s);
+            if (!match) throw new Error('invalid_backend_response');
+            data = JSON.parse(match[1]);
+          }
+
+          if (data && data.ok === false) {
+            throw new Error(data.error || 'api_error');
+          }
+
+          return data;
+        } catch (err) {
+          if (err?.name === 'AbortError') throw new Error('timeout');
+          throw err;
+        } finally {
+          clearTimeout(timeout);
+        }
       }
 
       return (async()=>{
@@ -63,7 +72,6 @@
           try{
             const data = await callOne(base);
 
-            // Promote a working deployment so subsequent calls use it first.
             if(base !== API.backendUrl){
               localStorage.setItem('nihilguh_backend_url',base);
             }
