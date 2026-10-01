@@ -524,7 +524,7 @@
           if ($('live-round-copy')) $('live-round-copy').textContent = 'O relógio continua pela Twitch; minigames e bônus aguardam reconexão.';
         } else if (page === 'play') {
           setStatus(true);
-          if ($('play-root')) $('play-root').innerHTML = '<section class="card offline-card"><h1>Live detectada</h1><p class="subtle">O cronômetro está funcionando pela Twitch, mas os minigames precisam do Apps Script público para sincronizar todos os jogadores.</p></section>';
+          if ($('play-root')) $('play-root').innerHTML = '<section class="card offline-card"><h1>Reconectando os minigames…</h1><p class="subtle">A Twitch está online. O site está tentando outro endpoint público do Apps Script para restaurar a rodada sincronizada.</p></section>';
         }
         return;
       }
