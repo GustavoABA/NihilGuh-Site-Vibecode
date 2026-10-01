@@ -932,3 +932,198 @@ body.overlay-clean-page .overlay-clean-shell{
   font-size:23px;
   line-height:1.12;
 }
+
+
+/* Reflexo do Gato — Cheshire signal */
+.reaction-zone{
+  display:grid;
+  place-items:center;
+  margin:25px 0;
+}
+.reaction-btn{
+  width:min(380px,86vw);
+  aspect-ratio:1.15/1;
+  position:relative;
+  display:grid;
+  place-items:center;
+  align-content:center;
+  gap:18px;
+  padding:22px;
+  overflow:hidden;
+  appearance:none;
+  -webkit-appearance:none;
+  border-radius:34px;
+  border:1px solid rgba(185,168,218,.14);
+  background:
+    radial-gradient(ellipse at 50% 48%,rgba(185,168,218,.055),transparent 46%),
+    linear-gradient(180deg,#0a0710,#050307);
+  color:#756b80;
+  cursor:default;
+  transition:
+    border-color .16s ease,
+    box-shadow .16s ease,
+    background .16s ease,
+    transform .12s ease;
+}
+.reaction-btn:disabled{
+  opacity:1;
+}
+.reaction-btn::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  opacity:.26;
+  background:
+    radial-gradient(circle at 24% 25%,rgba(255,255,255,.028),transparent 18%),
+    radial-gradient(circle at 76% 72%,rgba(185,168,218,.035),transparent 24%);
+  pointer-events:none;
+}
+.reaction-face{
+  width:min(270px,68vw);
+  height:170px;
+  position:relative;
+  display:block;
+  filter:brightness(.46) saturate(.55);
+  opacity:.36;
+  transform:scale(.96);
+  transition:
+    filter .16s ease,
+    opacity .16s ease,
+    transform .16s cubic-bezier(.2,.8,.2,1);
+}
+.reaction-eye{
+  position:absolute;
+  top:17px;
+  width:78px;
+  height:34px;
+  border:3px solid #cbb9ef;
+  border-top-width:5px;
+  border-radius:58% 42% 62% 38% / 70% 56% 44% 30%;
+  background:
+    radial-gradient(ellipse at center,#0b0910 0 19%,#a894cd 21% 31%,#eee9f4 34% 100%);
+  box-shadow:none;
+  opacity:.72;
+  transition:.15s ease;
+}
+.reaction-eye::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:9px;
+  height:25px;
+  border-radius:50%;
+  background:#050307;
+  transform:translate(-50%,-50%);
+}
+.reaction-eye-left{
+  left:28px;
+  transform:rotate(-7deg);
+}
+.reaction-eye-right{
+  right:28px;
+  transform:rotate(7deg) scaleX(-1);
+}
+.reaction-grin{
+  position:absolute;
+  left:50%;
+  bottom:10px;
+  width:232px;
+  height:92px;
+  transform:translateX(-50%);
+  overflow:hidden;
+  border-radius:0 0 50% 50% / 0 0 100% 100%;
+  background:
+    linear-gradient(180deg,#050307 0 22%,#f0eadb 23% 67%,#08060a 68% 100%);
+  clip-path:path("M 4 4 C 54 49, 178 49, 228 4 C 207 71, 165 90, 116 92 C 67 90, 25 71, 4 4 Z");
+  filter:drop-shadow(0 0 0 rgba(203,185,239,0));
+  opacity:.78;
+  transition:.16s ease;
+}
+.reaction-teeth{
+  position:absolute;
+  inset:21px 20px 25px;
+  display:grid;
+  grid-template-columns:repeat(8,1fr);
+  transform:rotate(.2deg);
+}
+.reaction-teeth i{
+  display:block;
+  border-right:2px solid rgba(25,20,29,.65);
+}
+.reaction-teeth i:last-child{
+  border-right:0;
+}
+.reaction-label{
+  position:relative;
+  z-index:2;
+  font-size:.82rem;
+  font-weight:950;
+  letter-spacing:.16em;
+  color:#73677e;
+  transition:.16s ease;
+}
+.reaction-btn.ready{
+  border-color:rgba(211,191,250,.72);
+  background:
+    radial-gradient(ellipse at 50% 48%,rgba(180,108,255,.20),transparent 48%),
+    linear-gradient(180deg,#120b1a,#08040d);
+  box-shadow:
+    0 0 0 1px rgba(203,185,239,.12),
+    0 0 34px rgba(180,108,255,.24),
+    0 0 92px rgba(180,108,255,.20),
+    inset 0 0 48px rgba(180,108,255,.08);
+  cursor:pointer;
+  transform:scale(1.018);
+}
+.reaction-btn.ready .reaction-face{
+  opacity:1;
+  filter:brightness(1.18) saturate(1.04);
+  transform:scale(1.035);
+  animation:reaction-face-pulse .64s ease-in-out infinite alternate;
+}
+.reaction-btn.ready .reaction-eye{
+  opacity:1;
+  border-color:#eadfff;
+  box-shadow:
+    0 0 12px rgba(222,205,255,.72),
+    0 0 34px rgba(180,108,255,.52),
+    inset 0 0 13px rgba(180,108,255,.22);
+}
+.reaction-btn.ready .reaction-grin{
+  opacity:1;
+  filter:
+    drop-shadow(0 0 8px rgba(238,230,255,.90))
+    drop-shadow(0 0 24px rgba(180,108,255,.62));
+  animation:reaction-grin-pulse .34s ease-in-out infinite alternate;
+}
+.reaction-btn.ready .reaction-label{
+  color:#f1e8ff;
+  text-shadow:0 0 16px rgba(180,108,255,.75);
+}
+.reaction-btn.ready:hover{
+  transform:scale(1.035);
+}
+.reaction-btn.ready:active{
+  transform:scale(.985);
+}
+@keyframes reaction-face-pulse{
+  from{transform:scale(1.02)}
+  to{transform:scale(1.055)}
+}
+@keyframes reaction-grin-pulse{
+  from{transform:translateX(-50%) scaleX(.985);filter:drop-shadow(0 0 7px rgba(238,230,255,.82)) drop-shadow(0 0 21px rgba(180,108,255,.52))}
+  to{transform:translateX(-50%) scaleX(1.02);filter:drop-shadow(0 0 12px rgba(255,255,255,.96)) drop-shadow(0 0 36px rgba(180,108,255,.78))}
+}
+@media(max-width:520px){
+  .reaction-btn{
+    width:min(340px,92vw);
+    border-radius:26px;
+  }
+  .reaction-face{
+    transform:scale(.86);
+  }
+  .reaction-btn.ready .reaction-face{
+    transform:scale(.92);
+  }
+}
