@@ -31,4 +31,16 @@ jobs:
           probe v4 "https://script.google.com/macros/s/AKfycbz8yWzWTfFx1N-KFCuYQK3kEx4mC854xja58Dq4pa8GzdZpxXBPX_91lVaqF7MrpUGR/exec"
           probe v3 "https://script.google.com/macros/s/AKfycbzmJicdKBhkA4hOC8v0bjF6eDWBR2ngPoPDpwVOtglxkSWDP_Q5VyTezfymGnhKGngH/exec"
 
+      - name: Probe browser transport headers
+        run: |
+          URL="https://script.google.com/macros/s/AKfycbx8IbeTPXiVQIJw_QL0YgRBRhurFGk2W2lQWE0CjGweLkF-aFI7KNyeh6PvVBuYZGM/exec?action=stateLite&callback=probe"
+          echo "===== INITIAL HEADERS ====="
+          curl -sS -I "$URL" || true
+          echo "===== FOLLOW REDIRECTS ====="
+          curl -L -sS -D /tmp/headers -o /tmp/body -w "FINAL_URL=%{url_effective}\nCONTENT_TYPE=%{content_type}\nHTTP=%{http_code}\n" "$URL" || true
+          cat /tmp/headers || true
+          echo "===== BODY PREFIX ====="
+          head -c 300 /tmp/body || true
+          echo
+
 # probe refresh 2026-10-01
