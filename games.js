@@ -1,5 +1,5 @@
 (() => {
-  const local = { roundId:'', mazePos:0, mazeMoves:'', puzzleBoard:[], puzzleMoves:'', round:null, submit:null };
+  const local = { roundId:'', mazePos:0, mazeMoves:'', puzzleBoard:[], puzzleMoves:'', round:null, submit:null, reactionRaf:0 };
   const esc = (v) => String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
   const icons = {
     reaction:'⚡',hunt:'🐇',odd:'👁️',flash:'💨',scramble:'🔤',sequence:'🔢',
@@ -30,7 +30,22 @@
   }
 
   function renderReaction(r) {
-    return shell(r,'<div class="reaction-zone"><button class="reaction-btn" id="reaction-btn" type="button" disabled>ESPERE…</button></div>');
+    return shell(r,
+      '<div class="reaction-zone">'+
+        '<button class="reaction-btn" id="reaction-btn" type="button" data-game-answer="reaction" disabled aria-label="Espere o sorriso do Gato acender">'+
+          '<span class="reaction-face" aria-hidden="true">'+
+            '<span class="reaction-eye reaction-eye-left"></span>'+
+            '<span class="reaction-eye reaction-eye-right"></span>'+
+            '<span class="reaction-grin">'+
+              '<span class="reaction-teeth">'+
+                '<i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>'+
+              '</span>'+
+            '</span>'+
+          '</span>'+
+          '<span class="reaction-label" id="reaction-label">ESPERE O SORRISO…</span>'+
+        '</button>'+
+      '</div>'
+    );
   }
 
   function renderHunt(r) {
@@ -138,6 +153,10 @@
   }
 
   function mount(r,submit,rootId='play-root') {
+    if(local.reactionRaf){
+      cancelAnimationFrame(local.reactionRaf);
+      local.reactionRaf=0;
+    }
     local.round=r;local.submit=submit;
     if(local.roundId!==r.roundId){
       local.roundId=r.roundId;
@@ -166,6 +185,7 @@
     drawMaze();
     drawPuzzle();
     tick(r);
+    if(r.type==='reaction') startReactionClock(r);
   }
 
   function moveMaze(dir) {
@@ -222,12 +242,56 @@
     return board[15]===0;
   }
 
+  function updateReactionSignal(r) {
+    if(!r || r.type!=='reaction' || r.status!=='active') return false;
+
+    const btn=document.getElementById('reaction-btn');
+    if(!btn) return false;
+
+    const label=document.getElementById('reaction-label');
+    const unlockAt=new Date(r.challenge?.unlockAt||'').getTime();
+    const validUnlock=Number.isFinite(unlockAt) && unlockAt>0;
+    const ready=validUnlock && Date.now()>=unlockAt;
+
+    btn.disabled=!ready;
+    btn.classList.toggle('ready',ready);
+    btn.setAttribute('aria-label',ready?'Sorriso aceso. Clique agora!':'Espere o sorriso do Gato acender');
+
+    if(label){
+      label.textContent=ready?'CLIQUE AGORA!':'ESPERE O SORRISO…';
+    }
+
+    return ready;
+  }
+
+  function startReactionClock(r){
+    if(local.reactionRaf) cancelAnimationFrame(local.reactionRaf);
+
+    const roundId=String(r?.roundId||'');
+
+    const frame=()=>{
+      if(!local.round || local.round.type!=='reaction' || String(local.round.roundId||'')!==roundId){
+        local.reactionRaf=0;
+        return;
+      }
+
+      const ready=updateReactionSignal(local.round);
+
+      if(!ready){
+        local.reactionRaf=requestAnimationFrame(frame);
+      }else{
+        local.reactionRaf=0;
+      }
+    };
+
+    frame();
+  }
+
   function tick(r) {
     if(!r||r.status!=='active')return;
     if(r.type==='reaction'){
-      const btn=document.getElementById('reaction-btn');if(!btn)return;
-      const ready=Date.now()>=new Date(r.challenge?.unlockAt||0).getTime();
-      btn.disabled=!ready;btn.classList.toggle('ready',ready);btn.textContent=ready?'CLIQUE AGORA!':'ESPERE…';
+      local.round=r;
+      updateReactionSignal(r);
     }
     if(r.type==='memory' && String(r.challenge?.phase||'memorize')==='memorize'){
       const hidden=Date.now()>=new Date(r.challenge?.phaseEndsAt||0).getTime();
