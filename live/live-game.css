@@ -1,0 +1,128 @@
+.live-game-panel{
+  margin-top:14px;
+  padding-top:16px;
+  border-top:1px solid rgba(255,255,255,.07);
+}
+.live-game-panel-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+.live-game-panel-title{
+  display:grid;
+  gap:3px;
+}
+.live-game-panel-title strong{
+  font-size:1rem;
+  letter-spacing:.02em;
+}
+.live-game-status{
+  font-size:.68rem;
+  font-weight:900;
+  letter-spacing:.12em;
+  color:#c9a7ff;
+  padding:7px 10px;
+  border:1px solid rgba(180,108,255,.22);
+  background:rgba(180,108,255,.07);
+  border-radius:999px;
+  white-space:nowrap;
+}
+.live-game-name{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:0 0 12px;
+}
+.live-game-name label{
+  color:var(--muted);
+  font-size:.78rem;
+  font-weight:800;
+  white-space:nowrap;
+}
+.live-game-name input{
+  flex:1;
+  min-width:0;
+  background:#0d0713;
+  border:1px solid var(--line);
+  color:#fff;
+  border-radius:12px;
+  padding:10px 12px;
+  outline:none;
+}
+.live-game-name input:focus{
+  border-color:rgba(180,108,255,.55);
+  box-shadow:0 0 0 3px rgba(180,108,255,.08);
+}
+#live-game-root{
+  min-height:120px;
+}
+#live-game-root .game-card{
+  min-height:0;
+  margin:0;
+  padding:20px;
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(21,12,31,.96),rgba(8,5,12,.98));
+  border:1px solid rgba(180,108,255,.14);
+  box-shadow:none;
+}
+#live-game-root .challenge-icon{
+  width:56px;
+  height:56px;
+  border-radius:17px;
+  margin-bottom:12px;
+  font-size:1.55rem;
+}
+#live-game-root .challenge h1{
+  font-size:clamp(1.45rem,3vw,2rem);
+}
+#live-game-root .challenge-prompt{
+  margin:18px 0;
+  padding:18px;
+}
+#live-game-root .reaction-zone{
+  margin:16px 0;
+}
+#live-game-root .reaction-btn{
+  width:min(320px,72vw);
+}
+#live-game-root .play-stats{
+  margin-top:12px;
+}
+.live-game-empty{
+  min-height:120px;
+  display:grid;
+  place-content:center;
+  gap:5px;
+  text-align:center;
+  padding:22px;
+  border-radius:18px;
+  border:1px dashed rgba(180,108,255,.18);
+  background:rgba(12,7,18,.55);
+}
+.live-game-empty strong{
+  font-size:1.05rem;
+}
+.live-game-empty span{
+  color:var(--muted);
+  font-size:.9rem;
+}
+.live-game-winner strong{
+  color:var(--green);
+}
+@media(max-width:820px){
+  .live-game-panel-head{
+    align-items:flex-start;
+  }
+  .live-game-name{
+    align-items:stretch;
+    flex-direction:column;
+  }
+  #live-game-root .game-card{
+    padding:16px 12px;
+  }
+  #live-game-root .reaction-btn{
+    width:min(300px,82vw);
+  }
+}
