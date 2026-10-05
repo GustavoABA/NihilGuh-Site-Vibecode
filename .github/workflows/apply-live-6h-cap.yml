@@ -1,0 +1,108 @@
+name: Apply 6h live cap
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/apply-live-6h-cap.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Apply 4h plus 2h rules
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          # Frontend copy.
+          p = Path('app.js')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace(
+              'A comunidade pode estender esta live até o limite de 8 horas.',
+              'A comunidade pode adicionar até 2 horas: 4h base + 2h de bônus, máximo de 6h.'
+          )
+          p.write_text(s, encoding='utf-8')
+
+          # Backend default: never fall back to a 240-minute bonus cap again.
+          for name in ['apps-script/Code.gs', 'apps-script/ALL_IN_ONE.gs']:
+              p = Path(name)
+              s = p.read_text(encoding='utf-8')
+              s = s.replace(
+                  "maxBonusMinutes:Number(map['Máximo de bônus da live (min)'] || 240)",
+                  "maxBonusMinutes:Number(map['Máximo de bônus da live (min)'] || 120)"
+              )
+              s = s.replace(
+                  'const maxBonus=Math.max(0,Number(cfg.maxBonusMinutes || 240));',
+                  'const maxBonus=Math.max(0,Number(cfg.maxBonusMinutes || 120));'
+              )
+              p.write_text(s, encoding='utf-8')
+
+          # Rebalance the 23-game deck so the full positive potential is exactly +120 min.
+          old_rewards = '''const ROUND_REWARDS = {
+            reaction:5,
+            hunt:5,
+            odd:10,
+            flash:10,
+            scramble:10,
+            sequence:10,
+            math:10,
+            memory:10,
+            caesar:15,
+            maze:20,
+            puzzle:25,
+            queen:15
+          };'''
+          new_rewards = '''const ROUND_REWARDS = {
+            reaction:3,
+            hunt:3,
+            odd:5,
+            flash:5,
+            scramble:5,
+            sequence:5,
+            math:5,
+            memory:5,
+            caesar:6,
+            maze:10,
+            puzzle:15,
+            queen:5
+          };'''
+
+          for name in ['apps-script/RoundEngine.gs', 'apps-script/ALL_IN_ONE.gs']:
+              p = Path(name)
+              s = p.read_text(encoding='utf-8')
+              s = s.replace('Potencial positivo total: +240 min.', 'Potencial positivo total: +120 min.')
+              s = s.replace(old_rewards, new_rewards)
+              p.write_text(s, encoding='utf-8')
+
+          # Documentation.
+          for name in ['apps-script/DEPLOY.txt', 'apps-script/README.md']:
+              p = Path(name)
+              if not p.exists():
+                  continue
+              s = p.read_text(encoding='utf-8')
+              s = s.replace('máximo absoluto: 480 min / 8h', 'máximo absoluto: 360 min / 6h')
+              s = s.replace('480 min / 8h', '360 min / 6h')
+              s = s.replace('até o limite de 8 horas', 'até o limite de 6 horas')
+              p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit patched sources
+        run: |
+          if git diff --quiet; then
+            echo "No changes needed"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app.js apps-script/Code.gs apps-script/ALL_IN_ONE.gs apps-script/RoundEngine.gs apps-script/DEPLOY.txt apps-script/README.md
+          git commit -m "feat: cap live bonus at 2h and rebalance minigames"
+          git push origin main
