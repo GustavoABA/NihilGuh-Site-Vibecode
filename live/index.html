@@ -5,7 +5,8 @@
   <meta name="theme-color" content="#09050f"><title>NihilGuh — Sala da Live</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../app.css?v=18">
+  <link rel="stylesheet" href="../app.css?v=19">
+  <link rel="stylesheet" href="live-game.css?v=1">
 </head>
 <body data-page="live">
   <main class="shell">
@@ -21,7 +22,27 @@
             <div><span class="eyebrow">SALA DA LIVE</span><h2>Wonderland Broadcast</h2></div>
             <span class="status-badge" data-live-badge>OFFLINE</span>
           </div>
+
           <div class="player-wrap" id="live-player"></div>
+
+          <section class="live-game-panel" aria-labelledby="live-game-heading">
+            <div class="live-game-panel-head">
+              <div class="live-game-panel-title">
+                <span class="eyebrow">DESAFIO DA LIVE</span>
+                <strong id="live-game-heading">Jogue sem sair da transmissão</strong>
+              </div>
+              <span class="live-game-status" id="live-game-status">SINCRONIZANDO</span>
+            </div>
+
+            <div class="live-game-name">
+              <label for="live-player-name-input">Seu nome no jogo</label>
+              <input id="live-player-name-input" maxlength="24" placeholder="Como você quer aparecer se vencer?" autocomplete="nickname">
+            </div>
+
+            <div id="live-game-root">
+              <div class="live-game-empty"><strong>Carregando desafio…</strong><span>Sincronizando a rodada com todos os jogadores.</span></div>
+            </div>
+          </section>
         </article>
 
         <article class="card">
@@ -35,23 +56,19 @@
         <article class="card">
           <span class="eyebrow">RELÓGIO DA LIVE</span>
           <div class="big-clock" id="live-clock">04:00:00</div>
-          <p class="subtle" id="live-state-copy">As brincadeiras começam automaticamente quando a Twitch ficar online.</p>
+          <p class="subtle" id="live-state-copy">Até +2h de bônus: 4h base, máximo de 6h.</p>
           <div class="list">
             <div class="list-row"><span>Tempo ganho</span><strong id="live-bonus">+0 min</strong></div>
             <div class="list-row"><span>Tempo da sessão</span><strong id="live-total">4h base</strong></div>
           </div>
         </article>
-
-        <article class="card round-card">
-          <span class="eyebrow">RODADA ATUAL</span>
-          <h2 class="round-title" id="live-round-title">Sem rodada ativa</h2>
-          <p class="round-copy" id="live-round-copy">Abra a página de jogo quando a live começar.</p>
-          <div class="round-meta"><span id="live-round-meta">—</span></div>
-          <div class="actions"><a class="btn primary" href="../play/">Entrar no desafio</a></div>
-        </article>
       </aside>
     </div>
   </main>
-  <script src="../site.config.js?v=20"></script><script src="../goals-api.js?v=22"></script><script src="../app.js?v=20"></script>
+  <script src="../site.config.js?v=20"></script>
+  <script src="../goals-api.js?v=22"></script>
+  <script src="../games.js?v=18"></script>
+  <script src="../app.js?v=20"></script>
+  <script src="live-game.js?v=1"></script>
 </body>
 </html>
